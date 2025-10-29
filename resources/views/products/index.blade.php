@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-start">
         <div>
             <h1 class="page-title">
-                <i class="fas fa-list text-luxury-gold me-3"></i>
+                <i class="fas fa-clipboard-list text-luxury-gold me-3"></i>
                 Product List
             </h1>
             <p class="page-subtitle">Manage and track all pending products</p>
@@ -22,9 +22,9 @@
 <!-- Quick Actions -->
 <div class="row g-3 mb-4">
     <div class="col-md-6 col-lg-3">
-        <a href="{{ route('products.create') }}" class="mobile-card text-decoration-none h-100">
+            <a href="{{ route('products.create') }}" class="mobile-card text-decoration-none h-100">
             <div class="mobile-card-body text-center">
-                <i class="fas fa-plus-circle fa-2x text-luxury-gold mb-2"></i>
+                <i class="fas fa-plus fa-2x text-luxury-gold mb-2"></i>
                 <h6 class="mb-1">Add Product</h6>
                 <small class="text-muted">Create new entry</small>
             </div>
@@ -33,7 +33,7 @@
     <div class="col-md-6 col-lg-3">
         <a href="{{ route('products.submitted') }}" class="mobile-card text-decoration-none h-100">
             <div class="mobile-card-body text-center">
-                <i class="fas fa-check-double fa-2x text-success mb-2"></i>
+                <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
                 <h6 class="mb-1">Submitted</h6>
                 <small class="text-muted">View completed</small>
             </div>
@@ -42,7 +42,7 @@
     <div class="col-md-6 col-lg-3">
         <div class="mobile-card h-100">
             <div class="mobile-card-body text-center">
-                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                <i class="fas fa-hourglass-half fa-2x text-warning mb-2"></i>
                 <h6 class="mb-1">Pending</h6>
                 <small class="text-muted">{{ $products->count() }} items</small>
             </div>
@@ -61,9 +61,9 @@
 
 <!-- Product List -->
 <div class="mobile-card">
-    <div class="mobile-card-header">
+            <div class="mobile-card-header">
         <h3 class="mobile-card-title">
-            <i class="fas fa-boxes text-luxury-gold me-2"></i>
+            <i class="fas fa-box-open text-luxury-gold me-2"></i>
             Pending Products
         </h3>
     </div>
@@ -121,7 +121,7 @@
                                         </a>
                                         <a href="{{ route('products.edit', $product) }}" 
                                            class="btn btn-outline-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-pen-to-square"></i>
                                         </a>
                                         @if(!$product->isSubmitted())
                                             <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
@@ -129,7 +129,7 @@
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-outline-danger btn-sm" 
                                                         onclick="return confirm('Are you sure you want to delete this product?')">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fas fa-trash-can"></i>
                                                 </button>
                                             </form>
                                         @endif
@@ -190,7 +190,7 @@
                             </a>
                             <a href="{{ route('products.edit', $product) }}" 
                                class="btn btn-outline-warning btn-sm">
-                                <i class="fas fa-edit"></i>
+                                <i class="fas fa-pen-to-square"></i>
                             </a>
                             @if(!$product->isSubmitted())
                                 <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
@@ -198,7 +198,7 @@
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm" 
                                             onclick="return confirm('Delete this product?')">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash-can"></i>
                                     </button>
                                 </form>
                             @endif
@@ -208,7 +208,7 @@
             </div>
         @else
             <div class="text-center py-5">
-                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted mb-2">No Products Found</h5>
                 <p class="text-muted mb-3">Start by adding your first product to the tracking system.</p>
                 <a href="{{ route('products.create') }}" class="btn btn-primary">

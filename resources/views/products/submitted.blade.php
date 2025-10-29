@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-between align-items-start">
         <div>
             <h1 class="page-title">
-                <i class="fas fa-check-double text-luxury-gold me-3"></i>
+                <i class="fas fa-clipboard-check text-luxury-gold me-3"></i>
                 Submitted Products
             </h1>
             <p class="page-subtitle">
@@ -16,7 +16,7 @@
             </p>
         </div>
         @if($submittedProducts->count() > 0)
-            <a href="{{ route('products.export') }}" class="btn btn-luxury">
+            <a href="{{ route('products.export') }}" class="btn btn-luxury btn-export">
                 <i class="fas fa-download me-2"></i>Export
             </a>
         @endif
@@ -30,13 +30,13 @@
             <div class="row g-3">
                 <div class="col-12 col-md-8">
                     <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" class="form-control" name="search" 
-                               placeholder="Search products..." 
-                               value="{{ request('search') }}">
-                    </div>
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control search-input" name="search" 
+                                   placeholder="Search products..." 
+                                   value="{{ request('search') }}">
+                        </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="d-flex gap-2">
@@ -111,7 +111,7 @@
                                                 <span class="text-muted" 
                                                       data-bs-toggle="tooltip" 
                                                       data-bs-title="{{ $product->remarks }}">
-                                                    <i class="fas fa-comment-alt"></i>
+                                                                            <i class="fas fa-comment-dots"></i>
                                                     {{ Str::limit($product->remarks, 20) }}
                                                 </span>
                                             @else
@@ -131,7 +131,7 @@
                     </div>
                 @else
                     <div class="text-center py-5">
-                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                         @if(request('search'))
                             <p class="text-muted lead">No products found matching "{{ request('search') }}"</p>
                             <a href="{{ route('products.submitted') }}" class="btn btn-outline-secondary">

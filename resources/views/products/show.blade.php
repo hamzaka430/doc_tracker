@@ -6,7 +6,7 @@
 <!-- Page Header -->
 <div class="page-header">
     <div class="d-flex align-items-start gap-3">
-        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div class="flex-grow-1">
@@ -45,7 +45,7 @@
             <div class="col-md-6">
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-luxury-gold">
-                        <i class="fas fa-layer-group fa-lg"></i>
+                        <i class="fas fa-diagram-project fa-lg"></i>
                     </div>
                     <div>
                         <small class="text-muted d-block">Stage</small>
@@ -69,7 +69,7 @@
             <div class="col-md-6">
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-luxury-gold">
-                        <i class="fas fa-calendar fa-lg"></i>
+                        <i class="fas fa-calendar-alt fa-lg"></i>
                     </div>
                     <div>
                         <small class="text-muted d-block">Created At</small>
@@ -80,8 +80,8 @@
             @if($product->isSubmitted())
                 <div class="col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="text-success">
-                            <i class="fas fa-check-circle fa-lg"></i>
+                            <div class="text-success">
+                            <i class="fas fa-circle-check fa-lg"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Submission Date</small>
@@ -93,8 +93,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="text-success">
-                            <i class="fas fa-clock fa-lg"></i>
+                            <div class="text-success">
+                            <i class="fas fa-stopwatch fa-lg"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Submission Time</small>
@@ -111,16 +111,16 @@
 
 <!-- Update Product Details -->
 <div class="mobile-card">
-    <div class="mobile-card-header">
+            <div class="mobile-card-header">
         <h3 class="mobile-card-title">
-            <i class="fas fa-edit text-luxury-gold me-2"></i>
+            <i class="fas fa-pen-to-square text-luxury-gold me-2"></i>
             Update Details
         </h3>
     </div>
     <div class="mobile-card-body">
                 @if($product->isSubmitted())
                     <div class="alert alert-success">
-                        <i class="fas fa-check-circle me-2"></i>
+                        <i class="fas fa-circle-check me-2"></i>
                         This product has been submitted and cannot be modified.
                     </div>
                 @else
@@ -142,7 +142,7 @@
                                                name="pre_line_clearance" value="1" {{ $product->pre_line_clearance ? 'checked' : '' }}>
                                         <label class="form-check-label w-100" for="pre_line_clearance">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-check-circle me-3 text-success fa-lg"></i>
+                                                <i class="fas fa-circle-check me-3 text-success fa-lg"></i>
                                                 <div>
                                                     <div class="fw-semibold">Pre-Line Clearance</div>
                                                     <small class="text-muted">Initial quality check completed</small>
@@ -158,7 +158,7 @@
                                                name="in_process" value="1" {{ $product->in_process ? 'checked' : '' }}>
                                         <label class="form-check-label w-100" for="in_process">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-cog me-3 text-warning fa-lg"></i>
+                                                <i class="fas fa-industry me-3 text-warning fa-lg"></i>
                                                 <div>
                                                     <div class="fw-semibold">Hourly In-Process</div>
                                                     <small class="text-muted">Production monitoring completed</small>
@@ -217,7 +217,7 @@
                         <!-- Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-secondary flex-fill">
-                                <i class="fas fa-save me-2"></i>Save Updates
+                                <i class="fas fa-floppy-disk me-2"></i>Save Updates
                             </button>
                             
                             @if($product->isReadyForSubmission())
@@ -229,11 +229,11 @@
                         
                         <div class="d-flex gap-2 mt-3">
                             <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-primary flex-fill">
-                                <i class="fas fa-edit me-2"></i>Edit Product
+                                <i class="fas fa-pen-to-square me-2"></i>Edit Product
                             </a>
                             @if(!$product->isSubmitted())
                                 <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    <i class="fas fa-trash me-2"></i>Delete
+                                    <i class="fas fa-trash-can me-2"></i>Delete
                                 </button>
                             @endif
                         </div>
@@ -281,7 +281,7 @@
                 <form action="{{ route('products.submit', $product) }}" method="POST" class="d-inline">
                     @csrf
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check me-2"></i>Yes, Submit
+                        <i class="fas fa-paper-plane me-2"></i>Yes, Submit
                     </button>
                 </form>
             </div>
@@ -309,7 +309,7 @@
                     <small class="text-muted">Batch: {{ $product->batch_no }} | Stage: {{ $product->stage }}</small>
                 </div>
                 <p class="text-danger mt-3 mb-0">
-                    <i class="fas fa-exclamation-circle me-1"></i>
+                    <i class="fas fa-circle-exclamation me-1"></i>
                     This action cannot be undone.
                 </p>
             </div>
@@ -319,7 +319,7 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash me-2"></i>Yes, Delete
+                        <i class="fas fa-trash-can me-2"></i>Yes, Delete
                     </button>
                 </form>
             </div>
