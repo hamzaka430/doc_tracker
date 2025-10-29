@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Product Stage Tracker')</title>
+    <title>@yield('title', 'Doc Tracker')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1101,8 +1101,8 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h4 class="sidebar-title">
-                <i class="fas fa-briefcase me-2"></i>
-                Product Tracker
+                <i class="fas fa-file-lines me-2"></i>
+                Doc Tracker
             </h4>
             <button class="sidebar-toggle d-lg-none" onclick="toggleSidebar()">
                 <i class="fas fa-times"></i>
@@ -1110,16 +1110,20 @@
         </div>
         <nav class="sidebar-nav">
             <a href="{{ route('products.index') }}" class="sidebar-link {{ request()->routeIs('products.index') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-list me-3"></i>
-                <span>Product List</span>
+                <i class="fas fa-file-lines me-3"></i>
+                <span>All Documents</span>
             </a>
             <a href="{{ route('products.create') }}" class="sidebar-link {{ request()->routeIs('products.create') ? 'active' : '' }}">
                 <i class="fas fa-plus me-3"></i>
-                <span>Add Product</span>
+                <span>Add Document</span>
             </a>
             <a href="{{ route('products.submitted') }}" class="sidebar-link {{ request()->routeIs('products.submitted') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-check me-3"></i>
                 <span>Submitted</span>
+            </a>
+            <a href="{{ route('products.daily') }}" class="sidebar-link {{ request()->routeIs('products.daily') ? 'active' : '' }}">
+                <i class="fas fa-calendar-day me-3"></i>
+                <span>Daily</span>
             </a>
             <div class="sidebar-divider"></div>
             <a href="{{ route('products.export') }}" class="sidebar-link">
