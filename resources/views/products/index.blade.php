@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Product List')
+@section('title', 'Document List')
 
 @section('content')
 <!-- Page Header -->
@@ -8,54 +8,14 @@
     <div class="d-flex justify-content-between align-items-start">
         <div>
             <h1 class="page-title">
-                <i class="fas fa-clipboard-list text-luxury-gold me-3"></i>
-                Product List
+                <i class="fas fa-file-lines text-luxury-gold me-3"></i>
+                Document List
             </h1>
-            <p class="page-subtitle">Manage and track all pending products</p>
+            <p class="page-subtitle">Manage and track all pending documents</p>
         </div>
         <div class="text-end">
-            <span class="badge badge-luxury fs-6">{{ $products->count() }} Products</span>
+            <span class="badge badge-luxury fs-6">{{ $products->count() }} Documents</span>
         </div>
-    </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row g-3 mb-4">
-    <div class="col-md-6 col-lg-3">
-            <a href="{{ route('products.create') }}" class="mobile-card text-decoration-none h-100">
-            <div class="mobile-card-body text-center">
-                <i class="fas fa-plus fa-2x text-luxury-gold mb-2"></i>
-                <h6 class="mb-1">Add Product</h6>
-                <small class="text-muted">Create new entry</small>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a href="{{ route('products.submitted') }}" class="mobile-card text-decoration-none h-100">
-            <div class="mobile-card-body text-center">
-                <i class="fas fa-clipboard-check fa-2x text-success mb-2"></i>
-                <h6 class="mb-1">Submitted</h6>
-                <small class="text-muted">View completed</small>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="mobile-card h-100">
-            <div class="mobile-card-body text-center">
-                <i class="fas fa-hourglass-half fa-2x text-warning mb-2"></i>
-                <h6 class="mb-1">Pending</h6>
-                <small class="text-muted">{{ $products->count() }} items</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a href="{{ route('products.export') }}" class="mobile-card text-decoration-none h-100">
-            <div class="mobile-card-body text-center">
-                <i class="fas fa-download fa-2x text-info mb-2"></i>
-                <h6 class="mb-1">Export</h6>
-                <small class="text-muted">Download CSV</small>
-            </div>
-        </a>
     </div>
 </div>
 
@@ -63,8 +23,8 @@
 <div class="mobile-card">
             <div class="mobile-card-header">
         <h3 class="mobile-card-title">
-            <i class="fas fa-box-open text-luxury-gold me-2"></i>
-            Pending Products
+            <i class="fas fa-file-text text-luxury-gold me-2"></i>
+            Pending Documents
         </h3>
     </div>
     <div class="mobile-card-body p-0">
@@ -74,7 +34,7 @@
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Product Name</th>
+                            <th>Document Name</th>
                             <th>Batch No</th>
                             <th>Stage</th>
                             <th>Status</th>
@@ -128,7 +88,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                                        onclick="return confirm('Are you sure you want to delete this product?')">
+                                                        onclick="return confirm('Are you sure you want to delete this document?')">
                                                     <i class="fas fa-trash-can"></i>
                                                 </button>
                                             </form>
@@ -197,7 +157,7 @@
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm" 
-                                            onclick="return confirm('Delete this product?')">
+                                            onclick="return confirm('Delete this document?')">
                                         <i class="fas fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -209,10 +169,10 @@
         @else
             <div class="text-center py-5">
                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted mb-2">No Products Found</h5>
-                <p class="text-muted mb-3">Start by adding your first product to the tracking system.</p>
+                <h5 class="text-muted mb-2">No Documents Found</h5>
+                <p class="text-muted mb-3">Start by adding your first document to the tracking system.</p>
                 <a href="{{ route('products.create') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Add First Product
+                    <i class="fas fa-plus me-2"></i>Add First Document
                 </a>
             </div>
         @endif

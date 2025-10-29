@@ -130,6 +130,20 @@ class ProductController extends Controller
     }
 
     /**
+     * Display today's documents (daily list)
+     */
+    public function daily(Request $request)
+    {
+        $today = Carbon::today();
+
+        $products = Product::whereDate('created_at', $today)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('products.daily', compact('products'));
+    }
+
+    /**
      * Export submitted products to CSV
      */
     public function exportCsv()

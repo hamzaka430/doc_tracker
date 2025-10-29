@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Product Details - ' . $product->name)
+@section('title', 'Document Details - ' . $product->name)
 
 @section('content')
 <!-- Page Header -->
@@ -12,7 +12,7 @@
         <div class="flex-grow-1">
             <h1 class="page-title">{{ $product->name }}</h1>
             <p class="page-subtitle mb-0">
-                Product ID: <strong class="text-luxury-gold">#{{ $product->id }}</strong>
+                Document ID: <strong class="text-luxury-gold">#{{ $product->id }}</strong>
                 @if($product->isReadyForSubmission() && !$product->isSubmitted())
                     <span class="badge bg-success ms-2">Ready for Submit</span>
                 @endif
@@ -26,7 +26,7 @@
     <div class="mobile-card-header">
         <h3 class="mobile-card-title">
             <i class="fas fa-info-circle text-luxury-gold me-2"></i>
-            Product Information
+            Document Information
         </h3>
     </div>
     <div class="mobile-card-body">

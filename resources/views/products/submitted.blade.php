@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Submitted Products')
+@section('title', 'Submitted Documents')
 
 @section('content')
 <!-- Page Header -->
@@ -9,10 +9,10 @@
         <div>
             <h1 class="page-title">
                 <i class="fas fa-clipboard-check text-luxury-gold me-3"></i>
-                Submitted Products
+                Submitted Documents
             </h1>
             <p class="page-subtitle">
-                Total submitted: <strong>{{ $submittedProducts->count() }}</strong> products
+                Total submitted: <strong>{{ $submittedProducts->count() }}</strong> documents
             </p>
         </div>
         @if($submittedProducts->count() > 0)
@@ -34,7 +34,7 @@
                                 <i class="fas fa-search"></i>
                             </span>
                             <input type="text" class="form-control search-input" name="search" 
-                                   placeholder="Search products..." 
+                                   placeholder="Search documents..." 
                                    value="{{ request('search') }}">
                         </div>
                 </div>
@@ -55,13 +55,13 @@
     </div>
 </div>
 
-    <!-- Submitted Products Table -->
+    <!-- Submitted Documents Table -->
     <div class="col-12">
         <div class="card fade-in-up">
             <div class="card-header">
                 <h4 class="mb-0">
                     <i class="fas fa-table text-luxury-gold me-2"></i>
-                    Submitted Products
+                    Submitted Documents
                     @if(request('search'))
                         <small class="text-muted ms-2">
                             (filtered by "{{ request('search') }}")
@@ -75,7 +75,7 @@
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Product Name</th>
+                                    <th>Document Name</th>
                                     <th>Batch No</th>
                                     <th>Stage</th>
                                     <th>Submission Date</th>
@@ -133,14 +133,14 @@
                     <div class="text-center py-5">
                         <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
                         @if(request('search'))
-                            <p class="text-muted lead">No products found matching "{{ request('search') }}"</p>
+                            <p class="text-muted lead">No documents found matching "{{ request('search') }}"</p>
                             <a href="{{ route('products.submitted') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-1"></i>Show All Products
+                                <i class="fas fa-arrow-left me-1"></i>Show All Documents
                             </a>
                         @else
-                            <p class="text-muted lead">No submitted products yet.</p>
+                            <p class="text-muted lead">No submitted documents yet.</p>
                             <a href="{{ route('products.index') }}" class="btn btn-primary">
-                                <i class="fas fa-plus me-1"></i>Add First Product
+                                <i class="fas fa-plus me-1"></i>Add First Document
                             </a>
                         @endif
                     </div>

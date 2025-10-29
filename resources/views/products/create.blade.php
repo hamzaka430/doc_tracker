@@ -1,23 +1,23 @@
 @extends('app')
 
-@section('title', 'Add New Product')
+@section('title', 'Add New Document')
 
 @section('content')
 <!-- Page Header -->
 <div class="page-header">
     <h1 class="page-title">
         <i class="fas fa-plus text-luxury-gold me-3"></i>
-        Add New Product
+        Add New Document
     </h1>
-    <p class="page-subtitle">Create a new product entry in the tracking system</p>
+    <p class="page-subtitle">Create a new document entry in the tracking system</p>
 </div>
 
 <!-- Add Product Form -->
 <div class="mobile-card">
     <div class="mobile-card-header">
         <h3 class="mobile-card-title">
-            <i class="fas fa-pen-to-square text-luxury-gold me-2"></i>
-            Product Information
+            <i class="fas fa-file-lines text-luxury-gold me-2"></i>
+            Document Information
         </h3>
     </div>
     <div class="mobile-card-body">
@@ -29,9 +29,9 @@
                 <div class="col-12">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="name" name="name" 
-                               placeholder="Product Name" value="{{ old('name') }}" required>
+                               placeholder="Document Name" value="{{ old('name') }}" required>
                         <label for="name">
-                            <i class="fas fa-box-open me-2"></i>Product Name
+                            <i class="fas fa-file-lines me-2"></i>Document Name
                         </label>
                         @error('name')
                             <div class="text-danger small mt-2">
@@ -89,7 +89,7 @@
             <div class="d-flex gap-3 mt-4 pt-3 border-top">
                 <button type="submit" class="btn btn-primary flex-fill">
                     <i class="fas fa-plus me-2"></i>
-                    Add Product
+                    Add Document
                 </button>
                 <a href="{{ route('products.index') }}" class="btn btn-outline-secondary flex-fill">
                     <i class="fas fa-arrow-left me-2"></i>
@@ -107,7 +107,7 @@
             <div class="mobile-card-body">
                 <i class="fas fa-stopwatch fa-2x text-luxury-gold mb-2"></i>
                 <h5 class="mb-1">Quick Entry</h5>
-                <p class="text-muted small mb-0">Add products efficiently</p>
+                <p class="text-muted small mb-0">Add documents efficiently</p>
             </div>
         </div>
     </div>
@@ -135,7 +135,7 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Auto-focus on product name field
+        // Auto-focus on document name field
         document.getElementById('name').focus();
     });
 
@@ -145,12 +145,12 @@
         const stageValue = document.getElementById('stage').value;
         if (!stageValue || stageValue.trim() === '') {
             e.preventDefault();
-            alert('Please enter a stage for the product.');
+            alert('Please enter a stage for the document.');
             return false;
         }
 
         const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Product...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Document...';
         submitBtn.disabled = true;
     });
 </script>

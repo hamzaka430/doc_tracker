@@ -15,3 +15,5 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 Route::post('/products/{product}/submit', [ProductController::class, 'submit'])->name('products.submit');
 Route::get('/submitted', [ProductController::class, 'submitted'])->name('products.submitted');
 Route::get('/export-csv', [ProductController::class, 'exportCsv'])->name('products.export');
+// Daily documents list (created today)
+Route::get('/daily', [ProductController::class, 'daily'])->name('products.daily');
