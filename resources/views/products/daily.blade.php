@@ -9,7 +9,7 @@
         <div>
             <h1 class="page-title">
                 <i class="fas fa-calendar-day text-luxury-gold me-3"></i>
-                Daily Documents
+                Today's Documents
             </h1>
             <p class="page-subtitle">Documents added today</p>
         </div>

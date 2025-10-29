@@ -1123,7 +1123,7 @@
             </a>
             <a href="{{ route('products.daily') }}" class="sidebar-link {{ request()->routeIs('products.daily') ? 'active' : '' }}">
                 <i class="fas fa-calendar-day me-3"></i>
-                <span>Daily</span>
+                <span>Today's Docs</span>
             </a>
             <div class="sidebar-divider"></div>
             <a href="{{ route('products.export') }}" class="sidebar-link">
