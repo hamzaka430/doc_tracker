@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Select - Quick Reference</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .card {
+            background: #16213e;
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+        .card h2 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #00d4ff;
+            padding-bottom: 10px;
+        }
+        .code-block {
+            background: #0f1419;
+            border-left: 3px solid #00d4ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        .code-block code { color: #7ec699; }
+        .tag { 
+            color: #e06c75;
+        }
+        .attr {
+            color: #d19a66;
+        }
+        .value {
+            color: #98c379;
+        }
+        .class-name {
+            background: #00d4ff;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin: 5px 5px 5px 0;
+            display: inline-block;
+        }
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #2a3f5f;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #00d4ff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #00d4ff;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Custom Select - Quick Reference</h1>
+        
+        <div class="grid">
+            <!-- Basic Structure -->
+            <div class="card">
+                <h2>📌 Basic Structure</h2>
+                <div class="code-block">
+<code><span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-pills icon-left"</span><span class="tag">&gt;&lt;/i&gt;</span>
+    <span class="tag">&lt;select</span> <span class="attr">name=</span><span class="value">"type"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="value">""</span> disabled selected<span class="tag">&gt;</span>
+            Select Type
+        <span class="tag">&lt;/option&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="value">"1"</span><span class="tag">&gt;</span>Option 1<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;/select&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-chevron-down icon-right"</span><span class="tag">&gt;&lt;/i&gt;</span>
+<span class="tag">&lt;/div&gt;</span></code>
+                </div>
+            </div>
+
+            <!-- Classes -->
+            <div class="card">
+                <h2>🎨 Available Classes</h2>
+                <div>
+                    <span class="class-name">custom-select-wrapper</span>
+                    <p style="margin: 10px 0; color: #aaa;">Main container (required)</p>
+                    
+                    <span class="class-name">icon-left</span>
+                    <p style="margin: 10px 0; color: #aaa;">Left icon position</p>
+                    
+                    <span class="class-name">icon-right</span>
+                    <p style="margin: 10px 0; color: #aaa;">Right icon position (arrow)</p>
+                    
+                    <span class="class-name">select-sm</span>
+                    <p style="margin: 10px 0; color: #aaa;">Small size variant</p>
+                    
+                    <span class="class-name">select-lg</span>
+                    <p style="margin: 10px 0; color: #aaa;">Large size variant</p>
+                    
+                    <span class="class-name">is-valid</span>
+                    <p style="margin: 10px 0; color: #aaa;">Success validation state</p>
+                    
+                    <span class="class-name">is-invalid</span>
+                    <p style="margin: 10px 0; color: #aaa;">Error validation state</p>
+                    
+                    <span class="class-name">gradient-border</span>
+                    <p style="margin: 10px 0; color: #aaa;">Premium gradient effect</p>
+                </div>
+            </div>
+
+            <!-- Size Variants -->
+            <div class="card">
+                <h2>📏 Size Variants</h2>
+                <div class="code-block">
+<code><span class="comment">/* Small */</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper select-sm"</span><span class="tag">&gt;</span>
+    ...
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">/* Normal (default) */</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper"</span><span class="tag">&gt;</span>
+    ...
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">/* Large */</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper select-lg"</span><span class="tag">&gt;</span>
+    ...
+<span class="tag">&lt;/div&gt;</span></code>
+                </div>
+            </div>
+
+            <!-- Validation -->
+            <div class="card">
+                <h2>✅ Validation States</h2>
+                <div class="code-block">
+<code><span class="comment">/* Success */</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper is-valid"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-check-circle icon-left"</span><span class="tag">&gt;&lt;/i&gt;</span>
+    <span class="tag">&lt;select&gt;</span>...<span class="tag">&lt;/select&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-chevron-down icon-right"</span><span class="tag">&gt;&lt;/i&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">/* Error */</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper is-invalid"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-exclamation-circle icon-left"</span><span class="tag">&gt;&lt;/i&gt;</span>
+    <span class="tag">&lt;select&gt;</span>...<span class="tag">&lt;/select&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-chevron-down icon-right"</span><span class="tag">&gt;&lt;/i&gt;</span>
+<span class="tag">&lt;/div&gt;</span></code>
+                </div>
+            </div>
+
+            <!-- Popular Icons -->
+            <div class="card">
+                <h2>🎯 Popular Icons</h2>
+                <ul class="feature-list">
+                    <li><code>fa-pills</code> - Medicine/Product Type</li>
+                    <li><code>fa-diagram-project</code> - Stages/Process</li>
+                    <li><code>fa-filter</code> - Filter Options</li>
+                    <li><code>fa-user</code> - User Selection</li>
+                    <li><code>fa-building</code> - Company/Department</li>
+                    <li><code>fa-location-dot</code> - Location</li>
+                    <li><code>fa-calendar</code> - Date/Time</li>
+                    <li><code>fa-star</code> - Rating/Priority</li>
+                    <li><code>fa-chevron-down</code> - Arrow (right icon)</li>
+                </ul>
+            </div>
+
+            <!-- JavaScript -->
+            <div class="card">
+                <h2>⚡ JavaScript Usage</h2>
+                <div class="code-block">
+<code><span class="comment">// Get value</span>
+const value = document.querySelector('#type').value;
+
+<span class="comment">// Set value</span>
+document.querySelector('#type').value = 'Injection';
+
+<span class="comment">// On change event</span>
+document.querySelector('#type')
+    .addEventListener('change', (e) => {
+        console.log(e.target.value);
+    });
+
+<span class="comment">// Add validation</span>
+const wrapper = document.querySelector('.custom-select-wrapper');
+if (isValid) {
+    wrapper.classList.add('is-valid');
+} else {
+    wrapper.classList.add('is-invalid');
+}</code>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="card">
+                <h2>✨ Key Features</h2>
+                <ul class="feature-list">
+                    <li>Hidden default browser arrow</li>
+                    <li>Custom positioned icons</li>
+                    <li>Smooth animations on focus</li>
+                    <li>Fully responsive design</li>
+                    <li>Keyboard navigation support</li>
+                    <li>Touch-friendly on mobile</li>
+                    <li>Validation state styling</li>
+                    <li>Multiple size options</li>
+                    <li>Gradient border effect</li>
+                    <li>Matches input field design</li>
+                </ul>
+            </div>
+
+            <!-- Laravel Blade -->
+            <div class="card">
+                <h2>🔥 Laravel Blade Example</h2>
+                <div class="code-block">
+<code><span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"custom-select-wrapper"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-pills icon-left"</span><span class="tag">&gt;&lt;/i&gt;</span>
+    <span class="tag">&lt;select</span> <span class="attr">name=</span><span class="value">"type"</span> required<span class="tag">&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="value">""</span> disabled selected<span class="tag">&gt;</span>
+            Select Type
+        <span class="tag">&lt;/option&gt;</span>
+        @foreach($types as $type)
+            <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="value">"{{ $type }}"</span>
+                {{ old('type') == $type ? 'selected' : '' }}<span class="tag">&gt;</span>
+                {{ $type }}
+            <span class="tag">&lt;/option&gt;</span>
+        @endforeach
+    <span class="tag">&lt;/select&gt;</span>
+    <span class="tag">&lt;i</span> <span class="attr">class=</span><span class="value">"fas fa-chevron-down icon-right"</span><span class="tag">&gt;&lt;/i&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+@error('type')
+    <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="value">"text-danger small mt-2"</span><span class="tag">&gt;</span>
+        {{ $message }}
+    <span class="tag">&lt;/div&gt;</span>
+@enderror</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 For full documentation, see CUSTOM-SELECT-DOCS.md</p>
+            <p>🎨 For live examples, visit /components/custom-select-demo</p>
+            <p style="margin-top: 20px; font-size: 0.9rem;">Version 1.0 | November 2025</p>
+        </div>
+    </div>
+</body>
+</html>
