@@ -84,6 +84,11 @@
                     </div>
                 </div>
 
+                <style>
+                    .custom-select-wrapper select {
+                        padding: 15.5px 45px
+                    }
+                </style>
                 <!-- Type -->
                 <div class="col-md-6">
                     <div class="custom-select-wrapper">
