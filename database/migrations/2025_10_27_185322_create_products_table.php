@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('batch_no');
             $table->string('stage');
+            $table->string('type');
             $table->enum('status', ['pending', 'submitted'])->default('pending');
-            $table->boolean('pre_line_clearance')->default(false);
-            $table->boolean('in_process')->default(false);
-            $table->boolean('post_line_clearance')->default(false);
+            $table->boolean('line_clearance')->default(false);
+            $table->boolean('review')->default(false);
+            $table->boolean('confirmation')->default(false);
             $table->text('remarks')->nullable();
             $table->date('submission_date')->nullable();
             $table->time('submission_time')->nullable();
