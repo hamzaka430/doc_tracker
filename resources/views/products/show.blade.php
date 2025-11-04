@@ -5,18 +5,20 @@
 @section('content')
 <!-- Page Header -->
 <div class="page-header">
-    <div class="d-flex align-items-start gap-3">
-            <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+    <div class="d-flex align-items-center justify-content-center gap-2 gap-md-3">
+        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary d-flex align-items-center justify-content-center" style="min-width: 40px; height: 40px;">
             <i class="fas fa-arrow-left"></i>
         </a>
-        <div class="flex-grow-1">
-            <h1 class="page-title">{{ $product->name }}</h1>
-            <p class="page-subtitle mb-0">
-                Document ID: <strong class="text-luxury-gold">#{{ $product->id }}</strong>
+        <div class="flex-grow-1 text-center">
+            <h1 class="page-title mb-1">{{ $product->name }}</h1>
+            <div class="page-subtitle mb-0 d-flex flex-wrap align-items-center justify-content-center gap-2">
+                <span class="text-nowrap">
+                    Document ID: <strong class="text-luxury-gold">#{{ $product->id }}</strong>
+                </span>
                 @if($product->isReadyForSubmission() && !$product->isSubmitted())
-                    <span class="badge bg-dark text-white ms-2">Ready for Submit</span>
+                    <span class="badge bg-dark text-white">Ready for Submit</span>
                 @endif
-            </p>
+            </div>
         </div>
     </div>
 </div>
