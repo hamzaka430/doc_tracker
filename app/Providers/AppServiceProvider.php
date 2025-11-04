@@ -24,5 +24,11 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
+
+        // Ensure PHP's default timezone matches the app timezone so
+        // Carbon and native PHP date/time functions use Pakistan time.
+        if (config('app.timezone')) {
+            date_default_timezone_set(config('app.timezone'));
+        }
     }
 }

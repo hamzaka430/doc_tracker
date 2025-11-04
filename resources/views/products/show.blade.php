@@ -14,7 +14,7 @@
             <p class="page-subtitle mb-0">
                 Document ID: <strong class="text-luxury-gold">#{{ $product->id }}</strong>
                 @if($product->isReadyForSubmission() && !$product->isSubmitted())
-                    <span class="badge bg-success ms-2">Ready for Submit</span>
+                    <span class="badge bg-dark text-white ms-2">Ready for Submit</span>
                 @endif
             </p>
         </div>
@@ -55,6 +55,19 @@
             </div>
             <div class="col-md-6">
                 <div class="d-flex align-items-center gap-3">
+                    <div class="text-dark">
+                        <i class="fas fa-pills fa-lg"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted d-block">Type</small>
+                        <span class="badge bg-dark text-white">
+                            {{ $product->type ?? 'N/A' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3">
                     <div class="text-luxury-gold">
                         <i class="fas fa-flag fa-lg"></i>
                     </div>
@@ -80,12 +93,12 @@
             @if($product->isSubmitted())
                 <div class="col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                            <div class="text-success">
+                            <div class="text-dark">
                             <i class="fas fa-circle-check fa-lg"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Submission Date</small>
-                            <div class="text-success fw-semibold">
+                            <div class="text-dark fw-semibold">
                                 {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
                             </div>
                         </div>
@@ -93,12 +106,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                            <div class="text-success">
+                            <div class="text-dark">
                             <i class="fas fa-stopwatch fa-lg"></i>
                         </div>
                         <div>
                             <small class="text-muted d-block">Submission Time</small>
-                            <div class="text-success fw-semibold">
+                            <div class="text-dark fw-semibold">
                                 {{ $product->submission_time ? $product->submission_time->format('H:i:s') : 'N/A' }}
                             </div>
                         </div>
@@ -129,23 +142,23 @@
                         @method('PUT')
 
                         <!-- Hidden inputs for checkboxes (ensures false values are sent) -->
-                        <input type="hidden" name="pre_line_clearance" value="0">
-                        <input type="hidden" name="in_process" value="0">
-                        <input type="hidden" name="post_line_clearance" value="0">
+                        <input type="hidden" name="line_clearance" value="0">
+                        <input type="hidden" name="review" value="0">
+                        <input type="hidden" name="confirmation" value="0">
 
                         <!-- Checkboxes -->
                         <div class="mb-4">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <div class="form-check p-3 border rounded" style="background: {{ $product->pre_line_clearance ? 'rgba(40, 167, 69, 0.1)' : 'rgba(108, 117, 125, 0.1)' }};">
-                                        <input class="form-check-input" type="checkbox" id="pre_line_clearance" 
-                                               name="pre_line_clearance" value="1" {{ $product->pre_line_clearance ? 'checked' : '' }}>
-                                        <label class="form-check-label w-100" for="pre_line_clearance">
+                                    <div class="form-check p-3 border rounded" style="background: {{ $product->line_clearance ? 'rgba(52, 58, 64, 0.1)' : 'rgba(248, 249, 250, 1)' }};">
+                                        <input class="form-check-input" type="checkbox" id="line_clearance" 
+                                               name="line_clearance" value="1" {{ $product->line_clearance ? 'checked' : '' }}>
+                                        <label class="form-check-label w-100" for="line_clearance">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-circle-check me-3 text-success fa-lg"></i>
+                                                <i class="fas fa-clipboard-check me-3 text-dark fa-lg"></i>
                                                 <div>
-                                                    <div class="fw-semibold">Pre-Line Clearance</div>
-                                                    <small class="text-muted">Initial quality check completed</small>
+                                                    <div class="fw-semibold">Line Clearance</div>
+                                                    <small class="text-muted">Pre, In-Process & Post line clearance completed</small>
                                                 </div>
                                             </div>
                                         </label>
@@ -153,15 +166,15 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <div class="form-check p-3 border rounded" style="background: {{ $product->in_process ? 'rgba(40, 167, 69, 0.1)' : 'rgba(108, 117, 125, 0.1)' }};">
-                                        <input class="form-check-input" type="checkbox" id="in_process" 
-                                               name="in_process" value="1" {{ $product->in_process ? 'checked' : '' }}>
-                                        <label class="form-check-label w-100" for="in_process">
+                                    <div class="form-check p-3 border rounded" style="background: {{ $product->review ? 'rgba(52, 58, 64, 0.1)' : 'rgba(248, 249, 250, 1)' }};">
+                                        <input class="form-check-input" type="checkbox" id="review" 
+                                               name="review" value="1" {{ $product->review ? 'checked' : '' }}>
+                                        <label class="form-check-label w-100" for="review">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-industry me-3 text-warning fa-lg"></i>
+                                                <i class="fas fa-eye me-3 text-dark fa-lg"></i>
                                                 <div>
-                                                    <div class="fw-semibold">Hourly In-Process</div>
-                                                    <small class="text-muted">Production monitoring completed</small>
+                                                    <div class="fw-semibold">Review</div>
+                                                    <small class="text-muted">Document review completed</small>
                                                 </div>
                                             </div>
                                         </label>
@@ -169,15 +182,15 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <div class="form-check p-3 border rounded" style="background: {{ $product->post_line_clearance ? 'rgba(40, 167, 69, 0.1)' : 'rgba(108, 117, 125, 0.1)' }};">
-                                        <input class="form-check-input" type="checkbox" id="post_line_clearance" 
-                                               name="post_line_clearance" value="1" {{ $product->post_line_clearance ? 'checked' : '' }}>
-                                        <label class="form-check-label w-100" for="post_line_clearance">
+                                    <div class="form-check p-3 border rounded" style="background: {{ $product->confirmation ? 'rgba(52, 58, 64, 0.1)' : 'rgba(248, 249, 250, 1)' }};">
+                                        <input class="form-check-input" type="checkbox" id="confirmation" 
+                                               name="confirmation" value="1" {{ $product->confirmation ? 'checked' : '' }}>
+                                        <label class="form-check-label w-100" for="confirmation">
                                             <div class="d-flex align-items-center">
-                                                <i class="fas fa-clipboard-check me-3 text-info fa-lg"></i>
+                                                <i class="fas fa-check-double me-3 text-dark fa-lg"></i>
                                                 <div>
-                                                    <div class="fw-semibold">Post-Line Clearance</div>
-                                                    <small class="text-muted">Final quality verification completed</small>
+                                                    <div class="fw-semibold">Confirmation</div>
+                                                    <small class="text-muted">Final confirmation completed</small>
                                                 </div>
                                             </div>
                                         </label>
@@ -191,17 +204,21 @@
                             <label class="form-label text-muted small">Completion Progress</label>
                             @php
                                 $completed = 0;
-                                if($product->pre_line_clearance) $completed++;
-                                if($product->in_process) $completed++;
-                                if($product->post_line_clearance) $completed++;
+                                if($product->line_clearance) $completed++;
+                                if($product->review) $completed++;
+                                if($product->confirmation) $completed++;
                                 $percentage = ($completed / 3) * 100;
                             @endphp
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: {{ $percentage }}%">
-                                    {{ number_format($percentage, 0) }}%
+                            <div class="progress" style="height: 30px;">
+                                <div class="progress-bar bg-dark text-white fw-semibold fs-6" 
+                                     role="progressbar" 
+                                     style="width: {{ $percentage }}%"
+                                     aria-valuenow="{{ $percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                    {{ $completed }}/3 Tasks Completed ({{ number_format($percentage, 0) }}%)
                                 </div>
                             </div>
-                            <small class="text-muted">{{ $completed }}/3 tasks completed</small>
                         </div>
 
                         <!-- Remarks -->
@@ -216,23 +233,23 @@
 
                         <!-- Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
-                            <button type="submit" class="btn btn-secondary flex-fill">
+                            <button type="submit" class="btn btn-dark flex-fill">
                                 <i class="fas fa-floppy-disk me-2"></i>Save Updates
                             </button>
                             
                             @if($product->isReadyForSubmission())
-                                <button type="button" class="btn btn-success flex-fill" data-bs-toggle="modal" data-bs-target="#submitModal">
+                                <button type="button" class="btn btn-dark flex-fill" data-bs-toggle="modal" data-bs-target="#submitModal">
                                     <i class="fas fa-paper-plane me-2"></i>Submit Product
                                 </button>
                             @endif
                         </div>
                         
                         <div class="d-flex gap-2 mt-3">
-                            <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-primary flex-fill">
+                            <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-dark flex-fill border">
                                 <i class="fas fa-pen-to-square me-2"></i>Edit Product
                             </a>
                             @if(!$product->isSubmitted())
-                                <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-outline-danger flex-fill border" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fas fa-trash-can me-2"></i>Delete
                                 </button>
                             @endif
@@ -280,7 +297,7 @@
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form action="{{ route('products.submit', $product) }}" method="POST" class="d-inline">
                     @csrf
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-dark">
                         <i class="fas fa-paper-plane me-2"></i>Yes, Submit
                     </button>
                 </form>

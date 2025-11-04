@@ -93,6 +93,30 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <label class="form-label">
+                        <i class="fas fa-pills me-2"></i>Type
+                    </label>
+                    <div class="custom-select-wrapper {{ $errors->has('type') ? 'is-invalid' : '' }}">
+                        <i class="fas fa-pills icon-left"></i>
+                        <select class="form-select @error('type') is-invalid @enderror" 
+                                id="type" 
+                                name="type" 
+                                required>
+                            <option value="" disabled>Select Type</option>
+                            @foreach($types as $type)
+                                <option value="{{ $type }}" {{ old('type', $product->type) == $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <i class="fas fa-chevron-down icon-right"></i>
+                    </div>
+                    @error('type')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="col-12">
                     <div class="bg-light p-3 rounded">
                         <h6 class="text-muted mb-2">Current Status Information</h6>
@@ -110,7 +134,7 @@
                             @if($product->isSubmitted())
                                 <div class="col-md-4">
                                     <small class="text-muted d-block">Submitted</small>
-                                    <span class="text-success">
+                                    <span class="text-dark">
                                         {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
                                     </span>
                                 </div>
@@ -121,7 +145,7 @@
             </div>
 
             <div class="d-flex gap-3 mt-4">
-                <button type="submit" class="btn btn-primary flex-fill">
+                <button type="submit" class="btn btn-dark flex-fill">
                     <i class="fas fa-save me-2"></i>Save Changes
                 </button>
                 <a href="{{ route('products.show', $product) }}" class="btn btn-outline-secondary flex-fill">

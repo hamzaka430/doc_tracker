@@ -26,8 +26,9 @@ class ProductController extends Controller
     public function create()
     {
         $stages = Product::getStages();
+        $types = Product::getTypes();
         
-        return view('products.create', compact('stages'));
+        return view('products.create', compact('stages', 'types'));
     }
 
     /**
@@ -39,12 +40,14 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'batch_no' => 'required|string|max:255',
             'stage' => 'required|string|max:255',
+            'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
         ]);
 
         Product::create([
             'name' => $request->name,
             'batch_no' => $request->batch_no,
             'stage' => $request->stage,
+            'type' => $request->type,
             'status' => 'pending'
         ]);
 
@@ -66,16 +69,16 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'pre_line_clearance' => 'nullable|in:0,1',
-            'in_process' => 'nullable|in:0,1',
-            'post_line_clearance' => 'nullable|in:0,1',
+            'line_clearance' => 'nullable|in:0,1',
+            'review' => 'nullable|in:0,1',
+            'confirmation' => 'nullable|in:0,1',
             'remarks' => 'nullable|string|max:1000',
         ]);
 
         $product->update([
-            'pre_line_clearance' => (bool) $request->input('pre_line_clearance', false),
-            'in_process' => (bool) $request->input('in_process', false),
-            'post_line_clearance' => (bool) $request->input('post_line_clearance', false),
+            'line_clearance' => (bool) $request->input('line_clearance', false),
+            'review' => (bool) $request->input('review', false),
+            'confirmation' => (bool) $request->input('confirmation', false),
             'remarks' => $request->remarks,
         ]);
 
@@ -198,7 +201,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $stages = Product::getStages();
-        return view('products.edit', compact('product', 'stages'));
+        $types = Product::getTypes();
+        return view('products.edit', compact('product', 'stages', 'types'));
     }
 
     /**
@@ -210,12 +214,14 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'batch_no' => 'required|string|max:255',
             'stage' => 'required|string|max:255',
+            'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
         ]);
 
         $product->update([
             'name' => $request->name,
             'batch_no' => $request->batch_no,
             'stage' => $request->stage,
+            'type' => $request->type,
         ]);
 
         return redirect()->route('products.show', $product)

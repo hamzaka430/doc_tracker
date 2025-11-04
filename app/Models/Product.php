@@ -10,19 +10,20 @@ class Product extends Model
         'name',
         'batch_no',
         'stage',
+        'type',
         'status',
-        'pre_line_clearance',
-        'in_process',
-        'post_line_clearance',
+        'line_clearance',
+        'review',
+        'confirmation',
         'remarks',
         'submission_date',
         'submission_time'
     ];
 
     protected $casts = [
-        'pre_line_clearance' => 'boolean',
-        'in_process' => 'boolean',
-        'post_line_clearance' => 'boolean',
+        'line_clearance' => 'boolean',
+        'review' => 'boolean',
+        'confirmation' => 'boolean',
         'submission_date' => 'date',
         'submission_time' => 'datetime:H:i:s'
     ];
@@ -41,11 +42,21 @@ class Product extends Model
         ];
     }
 
+    public static function getTypes()
+    {
+        return [
+            'Injection',
+            'Suspension',
+            'Tablet',
+            'Capsule'
+        ];
+    }
+
     public function isReadyForSubmission()
     {
-        return $this->pre_line_clearance && 
-               $this->in_process && 
-               $this->post_line_clearance;
+        return $this->line_clearance &&
+               $this->review &&
+               $this->confirmation;
     }
 
     public function isSubmitted()

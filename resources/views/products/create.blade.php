@@ -26,7 +26,7 @@
             
             <div class="row g-4">
                 <!-- Product Name -->
-                <div class="col-12">
+                <div class="col-md-6">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="name" name="name" 
                                placeholder="Document Name" value="{{ old('name') }}" required>
@@ -83,11 +83,32 @@
                         @enderror
                     </div>
                 </div>
+
+                <!-- Type -->
+                <div class="col-md-6">
+                    <div class="custom-select-wrapper">
+                        <i class="fas fa-pills icon-left"></i>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="" disabled selected>Select Type</option>
+                            @foreach($types as $type)
+                                <option value="{{ $type }}" {{ old('type') == $type ? 'selected' : '' }}>
+                                    {{ $type }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <i class="fas fa-chevron-down icon-right"></i>
+                    </div>
+                    @error('type')
+                        <div class="text-danger small mt-2">
+                            <i class="fas fa-circle-exclamation me-1"></i>{{ $message }}
+                        </div>
+                    @enderror
+                </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mt-4 pt-3 border-top">
-                <button type="submit" class="btn btn-primary flex-fill">
+                <button type="submit" class="btn btn-dark flex-fill">
                     <i class="fas fa-plus me-2"></i>
                     Add Document
                 </button>
@@ -114,7 +135,7 @@
     <div class="col-md-4">
         <div class="mobile-card text-center">
             <div class="mobile-card-body">
-                <i class="fas fa-circle-check fa-2x text-success mb-2"></i>
+                <i class="fas fa-circle-check fa-2x text-dark mb-2"></i>
                 <h5 class="mb-1">Auto Status</h5>
                 <p class="text-muted small mb-0">Pending status by default</p>
             </div>
@@ -123,7 +144,7 @@
     <div class="col-md-4">
         <div class="mobile-card text-center">
             <div class="mobile-card-body">
-                <i class="fas fa-diagram-project fa-2x text-info mb-2"></i>
+                <i class="fas fa-diagram-project fa-2x text-dark mb-2"></i>
                 <h5 class="mb-1">Stage Tracking</h5>
                 <p class="text-muted small mb-0">Monitor progress easily</p>
             </div>
