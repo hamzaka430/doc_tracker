@@ -14,6 +14,8 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
         
@@ -125,7 +127,9 @@ class ProductController extends Controller
             });
         }
 
-        $submittedProducts = $query->orderBy('submission_date', 'desc')
+        $submittedProducts = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('submission_date', 'desc')
             ->orderBy('submission_time', 'desc')
             ->get();
 
@@ -140,6 +144,8 @@ class ProductController extends Controller
         $today = Carbon::today();
 
         $products = Product::whereDate('created_at', $today)
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -152,6 +158,8 @@ class ProductController extends Controller
     public function exportCsv()
     {
         $products = Product::where('status', 'submitted')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
             ->orderBy('submission_date', 'desc')
             ->get();
 

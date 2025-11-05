@@ -1,1 +1,1 @@
-import './bootstrap';
+// Empty - No JavaScript dependencies needed
