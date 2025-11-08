@@ -11,10 +11,12 @@
                 <i class="fas fa-file-lines text-luxury-gold me-3"></i>
                 Document List
             </h1>
-            <p class="page-subtitle">Manage and track all pending documents</p>
+            <p class="page-subtitle">Manage and track all documents (pending & submitted)</p>
         </div>
         <div class="text-end">
-            <span class="badge badge-luxury fs-6" id="documentCount">{{ $products->count() }} Documents</span>
+            <a href="{{ route('products.create') }}" class="btn btn-dark">
+                <i class="fas fa-plus me-2"></i>Add Document
+            </a>
         </div>
     </div>
 </div>
@@ -59,10 +61,10 @@
 
 <!-- Product List -->
 <div class="mobile-card">
-            <div class="mobile-card-header">
+    <div class="mobile-card-header">
         <h3 class="mobile-card-title">
             <i class="fas fa-file-text text-luxury-gold me-2"></i>
-            Pending Documents
+            All Documents
         </h3>
     </div>
     <div class="mobile-card-body p-0">

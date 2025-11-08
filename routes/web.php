@@ -17,3 +17,4 @@ Route::get('/submitted', [ProductController::class, 'submitted'])->name('product
 Route::get('/export-csv', [ProductController::class, 'exportCsv'])->name('products.export');
 // Daily documents list (created today)
 Route::get('/daily', [ProductController::class, 'daily'])->name('products.daily');
+Route::get('/daily/pdf', [ProductController::class, 'exportDailyPdf'])->name('products.daily.pdf');

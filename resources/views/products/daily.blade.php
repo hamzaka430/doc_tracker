@@ -9,12 +9,18 @@
         <div>
             <h1 class="page-title">
                 <i class="fas fa-calendar-day text-luxury-gold me-3"></i>
-                Today's Documents
+                Remaining Documents
             </h1>
-            <p class="page-subtitle">Documents added today</p>
+            <p class="page-subtitle">All pending documents to be processed</p>
         </div>
-        <div class="text-end">
-            <span class="badge badge-luxury fs-6">{{ $products->count() }} Today</span>
+        <div class="text-end d-flex align-items-center gap-3">
+            <span class="badge badge-luxury fs-6">{{ $products->count() }} Remaining</span>
+            @if($products->count() > 0)
+                <a href="{{ route('products.daily.pdf') }}" class="btn btn-danger" target="_blank">
+                    <i class="fas fa-file-pdf me-2"></i>
+                    Download PDF
+                </a>
+            @endif
         </div>
     </div>
 </div>
@@ -23,7 +29,7 @@
     <div class="mobile-card-header">
         <h3 class="mobile-card-title">
             <i class="fas fa-file-lines text-luxury-gold me-2"></i>
-            Today's Documents
+            All Remaining Documents
         </h3>
     </div>
     <div class="mobile-card-body p-0">
@@ -58,8 +64,8 @@
         @else
             <div class="text-center py-5">
                 <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted mb-2">No Documents Today</h5>
-                <p class="text-muted mb-3">No documents were added today.</p>
+                <h5 class="text-muted mb-2">No Remaining Documents</h5>
+                <p class="text-muted mb-3">All documents have been processed and submitted.</p>
             </div>
         @endif
     </div>

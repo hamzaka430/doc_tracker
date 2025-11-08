@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProductController extends Controller
 {
     /**
-     * Display the product list page
+     * Display the product list page - ALL documents (both pending and submitted)
      */
     public function index()
     {
-        $products = Product::where('status', 'pending')
-            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+        $products = Product::orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -137,19 +137,52 @@ class ProductController extends Controller
     }
 
     /**
-     * Display today's documents (daily list)
+     * Display today's documents (daily list) - All remaining/pending documents
      */
     public function daily(Request $request)
     {
-        $today = Carbon::today();
-
-        $products = Product::whereDate('created_at', $today)
+        $products = Product::where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('products.daily', compact('products'));
+    }
+
+    /**
+     * Export remaining documents to PDF with grouped format
+     */
+    public function exportDailyPdf()
+    {
+        $products = Product::where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('name', 'asc')
+            ->orderBy('batch_no', 'asc')
+            ->get();
+
+        // Group products by name
+        $groupedProducts = $products->groupBy('name')->map(function($items) {
+            return [
+                'name' => $items->first()->name,
+                'batches' => $items->map(function($item) {
+                    return [
+                        'batch_no' => $item->batch_no,
+                        'stage' => $item->stage
+                    ];
+                })->toArray()
+            ];
+        })->values();
+
+        $pdf = Pdf::loadView('products.daily-pdf', [
+            'groupedProducts' => $groupedProducts,
+            'totalDocuments' => $products->count(),
+            'generatedDate' => Carbon::now()->format('d/m/Y h:i A')
+        ]);
+
+        $filename = 'remaining_documents_' . date('Y-m-d_H-i-s') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 
     /**
