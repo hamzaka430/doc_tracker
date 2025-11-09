@@ -23,29 +23,32 @@
         }
         
         .doc-item {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             page-break-inside: avoid;
         }
         
         .doc-header {
-            font-weight: normal;
-            margin-bottom: 1px;
+            font-weight: bold;
+            margin-bottom: 3px;
             font-size: 12px;
         }
         
-        .doc-number {
-            display: inline-block;
-            width: 15px;
-        }
-        
-        .doc-name {
-            display: inline;
-        }
-        
         .batch-line {
-            margin-left: 15px;
-            margin-bottom: 1px;
+            margin-left: 5px;
+            margin-bottom: 2px;
             font-size: 11px;
+            line-height: 1.6;
+        }
+        
+        .bullet {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            background-color: #000;
+            border-radius: 50%;
+            margin-right: 6px;
+            position: relative;
+            top: -1px;
         }
     </style>
 </head>
@@ -56,12 +59,11 @@
         @if($groupedProducts->count() > 0)
             @foreach($groupedProducts as $index => $product)
                 <div class="doc-item">
-                    <div class="doc-header">
-                        <span class="doc-number">{{ $index + 1 }}.</span>
-                        <span class="doc-name">{{ $product['name'] }}</span>
-                    </div>
+                    <div class="doc-header">{{ $product['name'] }}</div>
                     @foreach($product['batches'] as $batch)
-                        <div class="batch-line">{{ $batch['batch_no'] }} --------- {{ $batch['stage'] }}</div>
+                        <div class="batch-line">
+                            <span class="bullet"></span>{{ $batch['batch_no'] }} --------- {{ $batch['stage'] }}
+                        </div>
                     @endforeach
                 </div>
             @endforeach
