@@ -58,6 +58,13 @@
             line-height: 1.2;
         }
 
+        h1 { font-size: 1.5rem; }
+        h2 { font-size: 1.3rem; }
+        h3 { font-size: 1.1rem; }
+        h4 { font-size: 1rem; }
+        h5 { font-size: 0.95rem; }
+        h6 { font-size: 0.9rem; }
+
         .display-1, .display-2, .display-3, .display-4, .display-5 {
             font-family: var(--font-serif);
             font-weight: 300;
@@ -187,7 +194,7 @@
             padding: 1.2rem;
             font-family: var(--font-serif);
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--dark-blue);
             letter-spacing: -0.01em;
         }
@@ -352,7 +359,6 @@
 
         .table {
             background: var(--pure-white);
-            border-radius: var(--border-radius-lg);
             overflow: hidden;
             box-shadow: none;
             border: 1px solid var(--dark-blue);
@@ -561,7 +567,7 @@
 
         /* Search bar luxury styling */
         .search-input {
-            border-radius: 999px;
+            border-radius: var(--border-radius);
             padding: 12px 18px;
             border: 2px solid var(--dark-blue);
             box-shadow: var(--shadow-light);
@@ -634,6 +640,7 @@
         .modal-title {
             color: var(--dark-blue);
             font-weight: 600;
+            font-size: 1.1rem;
         }
 
         /* Luxury Animations */
@@ -936,13 +943,13 @@
             font-weight: 600;
             color: var(--dark-blue);
             margin: 0 0 0.3rem 0;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             line-height: 1.3;
         }
 
         .page-subtitle {
             color: var(--pure-black);
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             margin: 0;
             line-height: 1.4;
             margin: 0.3rem 0 0 0;
@@ -980,7 +987,7 @@
             font-weight: 600;
             color: var(--dark-blue);
             margin: 0;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             line-height: 1.3;
         }
 
@@ -1015,7 +1022,15 @@
             }
 
             .page-title {
-                font-size: 1.2rem;
+                font-size: 1.3rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+            }
+
+            .mobile-card-title {
+                font-size: 1rem;
             }
 
             .mobile-card-body {
@@ -1049,7 +1064,15 @@
             }
 
             .page-title {
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .mobile-card-title {
+                font-size: 0.95rem;
             }
 
             .mobile-card-body {
@@ -1110,13 +1133,17 @@
             </button>
         </div>
         <nav class="sidebar-nav">
+            <a href="{{ route('products.create') }}" class="sidebar-link {{ request()->routeIs('products.create') ? 'active' : '' }}">
+                <i class="fas fa-plus me-3"></i>
+                <span>Add Document</span>
+            </a>
             <a href="{{ route('products.index') }}" class="sidebar-link {{ request()->routeIs('products.index') ? 'active' : '' }}">
                 <i class="fas fa-file-lines me-3"></i>
                 <span>All Documents</span>
             </a>
-            <a href="{{ route('products.create') }}" class="sidebar-link {{ request()->routeIs('products.create') ? 'active' : '' }}">
-                <i class="fas fa-plus me-3"></i>
-                <span>Add Document</span>
+            <a href="{{ route('products.pending') }}" class="sidebar-link {{ request()->routeIs('products.pending') ? 'active' : '' }}">
+                <i class="fas fa-clock me-3"></i>
+                <span>Pending Docs</span>
             </a>
             <a href="{{ route('products.submitted') }}" class="sidebar-link {{ request()->routeIs('products.submitted') ? 'active' : '' }}">
                 <i class="fas fa-clipboard-check me-3"></i>
