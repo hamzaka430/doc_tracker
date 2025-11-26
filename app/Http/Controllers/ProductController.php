@@ -151,9 +151,23 @@ class ProductController extends Controller
     }
 
     /**
+     * Display pending documents page
+     */
+    public function pending(Request $request)
+    {
+        $products = Product::where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('products.pending', compact('products'));
+    }
+
+    /**
      * Export remaining documents to PDF with grouped format
      */
-    public function exportDailyPdf()
+    public function exportDailyPdf(Request $request)
     {
         $products = Product::where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
@@ -174,7 +188,13 @@ class ProductController extends Controller
             ];
         })->values();
 
-        $pdf = Pdf::loadView('products.daily-pdf', [
+        // Get layout preference from request (default: single)
+        $layout = $request->get('layout', 'single');
+        
+        // Choose the appropriate view based on layout
+        $viewName = $layout === 'double' ? 'products.daily-pdf-double' : 'products.daily-pdf';
+        
+        $pdf = Pdf::loadView($viewName, [
             'groupedProducts' => $groupedProducts,
             'totalDocuments' => $products->count(),
             'generatedDate' => Carbon::now()->format('d/m/Y h:i A')
@@ -278,5 +298,28 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully!');
+    }
+
+    /**
+     * Update submission date of a product
+     */
+    public function updateSubmissionDate(Request $request, Product $product)
+    {
+        $request->validate([
+            'submission_date' => 'required|date',
+            'submission_time' => 'nullable|date_format:H:i',
+        ]);
+
+        // If time is provided, combine date and time; otherwise use only date
+        $submissionDate = $request->submission_date;
+        $submissionTime = $request->submission_time ?? $product->submission_time;
+
+        $product->update([
+            'submission_date' => $submissionDate,
+            'submission_time' => $submissionTime,
+        ]);
+
+        return redirect()->route('products.submitted')
+            ->with('success', 'Submission date updated successfully!');
     }
 }

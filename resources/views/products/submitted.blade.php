@@ -113,8 +113,15 @@
                                             <span class="stage-badge">{{ $product->stage }}</span>
                                         </td>
                                         <td>
-                                            <div class="text-dark fw-semibold">
-                                                {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="text-dark fw-semibold">
+                                                    {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-secondary" 
+                                                        onclick="openDateModal({{ $product->id }}, '{{ $product->submission_date ? $product->submission_date->format('Y-m-d') : '' }}', '{{ $product->submission_time ? $product->submission_time->format('H:i') : '' }}')"
+                                                        title="Edit Date">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
                                             </div>
                                         </td>
                                         <td>
@@ -167,8 +174,61 @@
 </div>
 @endsection
 
+<!-- Edit Submission Date Modal -->
+<div class="modal fade" id="editDateModal" tabindex="-1" aria-labelledby="editDateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDateModalLabel">
+                    <i class="fas fa-calendar-alt me-2"></i>Edit Submission Date
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editDateForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="submission_date" class="form-label">Submission Date</label>
+                        <input type="date" class="form-control" id="submission_date" name="submission_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="submission_time" class="form-label">Submission Time (Optional)</label>
+                        <input type="time" class="form-control" id="submission_time" name="submission_time">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section('scripts')
 <script>
+function openDateModal(productId, currentDate, currentTime) {
+    const modal = new bootstrap.Modal(document.getElementById('editDateModal'));
+    const form = document.getElementById('editDateForm');
+    const dateInput = document.getElementById('submission_date');
+    const timeInput = document.getElementById('submission_time');
+    
+    // Set form action URL
+    form.action = `/products/${productId}/submission-date`;
+    
+    // Set current values
+    dateInput.value = currentDate;
+    timeInput.value = currentTime;
+    
+    // Show modal
+    modal.show();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Enable tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

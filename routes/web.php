@@ -13,8 +13,11 @@ Route::put('/products/{product}', [ProductController::class, 'update'])->name('p
 Route::put('/products/{product}/basic', [ProductController::class, 'updateBasic'])->name('products.updateBasic');
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 Route::post('/products/{product}/submit', [ProductController::class, 'submit'])->name('products.submit');
+Route::put('/products/{product}/submission-date', [ProductController::class, 'updateSubmissionDate'])->name('products.updateSubmissionDate');
 Route::get('/submitted', [ProductController::class, 'submitted'])->name('products.submitted');
 Route::get('/export-csv', [ProductController::class, 'exportCsv'])->name('products.export');
 // Daily documents list (created today)
 Route::get('/daily', [ProductController::class, 'daily'])->name('products.daily');
 Route::get('/daily/pdf', [ProductController::class, 'exportDailyPdf'])->name('products.daily.pdf');
+// Pending documents list
+Route::get('/pending', [ProductController::class, 'pending'])->name('products.pending');
