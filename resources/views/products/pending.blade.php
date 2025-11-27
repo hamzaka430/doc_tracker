@@ -1,70 +1,67 @@
-@extends('app')
+@extends('layouts.dashboard')
 
 @section('title', 'Pending Documents')
 
 @section('content')
-<!-- Page Header -->
 <div class="page-header">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-clock text-luxury-gold me-3"></i>
-                Pending Documents
-            </h1>
-            <p class="page-subtitle">All documents waiting for completion</p>
-        </div>
-        <div class="text-end">
-            <a href="{{ route('products.create') }}" class="btn btn-dark">
-                <i class="fas fa-plus me-2"></i>Add Document
+    <h3 class="fw-bold mb-3">Pending Documents</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+            <a href="{{ route('products.index') }}">
+                <i class="icon-home"></i>
             </a>
-        </div>
-    </div>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Pending</a>
+        </li>
+    </ul>
 </div>
 
-<!-- Search and Filter Bar -->
-<div class="mobile-card mb-4">
-    <div class="mobile-card-body">
-        <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control search-input" id="searchInput" 
-                           placeholder="Search by name, batch no, or stage...">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title">Pending Documents</h4>
+                    <a href="{{ route('products.create') }}" class="btn btn-primary btn-round ms-auto">
+                        <i class="fa fa-plus me-1"></i>
+                        Add Document
+                    </a>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="custom-select-wrapper">
-                    <i class="fas fa-pills icon-left"></i>
-                    <select class="form-select" id="typeFilter">
-                        <option value="">All Types</option>
-                        <option value="Injection">Injection</option>
-                        <option value="Suspension">Suspension</option>
-                        <option value="Tablet">Tablet</option>
-                        <option value="Capsule">Capsule</option>
-                    </select>
-                    <i class="fas fa-chevron-down icon-right"></i>
-                </div>
-            </div>
-            <div class="col-12 col-md-2">
-                <button class="btn btn-outline-secondary w-100 h-100" id="clearFilters">
-                    <i class="fas fa-times me-1"></i>Clear
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+            <div class="card-body">
 
-<!-- Product List -->
-<div class="mobile-card">
-    <div class="mobile-card-header">
-        <h3 class="mobile-card-title">
-            <i class="fas fa-list text-luxury-gold me-2"></i>
-            All Pending Documents
-        </h3>
-    </div>
-    <div class="mobile-card-body p-0">
+                <!-- Search and Filter -->
+                <div class="row mb-4">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchInput" 
+                                   placeholder="Search by name, batch no, or stage...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select form-control" id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Suspension">Suspension</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Capsule">Capsule</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-secondary w-100" id="clearFilters">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Documents Table -->
         @if($products->count() > 0)
             <!-- Desktop Table View -->
             <div class="table-responsive d-none d-lg-block">
@@ -96,7 +93,7 @@
                                 </td>
                                 <td>
                                     <span class="badge bg-dark text-white">
-                                        <i class="fas fa-pills me-1"></i>{{ $product->type ?? 'N/A' }}
+                                        {{ $product->type ?? 'N/A' }}
                                     </span>
                                 </td>
                                 <td>
@@ -127,25 +124,28 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex align-items-center">
                                         <a href="{{ route('products.show', $product) }}" 
-                                           class="btn btn-outline-dark btn-sm border" 
+                                           class="btn btn-link btn-primary btn-lg p-1" 
+                                           data-bs-toggle="tooltip" 
                                            title="View Details">
-                                            <i class="fas fa-eye"></i>
+                                            <i class="fa fa-eye"></i>
                                         </a>
                                         <a href="{{ route('products.edit', $product) }}" 
-                                           class="btn btn-outline-dark btn-sm border" 
-                                           title="Edit Product">
-                                            <i class="fas fa-pen-to-square"></i>
+                                           class="btn btn-link btn-info btn-lg p-1" 
+                                           data-bs-toggle="tooltip" 
+                                           title="Edit">
+                                            <i class="fa fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
-                                                    class="btn btn-outline-danger btn-sm border" 
-                                                    title="Delete Product"
+                                                    class="btn btn-link btn-danger p-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Delete"
                                                     onclick="return confirm('Are you sure you want to delete this document?')">
-                                                <i class="fas fa-trash-can"></i>
+                                                <i class="fa fa-times"></i>
                                             </button>
                                         </form>
                                     </div>
@@ -159,80 +159,102 @@
             <!-- Mobile Card View -->
             <div class="d-lg-none" id="mobileProductsList">
                 @foreach($products as $product)
-                    <div class="border-bottom p-3 product-card" 
+                    <div class="card shadow-sm mb-3 product-card" 
                          data-name="{{ strtolower($product->name) }}"
                          data-batch="{{ strtolower($product->batch_no) }}"
                          data-stage="{{ strtolower($product->stage) }}"
                          data-type="{{ $product->type }}">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                                <h6 class="mb-1 text-deep-navy">{{ $product->name }}</h6>
-                                <small class="text-muted">{{ $product->created_at->format('M d, Y') }}</small>
-                            </div>
-                            <span class="badge status-{{ strtolower($product->status) }}">
-                                {{ ucfirst($product->status) }}
-                            </span>
-                        </div>
-                        
-                        <div class="row g-2 mb-3">
-                            <div class="col-6">
-                                <small class="text-muted d-block">Batch No</small>
-                                <code class="bg-light px-1 rounded">{{ $product->batch_no }}</code>
-                            </div>
-                            <div class="col-6">
-                                <small class="text-muted d-block">Type</small>
-                                <span class="badge bg-dark text-white">
-                                    <i class="fas fa-pills me-1"></i>{{ $product->type ?? 'N/A' }}
+                        <div class="card-body p-3">
+                            <!-- Header Section -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-semibold text-dark">{{ $product->name }}</h6>
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar me-1"></i>{{ $product->created_at->format('M d, Y') }}
+                                    </small>
+                                </div>
+                                <span class="badge status-{{ strtolower($product->status) }} ms-2">
+                                    {{ ucfirst($product->status) }}
                                 </span>
                             </div>
-                            <div class="col-12">
-                                <small class="text-muted d-block">Stage</small>
-                                <span class="stage-badge">{{ $product->stage }}</span>
-                            </div>
-                        </div>
-
-                        @php
-                            $completed = 0;
-                            if($product->line_clearance) $completed++;
-                            if($product->review) $completed++;
-                            if($product->confirmation) $completed++;
-                            $percentage = ($completed / 3) * 100;
-                        @endphp
-                        <div class="mb-3">
-                            <small class="text-muted d-block mb-2">Progress</small>
-                            <div class="progress" style="height: 25px;">
-                                <div class="progress-bar bg-dark text-white fw-semibold" 
-                                     role="progressbar" 
-                                     style="width: {{ $percentage }}%"
-                                     aria-valuenow="{{ $percentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100">
-                                    {{ $completed }}/3 Tasks
+                            
+                            <!-- Info Grid -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="p-2 bg-light rounded">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="fas fa-barcode me-1"></i>Batch
+                                        </small>
+                                        <code class="bg-white px-2 py-1 rounded d-inline-block">{{ $product->batch_no }}</code>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 bg-light rounded">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="fas fa-tag me-1"></i>Type
+                                        </small>
+                                        <span class="badge bg-dark text-white">
+                                            {{ $product->type ?? 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="p-2 bg-light rounded">
+                                        <small class="text-muted d-block mb-1">
+                                            <i class="fas fa-layer-group me-1"></i>Stage
+                                        </small>
+                                        <span class="stage-badge">{{ $product->stage }}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('products.show', $product) }}" 
-                               class="btn btn-outline-dark btn-sm flex-fill border" 
-                               title="View Details">
-                                <i class="fas fa-eye me-1"></i>View
-                            </a>
-                            <a href="{{ route('products.edit', $product) }}" 
-                               class="btn btn-outline-dark btn-sm border" 
-                               title="Edit Product">
-                                <i class="fas fa-pen-to-square"></i>
-                            </a>
-                            <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" 
-                                        class="btn btn-outline-danger btn-sm border" 
-                                        title="Delete Product"
-                                        onclick="return confirm('Delete this document?')">
-                                    <i class="fas fa-trash-can"></i>
-                                </button>
-                            </form>
+                            @php
+                                $completed = 0;
+                                if($product->line_clearance) $completed++;
+                                if($product->review) $completed++;
+                                if($product->confirmation) $completed++;
+                                $percentage = ($completed / 3) * 100;
+                            @endphp
+                            
+                            <!-- Progress Section -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-tasks me-1"></i>Progress
+                                    </small>
+                                    <small class="text-muted fw-semibold">{{ $completed }}/3 Tasks</small>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-dark" 
+                                         role="progressbar" 
+                                         style="width: {{ $percentage }}%"
+                                         aria-valuenow="{{ $percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 border-top pt-3">
+                                <a href="{{ route('products.show', $product) }}" 
+                                   class="btn btn-sm btn-outline-primary flex-fill">
+                                    <i class="fa fa-eye me-1"></i>View
+                                </a>
+                                <a href="{{ route('products.edit', $product) }}" 
+                                   class="btn btn-sm btn-outline-info">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="btn btn-sm btn-outline-danger" 
+                                            onclick="return confirm('Delete this document?')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -248,17 +270,19 @@
             </div>
         @endif
         
-        <!-- No Results Message (Hidden by default) -->
-        <div class="text-center py-5 d-none" id="noResultsMessage">
-            <i class="fas fa-search fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted mb-2">No Documents Found</h5>
-            <p class="text-muted mb-3">Try adjusting your search or filter criteria.</p>
+                <!-- No Results Message (Hidden by default) -->
+                <div class="text-center py-5 d-none" id="noResultsMessage">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted mb-2">No Documents Found</h5>
+                    <p class="text-muted mb-3">Try adjusting your search or filter criteria.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
@@ -346,4 +370,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endsection
+@endpush

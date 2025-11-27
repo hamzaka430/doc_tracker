@@ -1,81 +1,69 @@
-@extends('app')
+@extends('layouts.dashboard')
 
 @section('title', 'Submitted Documents')
 
 @section('content')
-<!-- Page Header -->
 <div class="page-header">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-clipboard-check text-luxury-gold me-3"></i>
-                Submitted Documents
-            </h1>
-            <p class="page-subtitle">
-                Total submitted: <strong>{{ $submittedProducts->count() }}</strong> documents
-            </p>
-        </div>
-        @if($submittedProducts->count() > 0)
-            <a href="{{ route('products.export') }}" class="btn btn-luxury btn-export">
-                <i class="fas fa-download me-2"></i>Export
+    <h3 class="fw-bold mb-3">Submitted Documents</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+            <a href="{{ route('products.index') }}">
+                <i class="icon-home"></i>
             </a>
-        @endif
-    </div>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Submitted</a>
+        </li>
+    </ul>
 </div>
 
-<!-- Search and Filter Bar -->
-<div class="mobile-card mb-4">
-    <div class="mobile-card-body">
-        <div class="row g-3">
-            <div class="col-12 col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="fas fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control search-input" id="searchInput" 
-                           placeholder="Search by name, batch no, or stage...">
-                </div>
-            </div>
-            <div class="col-12 col-md-4">
-                <!-- <label class="form-label">
-                    <i class="fas fa-filter me-2"></i>Filter by Type
-                </label> -->
-                <div class="custom-select-wrapper">
-                    <i class="fas fa-pills icon-left"></i>
-                    <select class="form-select" id="typeFilter">
-                        <option value="">All Types</option>
-                        <option value="Injection">Injection</option>
-                        <option value="Suspension">Suspension</option>
-                        <option value="Tablet">Tablet</option>
-                        <option value="Capsule">Capsule</option>
-                    </select>
-                    <i class="fas fa-chevron-down icon-right"></i>
-                </div>
-            </div>
-            <div class="col-12 col-md-2">
-                <button class="btn btn-outline-secondary w-100 h-100" id="clearFilters">
-                    <i class="fas fa-times me-1"></i>Clear
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <!-- Submitted Documents Table -->
-    <div class="col-12">
-        <div class="card fade-in-up">
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
             <div class="card-header">
-                <h4 class="mb-0">
-                    <i class="fas fa-table text-luxury-gold me-2"></i>
-                    Submitted Documents
-                    @if(request('search'))
-                        <small class="text-muted ms-2">
-                            (filtered by "{{ request('search') }}")
-                        </small>
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title">Submitted Documents ({{ $submittedProducts->count() }})</h4>
+                    @if($submittedProducts->count() > 0)
+                        <a href="{{ route('products.export') }}" class="btn btn-primary btn-round ms-auto">
+                            <i class="fa fa-download me-1"></i>
+                            Export
+                        </a>
                     @endif
-                </h4>
+                </div>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body">
+
+                <!-- Search and Filter -->
+                <div class="row mb-4">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="searchInput" 
+                                   placeholder="Search by name, batch no, or stage...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select form-control" id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Suspension">Suspension</option>
+                            <option value="Tablet">Tablet</option>
+                            <option value="Capsule">Capsule</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-secondary w-100" id="clearFilters">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submitted Documents Table -->
                 @if($submittedProducts->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-hover mb-0" id="submittedTable">
@@ -106,7 +94,7 @@
                                         </td>
                                         <td>
                                             <span class="badge bg-dark text-white">
-                                                <i class="fas fa-pills me-1"></i>{{ $product->type ?? 'N/A' }}
+                                                {{ $product->type ?? 'N/A' }}
                                             </span>
                                         </td>
                                         <td>
@@ -142,10 +130,14 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <a href="{{ route('products.show', $product) }}" 
-                                               class="btn btn-outline-primary btn-sm">
-                                                <i class="fas fa-eye me-1"></i>View
-                                            </a>
+                                            <div class="d-flex align-items-center">
+                                                <a href="{{ route('products.show', $product) }}" 
+                                                   class="btn btn-link btn-primary btn-lg p-1"
+                                                   data-bs-toggle="tooltip"
+                                                   title="View Details">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -174,6 +166,7 @@
 </div>
 @endsection
 
+@section('modals')
 <!-- Edit Submission Date Modal -->
 <div class="modal fade" id="editDateModal" tabindex="-1" aria-labelledby="editDateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -209,8 +202,9 @@
         </div>
     </div>
 </div>
+@endsection
 
-@section('scripts')
+@push('scripts')
 <script>
 function openDateModal(productId, currentDate, currentTime) {
     const modal = new bootstrap.Modal(document.getElementById('editDateModal'));
@@ -303,4 +297,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endsection
+@endpush

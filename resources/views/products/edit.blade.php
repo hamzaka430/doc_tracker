@@ -1,33 +1,38 @@
-@extends('app')
+@extends('layouts.dashboard')
 
 @section('title', 'Edit Product - ' . $product->name)
 
 @section('content')
-<!-- Page Header -->
 <div class="page-header">
-    <div class="d-flex justify-content-between align-items-start">
-        <div>
-            <h1 class="page-title">
-                <i class="fas fa-edit text-luxury-gold me-3"></i>
-                Edit Product
-            </h1>
-            <p class="page-subtitle">Update product information</p>
-        </div>
-        <a href="{{ route('products.show', $product) }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Back to Details
-        </a>
-    </div>
+    <h3 class="fw-bold mb-3">Edit Document</h3>
+    <ul class="breadcrumbs mb-3">
+        <li class="nav-home">
+            <a href="{{ route('products.index') }}">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="separator">
+            <i class="icon-arrow-right"></i>
+        </li>
+        <li class="nav-item">
+            <a href="#">Edit Document</a>
+        </li>
+    </ul>
 </div>
 
-<!-- Edit Form -->
-<div class="mobile-card">
-    <div class="mobile-card-header">
-        <h3 class="mobile-card-title">
-            <i class="fas fa-info-circle text-luxury-gold me-2"></i>
-            Product Information
-        </h3>
-    </div>
-    <div class="mobile-card-body">
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h4 class="card-title">Document Information</h4>
+                    <a href="{{ route('products.show', $product) }}" class="btn btn-secondary btn-round ms-auto">
+                        Back to Details
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
         <form action="{{ route('products.updateBasic', $product) }}" method="POST">
             @csrf
             @method('PUT')
@@ -95,7 +100,7 @@
 
                 <div class="col-md-6">
                     <label class="form-label">
-                        <i class="fas fa-pills me-2"></i>Type
+                        Type
                     </label>
                     <div class="custom-select-wrapper {{ $errors->has('type') ? 'is-invalid' : '' }}">
                         <i class="fas fa-pills icon-left"></i>
@@ -156,25 +161,30 @@
     </div>
 </div>
 
-<!-- Danger Zone -->
-@if(!$product->isSubmitted())
-<div class="mobile-card mt-4 border-danger">
-    <div class="mobile-card-header bg-danger text-white">
-        <h3 class="mobile-card-title mb-0">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            Danger Zone
-        </h3>
-    </div>
-    <div class="mobile-card-body">
+        <!-- Danger Zone -->
+        @if(!$product->isSubmitted())
+        <div class="card mt-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="card-title mb-0 text-white">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    Danger Zone
+                </h4>
+            </div>
+            <div class="card-body">
         <p class="text-muted mb-3">
             Once you delete this product, there is no going back. Please be certain.
         </p>
-        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-            <i class="fas fa-trash me-2"></i>Delete Product
-        </button>
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fa fa-trash me-2"></i>Delete Product
+                </button>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
+@endsection
 
+@section('modals')
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -210,10 +220,9 @@
         </div>
     </div>
 </div>
-@endif
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Stage type toggle functionality
@@ -286,4 +295,4 @@
         submitBtn.disabled = true;
     });
 </script>
-@endsection
+@endpush
