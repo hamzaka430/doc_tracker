@@ -1,1 +1,3 @@
-/* Empty - Using Bootstrap CDN in app.blade.php */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
