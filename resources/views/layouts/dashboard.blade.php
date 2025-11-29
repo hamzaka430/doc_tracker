@@ -175,13 +175,11 @@
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <div class="avatar-img rounded-circle bg-primary d-flex align-items-center justify-content-center text-white">
-                                            <i class="fas fa-user"></i>
-                                        </div>
+                                        <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle">
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Hamza</span>
+                                        <span class="fw-bold">{{ Auth::user()->name }}</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -189,21 +187,26 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <div class="avatar-img rounded bg-primary d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px; font-size: 24px;">
-                                                        <i class="fas fa-user"></i>
-                                                    </div>
+                                                    <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4>Hamza</h4>
-                                                    <p class="text-muted">admin@hamzaka.me</p>
+                                                    <h4>{{ Auth::user()->name }}</h4>
+                                                    <p class="text-muted">{{ Auth::user()->email }}</p>
                                                 </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Settings</a>
+                                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                                <i class="fas fa-cog me-2"></i>Profile Settings
+                                            </a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
+                                            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                                </button>
+                                            </form>
                                         </li>
                                     </div>
                                 </ul>

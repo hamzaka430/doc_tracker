@@ -2,6 +2,21 @@
 
 @section('title', 'Daily Documents')
 
+@push('styles')
+<style>
+    /* Ensure proper spacing on mobile for footer */
+    @media (max-width: 767.98px) {
+        .page-inner {
+            padding-bottom: 2rem;
+        }
+        
+        .card-body {
+            padding: 1rem 0.75rem;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="page-header">
     <h3 class="fw-bold mb-3">Daily Documents</h3>
@@ -70,6 +85,8 @@
                 <p class="text-muted mb-3">All documents have been processed and submitted.</p>
             </div>
         @endif
+            </div>
+        </div>
     </div>
 </div>
 

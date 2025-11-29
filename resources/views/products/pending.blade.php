@@ -282,6 +282,34 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+    /* Ensure proper spacing on mobile for footer */
+    @media (max-width: 767.98px) {
+        .page-inner {
+            padding-bottom: 2rem;
+        }
+        
+        .card-body {
+            padding: 1rem 0.75rem;
+        }
+        
+        .row.mb-4 {
+            margin-bottom: 1rem !important;
+        }
+        
+        .input-group {
+            margin-bottom: 0.75rem;
+        }
+        
+        .col-md-5, .col-md-4, .col-md-3 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
