@@ -35,7 +35,7 @@
             <div class="card-body">
         <form action="{{ route('products.updateBasic', $product) }}" method="POST">
             @csrf
-            @method('PUT')
+            @method('PATCH')
             
             <div class="row g-4">
                 <div class="col-12">

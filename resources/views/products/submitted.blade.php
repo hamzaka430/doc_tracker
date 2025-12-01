@@ -106,7 +106,7 @@
                                                     {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
                                                 </div>
                                                 <button class="btn btn-sm btn-outline-secondary" 
-                                                        onclick="openDateModal({{ $product->id }}, '{{ $product->submission_date ? $product->submission_date->format('Y-m-d') : '' }}', '{{ $product->submission_time ? $product->submission_time->format('H:i') : '' }}')"
+                                                        onclick="openDateModal({{ $product->id }}, '{{ $product->submission_date ? $product->submission_date->format('Y-m-d') : '' }}', '{{ $product->submission_time ? substr($product->submission_time, 0, 5) : '' }}')"
                                                         title="Edit Date">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
@@ -114,7 +114,7 @@
                                         </td>
                                         <td>
                                             <div class="text-dark">
-                                                {{ $product->submission_time ? $product->submission_time->format('H:i:s') : 'N/A' }}
+                                                {{ $product->submission_time ?? 'N/A' }}
                                             </div>
                                         </td>
                                         <td>
@@ -179,7 +179,7 @@
             </div>
             <form id="editDateForm" method="POST">
                 @csrf
-                @method('PUT')
+                @method('PATCH')
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="submission_date" class="form-label">Submission Date</label>

@@ -30,10 +30,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/daily/pdf', [ProductController::class, 'exportDailyPdf'])->name('products.daily.pdf');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::patch('/products/{product}/basic', [ProductController::class, 'updateBasic'])->name('products.updateBasic');
-    Route::patch('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::match(['PUT', 'PATCH'], '/products/{product}/basic', [ProductController::class, 'updateBasic'])->name('products.updateBasic');
+    Route::match(['PUT', 'PATCH'], '/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/products/{product}/submit', [ProductController::class, 'submit'])->name('products.submit');
-    Route::patch('/products/{product}/submission-date', [ProductController::class, 'updateSubmissionDate'])->name('products.updateSubmissionDate');
+    Route::match(['PUT', 'PATCH'], '/products/{product}/submission-date', [ProductController::class, 'updateSubmissionDate'])->name('products.updateSubmissionDate');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
 

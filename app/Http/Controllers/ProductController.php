@@ -105,8 +105,10 @@ class ProductController extends Controller
             'stage' => 'Completed',
             'status' => 'submitted',
             'submission_date' => $now->toDateString(),
-            'submission_time' => $now->toTimeString(),
-        ]);        return redirect()->route('products.submitted')
+            'submission_time' => $now->format('H:i:s'),
+        ]);
+        
+        return redirect()->route('products.submitted')
             ->with('success', 'Product submitted successfully!');
     }
 

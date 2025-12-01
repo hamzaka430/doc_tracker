@@ -90,8 +90,8 @@
                         <div class="col-md-6 col-lg-4">
                             <div class="mb-3">
                                 <label class="form-label text-muted">Submission Time</label>
-                                <div class="fw-bold">
-                                    {{ $product->submission_time ? $product->submission_time->format('H:i:s') : 'N/A' }}
+                                <div class="text-muted">
+                                    {{ $product->submission_time ?? 'N/A' }}
                                 </div>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                 @else
                     <form action="{{ route('products.update', $product) }}" method="POST">
                         @csrf
-                        @method('PUT')
+                        @method('PATCH')
 
                         <!-- Hidden inputs for checkboxes -->
                         <input type="hidden" name="line_clearance" value="0">

@@ -24,8 +24,7 @@ class Product extends Model
         'line_clearance' => 'boolean',
         'review' => 'boolean',
         'confirmation' => 'boolean',
-        'submission_date' => 'date',
-        'submission_time' => 'datetime:H:i:s'
+        'submission_date' => 'date'
     ];
 
     public static function getStages()
