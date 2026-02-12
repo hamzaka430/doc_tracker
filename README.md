@@ -220,7 +220,7 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## 👨‍💻 Author
 
-**Hamza Khan**
+**Hamza Zaka**
 - GitHub: [@hamzaka430](https://github.com/hamzaka430)
 - Repository: [doc_tracker](https://github.com/hamzaka430/doc_tracker)
 
