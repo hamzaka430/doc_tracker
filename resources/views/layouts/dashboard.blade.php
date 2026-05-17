@@ -10,7 +10,7 @@
     
     <title>@yield('title', 'Doc Tracker - Document Tracking System')</title>
     
-    <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.svg') }}" type="image/svg+xml" />
 
     <!-- Fonts and icons -->
     <script src="{{ asset('Dashboard/assets/js/plugin/webfont/webfont.min.js') }}"></script>

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Reset Password - Doc Tracker</title>
     
-    <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.svg') }}" type="image/svg+xml" />
     
     <!-- Fonts and icons -->
     <script src="{{ asset('Dashboard/assets/js/plugin/webfont/webfont.min.js') }}"></script>
