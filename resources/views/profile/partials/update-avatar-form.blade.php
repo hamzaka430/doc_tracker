@@ -18,7 +18,7 @@
             @csrf
             
             <div class="form-group p-0 w-100 mb-3">
-                <input type="file" id="avatar" name="avatar" class="form-control form-control-sm @error('avatar') is-invalid @enderror" accept="image/*" required>
+                <input type="file" id="avatar" name="avatar" class="form-control form-control-sm @error('avatar') is-invalid @enderror" accept=".png, .jpg, .jpeg, .webp" required>
                 @error('avatar')
                     <span class="invalid-feedback d-block">{{ $message }}</span>
                 @enderror

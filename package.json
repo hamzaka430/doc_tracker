@@ -4,7 +4,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "heroku-postbuild": "npm run build"
+        "heroku-postbuild": "npm run build && php artisan storage:link"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
