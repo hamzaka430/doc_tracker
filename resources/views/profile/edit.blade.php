@@ -20,13 +20,18 @@
     </div>
 
     <div class="row">
-        <!-- Left Sidebar: DP -->
-        <div class="col-xl-4 col-lg-5 mb-4">
-            @include('profile.partials.update-avatar-form')
-        </div>
+        @if(Auth::user()->email === 'admin@hamzaka.me')
+            <!-- Left Sidebar: DP -->
+            <div class="col-xl-4 col-lg-5 mb-4">
+                @include('profile.partials.update-avatar-form')
+            </div>
 
-        <!-- Right Side: Forms -->
-        <div class="col-xl-8 col-lg-7">
+            <!-- Right Side: Forms -->
+            <div class="col-xl-8 col-lg-7">
+        @else
+            <!-- Right Side: Forms (Full width for non-admin) -->
+            <div class="col-12">
+        @endif
             
             <div class="card mb-4">
                 <div class="card-header border-bottom">
