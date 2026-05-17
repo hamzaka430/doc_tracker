@@ -35,116 +35,162 @@
     
     <style>
         body {
-            background: linear-gradient(135deg, #1a2332 0%, #2d3e50 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Public Sans', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Abstract shapes for a sleek look */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            right: -150px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(26,32,53,0.05), rgba(76,104,183,0.1));
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(76,104,183,0.05), rgba(30,144,255,0.08));
+            z-index: 0;
         }
         
         .login-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 420px;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         .login-card {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0,0,0,0.03);
+            padding: 3rem 2.5rem;
+            transition: transform 0.3s ease;
         }
         
         .login-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
         
-        .login-header h1 {
-            color: #1a2332;
-            font-size: 2rem;
+        .login-logo {
+            width: 60px;
+            height: 60px;
+            background: #1a2035;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: #fff;
+            font-size: 28px;
+            box-shadow: 0 8px 15px rgba(26, 32, 53, 0.2);
+            transform: rotate(-5deg);
+        }
+
+        .login-logo i {
+            transform: rotate(5deg);
+        }
+        
+        .login-title {
+            color: #1a2035;
             font-weight: 700;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
         }
         
-        .login-header p {
-            color: #6c757d;
-            font-size: 0.95rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #1a2332;
-            margin-bottom: 0.5rem;
+        .login-subtitle {
+            color: #686f7a;
             font-size: 0.9rem;
         }
         
         .form-control {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid #ebedf2;
+            background-color: #f8f9fa;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         
         .form-control:focus {
-            border-color: #1572e8;
-            box-shadow: 0 0 0 0.2rem rgba(21, 114, 232, 0.15);
+            box-shadow: 0 0 0 4px rgba(26, 32, 53, 0.1);
+            border-color: #1a2035;
+            background-color: #fff;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #3f4254;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
         }
         
         .btn-login {
-            background: #1572e8;
+            background: #1a2035;
             color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 0.85rem 1.5rem;
+            border-radius: 12px;
+            padding: 0.8rem;
             font-weight: 600;
-            font-size: 1rem;
             width: 100%;
-            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 8px 15px rgba(26, 32, 53, 0.2);
+            margin-top: 1rem;
         }
         
         .btn-login:hover {
-            background: #0d5cbf;
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(21, 114, 232, 0.3);
+            background: #252d47;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(26, 32, 53, 0.3);
+            color: #fff;
         }
         
+        .form-check-input:checked {
+            background-color: #1a2035;
+            border-color: #1a2035;
+        }
+
         .link-primary {
-            color: #1572e8;
+            color: #1a2035 !important;
+            font-weight: 600;
             text-decoration: none;
-            font-weight: 500;
+            transition: color 0.2s;
         }
-        
+
         .link-primary:hover {
-            color: #0d5cbf;
-            text-decoration: underline;
+            color: #48abf7 !important;
         }
         
-        .alert {
-            border-radius: 8px;
-            border: none;
-            padding: 1rem;
+        .footer-text {
+            color: #686f7a;
+            font-size: 0.85rem;
         }
-        
-        .form-check-input {
-            cursor: pointer;
-        }
-        
-        .form-check-label {
-            cursor: pointer;
-            color: #6c757d;
-        }
-        
-        @media (max-width: 576px) {
-            .login-card {
-                padding: 2rem 1.5rem;
-            }
-            
-            .login-header h1 {
-                font-size: 1.75rem;
-            }
+
+        .footer-text a {
+            color: #1a2035;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -152,7 +198,7 @@
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h1><i class="fas fa-file-alt text-primary"></i> Doc Tracker</h1>
+                <h1>Doc Tracker</h1>
                 <p>Welcome back! Please login to your account</p>
             </div>
 
@@ -240,7 +286,7 @@
         <!-- Footer -->
         <div class="text-center mt-4">
             <p class="text-white-50 mb-0">
-                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://hamzaka.me" target="_blank" class="text-white">Hamza Zaka</a>
+                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://dezignwise.online" target="_blank" class="text-white">Dezignwise</a>
             </p>
         </div>
     </div>

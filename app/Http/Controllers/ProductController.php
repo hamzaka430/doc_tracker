@@ -14,7 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+        $products = Product::where('user_id', auth()->id())
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -46,6 +47,7 @@ class ProductController extends Controller
         ]);
 
         Product::create([
+            'user_id' => auth()->id(),
             'name' => $request->name,
             'batch_no' => $request->batch_no,
             'stage' => $request->stage,
@@ -117,7 +119,7 @@ class ProductController extends Controller
      */
     public function submitted(Request $request)
     {
-        $query = Product::where('status', 'submitted');
+        $query = Product::where('user_id', auth()->id())->where('status', 'submitted');
 
         // Search functionality
         if ($request->has('search') && !empty($request->search)) {
@@ -143,7 +145,7 @@ class ProductController extends Controller
      */
     public function daily(Request $request)
     {
-        $products = Product::where('status', 'pending')
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
@@ -157,7 +159,7 @@ class ProductController extends Controller
      */
     public function pending(Request $request)
     {
-        $products = Product::where('status', 'pending')
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
@@ -171,7 +173,7 @@ class ProductController extends Controller
      */
     public function exportDailyPdf(Request $request)
     {
-        $products = Product::where('status', 'pending')
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('name', 'asc')
             ->orderBy('batch_no', 'asc')
@@ -212,7 +214,7 @@ class ProductController extends Controller
      */
     public function exportCsv()
     {
-        $products = Product::where('status', 'submitted')
+        $products = Product::where('user_id', auth()->id())->where('status', 'submitted')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('submission_date', 'desc')
@@ -246,8 +248,8 @@ class ProductController extends Controller
                     $product->name,
                     $product->batch_no,
                     $product->stage,
-                    $product->submission_date ? $product->submission_date->format('Y-m-d') : '',
-                    $product->submission_time ? $product->submission_time->format('H:i:s') : '',
+                    $product->submission_date ? (\is_string($product->submission_date) ? date('Y-m-d', strtotime($product->submission_date)) : $product->submission_date->format('Y-m-d')) : '',
+                    $product->submission_time ? (\is_string($product->submission_time) ? $product->submission_time : $product->submission_time->format('H:i:s')) : '',
                     $product->remarks ?? ''
                 ]);
             }

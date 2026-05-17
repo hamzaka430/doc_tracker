@@ -175,7 +175,13 @@
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle">
+                                        @if(Auth::user()->avatar)
+                                            <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded-circle border border-2 border-white">
+                                        @elseif(Auth::user()->email === 'admin@hamzaka.me')
+                                            <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle">
+                                        @else
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded-circle">
+                                        @endif
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -187,7 +193,13 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    @if(Auth::user()->avatar)
+                                                        <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    @elseif(Auth::user()->email === 'admin@hamzaka.me')
+                                                        <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    @else
+                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                    @endif
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ Auth::user()->name }}</h4>
@@ -257,7 +269,7 @@
                         {{ date('Y') }} © Doc Tracker - Document Tracking System
                     </div>
                     <div>
-                        Powered by <a href="https://hamzaka.me" target="_blank" class="text-decoration-none">Hamza Zaka</a>
+                        Powered by <a href="https://dezignwise.online" target="_blank" class="text-decoration-none">Dezignwise</a>
                     </div>
                 </div>
             </footer>

@@ -199,7 +199,7 @@
         <!-- Footer -->
         <div class="text-center mt-4">
             <p class="text-white-50 mb-0">
-                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://hamzaka.me" target="_blank" class="text-white">Hamza Zaka</a>
+                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://dezignwise.online" target="_blank" class="text-white">Dezignwise</a>
             </p>
         </div>
     </div>
