@@ -39,7 +39,7 @@
                                     <div class="form-group mb-0">
                                         <label>Document Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="name[]" 
-                                               placeholder="Enter document name" required>
+                                               placeholder="Enter document name" value="{{ request('name') }}" required>
                                     </div>
                                 </div>
 
@@ -48,7 +48,7 @@
                                     <div class="form-group mb-0">
                                         <label>Batch Number <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="batch_no[]" 
-                                               placeholder="Enter batch number" required>
+                                               placeholder="Enter batch number" value="{{ request('batch_no') }}" required>
                                     </div>
                                 </div>
 
@@ -60,6 +60,7 @@
                                                class="form-control" 
                                                name="stage[]" 
                                                placeholder="Enter stage or select" 
+                                               value="{{ request('stage') }}"
                                                list="stage_options"
                                                required>
                                     </div>
@@ -70,9 +71,9 @@
                                     <div class="form-group mb-0">
                                         <label>Type <span class="text-danger">*</span></label>
                                         <select class="form-select form-control" name="type[]" required>
-                                            <option value="" disabled selected>Select Type</option>
+                                            <option value="" disabled {{ !request('type') ? 'selected' : '' }}>Select Type</option>
                                             @foreach($types as $type)
-                                                <option value="{{ $type }}">{{ $type }}</option>
+                                                <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -136,7 +137,74 @@
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('documents-container');
     const addBtn = document.getElementById('add-document-btn');
+    const form = container.closest('form');
     
+    // === AUTO-SAVE DRAFTS LOGIC ===
+    function saveDraft() {
+        const formData = new FormData(form);
+        const draft = {
+            names: formData.getAll('name[]'),
+            batch_nos: formData.getAll('batch_no[]'),
+            stages: formData.getAll('stage[]'),
+            types: formData.getAll('type[]')
+        };
+        // Only save if there's actually some data typed in
+        if (draft.names.some(n => n) || draft.batch_nos.some(b => b)) {
+            localStorage.setItem('doc_tracker_draft', JSON.stringify(draft));
+        }
+    }
+    
+    form.addEventListener('input', saveDraft);
+    form.addEventListener('change', saveDraft);
+    
+    // Clear draft when successfully submitting
+    form.addEventListener('submit', function() {
+        localStorage.removeItem('doc_tracker_draft');
+    });
+
+    // Restore draft on load (if not cloning from URL params)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isCloning = urlParams.has('name');
+    
+    if (!isCloning && localStorage.getItem('doc_tracker_draft')) {
+        try {
+            const draft = JSON.parse(localStorage.getItem('doc_tracker_draft'));
+            if (draft.names && draft.names.length > 0) {
+                // We have multiple rows in draft
+                for (let i = 1; i < draft.names.length; i++) {
+                    addBtn.click(); // Create the extra rows
+                }
+                
+                const nameInputs = container.querySelectorAll('input[name="name[]"]');
+                const batchInputs = container.querySelectorAll('input[name="batch_no[]"]');
+                const stageInputs = container.querySelectorAll('input[name="stage[]"]');
+                const typeSelects = container.querySelectorAll('select[name="type[]"]');
+                
+                for (let i = 0; i < draft.names.length; i++) {
+                    if (nameInputs[i]) nameInputs[i].value = draft.names[i] || '';
+                    if (batchInputs[i]) batchInputs[i].value = draft.batch_nos[i] || '';
+                    if (stageInputs[i]) stageInputs[i].value = draft.stages[i] || '';
+                    if (typeSelects[i]) typeSelects[i].value = draft.types[i] || '';
+                }
+                
+                if (typeof $ !== 'undefined' && $.notify) {
+                    $.notify({
+                        icon: 'fa fa-bell',
+                        title: 'Draft Restored',
+                        message: 'Your unsaved document draft has been recovered.',
+                    },{
+                        type: 'info',
+                        placement: { from: "bottom", align: "right" },
+                        time: 3000,
+                    });
+                }
+            }
+        } catch(e) {
+            console.error('Failed to restore draft', e);
+        }
+    }
+
+    // === DYNAMIC ROWS LOGIC ===
     addBtn.addEventListener('click', function() {
         const firstRow = container.querySelector('.document-row');
         const newRow = firstRow.cloneNode(true);
@@ -159,11 +227,13 @@ document.addEventListener('DOMContentLoaded', function() {
             removeBtn.innerHTML = '<i class="fa fa-times"></i>';
             removeBtn.onclick = function() {
                 newRow.remove();
+                saveDraft(); // Update draft when a row is removed
             };
             newRow.appendChild(removeBtn);
         }
         
         container.appendChild(newRow);
+        saveDraft(); // Update draft when a row is added
     });
 });
 </script>

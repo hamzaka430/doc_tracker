@@ -155,6 +155,12 @@
                                                title="Edit">
                                                 <i class="fa fa-edit"></i>
                                             </a>
+                                            <a href="{{ route('products.create', ['name' => $product->name, 'batch_no' => $product->batch_no, 'stage' => $product->stage, 'type' => $product->type]) }}" 
+                                               class="btn btn-link btn-warning btn-lg p-1" 
+                                               data-bs-toggle="tooltip" 
+                                               title="Duplicate / Copy">
+                                                <i class="fa fa-copy"></i>
+                                            </a>
                                             @if(!$product->isSubmitted())
                                                 <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
                                                     @csrf
