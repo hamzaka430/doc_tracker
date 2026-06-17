@@ -7,6 +7,8 @@ A professional Laravel 11 application for tracking products through various stag
 - **Product Management**: Add, edit, and delete products with custom or predefined stages
 - **Stage Tracking**: Track products through multiple stages like "On Process", "QA Sign", "Production", etc.
 - **Submission System**: Complete pre-line clearance, in-process, and post-line clearance tasks
+- **SAP Error Tracking**: Record SAP errors with T-Codes, rich descriptions, and high-quality screenshots
+- **AWS S3 Integration**: Secure, robust cloud storage for user profile pictures and error screenshots
 - **Document Management**: View submitted products with detailed timestamps
 - **Mobile-First Design**: Responsive sidebar navigation with luxury UI components
 - **Export Functionality**: Export submitted products to CSV format
@@ -145,6 +147,18 @@ http://localhost:8000
 | `remarks` | TEXT | Additional notes |
 | `submission_date` | DATE | Date of submission |
 | `submission_time` | TIME | Time of submission |
+| `created_at` | TIMESTAMP | Record creation time |
+| `updated_at` | TIMESTAMP | Record update time |
+
+### SAP Errors Table
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | BIGINT | Primary key (auto-increment) |
+| `user_id` | BIGINT | Foreign key linking to Users |
+| `title` | VARCHAR(255) | Short description/title of the error |
+| `sap_tcode` | VARCHAR(100) | SAP Transaction Code (e.g. MIGO, ME21N) |
+| `description` | TEXT | Detailed explanation of the error |
+| `image_path` | VARCHAR(255) | Path/URL to the screenshot hosted on AWS S3 |
 | `created_at` | TIMESTAMP | Record creation time |
 | `updated_at` | TIMESTAMP | Record update time |
 
