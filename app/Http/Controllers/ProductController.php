@@ -34,29 +34,38 @@ class ProductController extends Controller
         return view('products.create', compact('stages', 'types'));
     }
 
-    /**
-     * Store a new product
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'batch_no' => 'required|string|max:255',
-            'stage' => 'required|string|max:255',
-            'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
+            'name' => 'required|array|min:1',
+            'name.*' => 'required|string|max:255',
+            'batch_no' => 'required|array|min:1',
+            'batch_no.*' => 'required|string|max:255',
+            'stage' => 'required|array|min:1',
+            'stage.*' => 'required|string|max:255',
+            'type' => 'required|array|min:1',
+            'type.*' => 'required|in:Injection,Suspension,Tablet,Capsule',
         ]);
 
-        Product::create([
-            'user_id' => auth()->id(),
-            'name' => $request->name,
-            'batch_no' => $request->batch_no,
-            'stage' => $request->stage,
-            'type' => $request->type,
-            'status' => 'pending'
-        ]);
+        $userId = auth()->id();
+        $names = $request->name;
+        $batchNos = $request->batch_no;
+        $stages = $request->stage;
+        $types = $request->type;
+
+        for ($i = 0; $i < count($names); $i++) {
+            Product::create([
+                'user_id' => $userId,
+                'name' => $names[$i],
+                'batch_no' => $batchNos[$i],
+                'stage' => $stages[$i],
+                'type' => $types[$i],
+                'status' => 'pending'
+            ]);
+        }
 
         return redirect()->route('products.index')
-            ->with('success', 'Product added successfully!');
+            ->with('success', count($names) . ' Document(s) added successfully!');
     }
 
     /**
