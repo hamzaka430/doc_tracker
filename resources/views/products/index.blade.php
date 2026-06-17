@@ -58,9 +58,9 @@
                         </button>
                     </div>
                     <div class="col-md-3">
-                        <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="w-100 d-none">
+                        <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="w-100">
                             @csrf
-                            <button type="button" class="btn btn-success w-100 fw-bold" id="bulkSubmitBtn">
+                            <button type="button" class="btn btn-success w-100 fw-bold" id="bulkSubmitBtn" disabled>
                                 <i class="fa fa-check-double me-1"></i> Bulk Submit (<span id="bulkCount">0</span>)
                             </button>
                         </form>
@@ -271,9 +271,9 @@ $(document).ready(function() {
         if(bulkCountSpan) bulkCountSpan.textContent = checkedCount;
         
         if (checkedCount > 0) {
-            if(bulkSubmitForm) bulkSubmitForm.classList.remove('d-none');
+            if(bulkSubmitBtn) bulkSubmitBtn.disabled = false;
         } else {
-            if(bulkSubmitForm) bulkSubmitForm.classList.add('d-none');
+            if(bulkSubmitBtn) bulkSubmitBtn.disabled = true;
             if (selectAllDesktop) selectAllDesktop.checked = false;
         }
     }
