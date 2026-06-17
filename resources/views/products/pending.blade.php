@@ -481,6 +481,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 bulkSubmitForm.appendChild(input);
             });
             
+            // Disable button to prevent double clicks
+            bulkSubmitBtn.disabled = true;
+            bulkSubmitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Submitting...';
+            
             bulkSubmitForm.submit();
         }
     });

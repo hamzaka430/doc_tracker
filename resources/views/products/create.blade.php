@@ -157,9 +157,15 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('input', saveDraft);
     form.addEventListener('change', saveDraft);
     
-    // Clear draft when successfully submitting
-    form.addEventListener('submit', function() {
+    // Clear draft and prevent double submission when successfully submitting
+    form.addEventListener('submit', function(e) {
         localStorage.removeItem('doc_tracker_draft');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            // Disable button to prevent double clicks
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Saving...';
+        }
     });
 
     // Restore draft on load (if not cloning from URL params)
