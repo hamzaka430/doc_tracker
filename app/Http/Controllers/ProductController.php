@@ -1,0 +1,384 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+class ProductController extends Controller
+{
+    /**
+     * Display the product list page - ALL documents (both pending and submitted)
+     */
+    public function index()
+    {
+        $products = Product::where('user_id', auth()->id())
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('products.index', compact('products'));
+    }
+
+    /**
+     * Show the form for creating a new product
+     */
+    public function create()
+    {
+        $stages = Product::getStages();
+        $types = Product::getTypes();
+        
+        return view('products.create', compact('stages', 'types'));
+    }
+
+    /**
+     * Store a new product
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'batch_no' => 'required|string|max:255',
+            'stage' => 'required|string|max:255',
+            'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
+        ]);
+
+        Product::create([
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'batch_no' => $request->batch_no,
+            'stage' => $request->stage,
+            'type' => $request->type,
+            'status' => 'pending'
+        ]);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product added successfully!');
+    }
+
+    /**
+     * Display product details page
+     */
+    public function show(Product $product)
+    {   
+        return view('products.show', compact('product'));
+    }
+
+    /**
+     * Update product details
+     */
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'line_clearance' => 'nullable|in:0,1',
+            'review' => 'nullable|in:0,1',
+            'confirmation' => 'nullable|in:0,1',
+            'remarks' => 'nullable|string|max:1000',
+        ]);
+
+        $product->update([
+            'line_clearance' => (bool) $request->input('line_clearance', false),
+            'review' => (bool) $request->input('review', false),
+            'confirmation' => (bool) $request->input('confirmation', false),
+            'remarks' => $request->remarks,
+        ]);
+
+        return redirect()->route('products.show', $product)
+            ->with('success', 'Product details updated successfully!');
+    }
+
+    /**
+     * Submit a product
+     */
+    public function submit(Product $product)
+    {
+        // Check if all checkboxes are marked
+        if (!$product->isReadyForSubmission()) {
+            return redirect()->route('products.show', $product)
+                ->with('error', 'Please complete all clearances before submitting.');
+        }
+
+        $now = Carbon::now();
+        
+        $product->update([
+            'stage' => 'Completed',
+            'status' => 'submitted',
+            'submission_date' => $now->toDateString(),
+            'submission_time' => $now->format('H:i:s'),
+        ]);
+        
+        return redirect()->route('products.submitted')
+            ->with('success', 'Product submitted successfully!');
+    }
+
+    /**
+     * Submit multiple products in bulk
+     */
+    public function bulkSubmit(Request $request)
+    {
+        $request->validate([
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id'
+        ]);
+
+        $products = Product::where('user_id', auth()->id())
+            ->whereIn('id', $request->product_ids)
+            ->get();
+
+        $submittedCount = 0;
+        $skippedCount = 0;
+        $now = \Carbon\Carbon::now();
+
+        foreach ($products as $product) {
+            if ($product->isSubmitted()) {
+                $skippedCount++;
+                continue;
+            }
+
+            $product->update([
+                'stage' => 'Completed',
+                'line_clearance' => true,
+                'review' => true,
+                'confirmation' => true,
+                'status' => 'submitted',
+                'submission_date' => $now->toDateString(),
+                'submission_time' => $now->format('H:i:s'),
+            ]);
+
+            $submittedCount++;
+        }
+
+        if ($submittedCount > 0 && $skippedCount == 0) {
+            $message = "Successfully submitted {$submittedCount} documents!";
+            $type = 'success';
+        } elseif ($submittedCount > 0 && $skippedCount > 0) {
+            $message = "Successfully submitted {$submittedCount} documents. Skipped {$skippedCount} documents that were already submitted.";
+            $type = 'warning';
+        } elseif ($submittedCount == 0 && $skippedCount > 0) {
+            $message = "No documents submitted. All {$skippedCount} selected documents were already submitted.";
+            $type = 'error';
+        } else {
+            $message = "No documents selected for submission.";
+            $type = 'error';
+        }
+
+        return redirect()->route('products.submitted')
+            ->with($type, $message);
+    }
+
+    /**
+     * Display submitted products page
+     */
+    public function submitted(Request $request)
+    {
+        $query = Product::where('user_id', auth()->id())->where('status', 'submitted');
+
+        // Search functionality
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%")
+                  ->orWhere('stage', 'like', "%{$search}%");
+            });
+        }
+
+        $submittedProducts = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('submission_date', 'desc')
+            ->orderBy('submission_time', 'desc')
+            ->get();
+
+        return view('products.submitted', compact('submittedProducts'));
+    }
+
+    /**
+     * Display today's documents (daily list) - All remaining/pending documents
+     */
+    public function daily(Request $request)
+    {
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('products.daily', compact('products'));
+    }
+
+    /**
+     * Display pending documents page
+     */
+    public function pending(Request $request)
+    {
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('products.pending', compact('products'));
+    }
+
+    /**
+     * Export remaining documents to PDF with grouped format
+     */
+    public function exportDailyPdf(Request $request)
+    {
+        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('name', 'asc')
+            ->orderBy('batch_no', 'asc')
+            ->get();
+
+        // Group products by name
+        $groupedProducts = $products->groupBy('name')->map(function($items) {
+            return [
+                'name' => $items->first()->name,
+                'batches' => $items->map(function($item) {
+                    return [
+                        'batch_no' => $item->batch_no,
+                        'stage' => $item->stage
+                    ];
+                })->toArray()
+            ];
+        })->values();
+
+        // Get layout preference from request (default: single)
+        $layout = $request->get('layout', 'single');
+        
+        // Choose the appropriate view based on layout
+        $viewName = $layout === 'double' ? 'products.daily-pdf-double' : 'products.daily-pdf';
+        
+        $pdf = Pdf::loadView($viewName, [
+            'groupedProducts' => $groupedProducts,
+            'totalDocuments' => $products->count(),
+            'generatedDate' => Carbon::now()->format('d/m/Y h:i A')
+        ]);
+
+        $filename = 'remaining_documents_' . date('Y-m-d_H-i-s') . '.pdf';
+        
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Export submitted products to CSV
+     */
+    public function exportCsv()
+    {
+        $products = Product::where('user_id', auth()->id())->where('status', 'submitted')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
+            ->orderBy('submission_date', 'desc')
+            ->get();
+
+        $filename = 'submitted_products_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function() use ($products) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Header
+            fputcsv($file, [
+                'ID',
+                'Product Name',
+                'Batch No',
+                'Stage',
+                'Submission Date',
+                'Submission Time',
+                'Remarks'
+            ]);
+
+            // CSV Data
+            foreach ($products as $product) {
+                fputcsv($file, [
+                    $product->id,
+                    $product->name,
+                    $product->batch_no,
+                    $product->stage,
+                    $product->submission_date ? (\is_string($product->submission_date) ? date('Y-m-d', strtotime($product->submission_date)) : $product->submission_date->format('Y-m-d')) : '',
+                    $product->submission_time ? (\is_string($product->submission_time) ? $product->submission_time : $product->submission_time->format('H:i:s')) : '',
+                    $product->remarks ?? ''
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Show the form for editing a product
+     */
+    public function edit(Product $product)
+    {
+        $stages = Product::getStages();
+        $types = Product::getTypes();
+        return view('products.edit', compact('product', 'stages', 'types'));
+    }
+
+    /**
+     * Update product basic information
+     */
+    public function updateBasic(Request $request, Product $product)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'batch_no' => 'required|string|max:255',
+            'stage' => 'required|string|max:255',
+            'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
+        ]);
+
+        $product->update([
+            'name' => $request->name,
+            'batch_no' => $request->batch_no,
+            'stage' => $request->stage,
+            'type' => $request->type,
+        ]);
+
+        return redirect()->route('products.show', $product)
+            ->with('success', 'Product information updated successfully!');
+    }
+
+    /**
+     * Delete a product
+     */
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully!');
+    }
+
+    /**
+     * Update submission date of a product
+     */
+    public function updateSubmissionDate(Request $request, Product $product)
+    {
+        $request->validate([
+            'submission_date' => 'required|date',
+            'submission_time' => 'nullable|date_format:H:i',
+        ]);
+
+        // If time is provided, combine date and time; otherwise use only date
+        $submissionDate = $request->submission_date;
+        $submissionTime = $request->submission_time ?? $product->submission_time;
+
+        $product->update([
+            'submission_date' => $submissionDate,
+            'submission_time' => $submissionTime,
+        ]);
+
+        return redirect()->route('products.submitted')
+            ->with('success', 'Submission date updated successfully!');
+    }
+}
