@@ -121,7 +121,7 @@
                         </li>
                         <li class="nav-item {{ request()->routeIs('products.trash') ? 'active' : '' }}">
                             <a href="{{ route('products.trash') }}">
-                                <i class="fa fa-trash-restore"></i>
+                                <i class="fas fa-trash"></i>
                                 <p>Recycle Bin</p>
                             </a>
                         </li>
