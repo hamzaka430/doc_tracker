@@ -35,39 +35,38 @@
             <div class="card-body">
 
                 <!-- Search and Filter -->
-                <div class="row mb-4">
+                <form action="{{ route('products.pending') }}" method="GET" class="row mb-4">
                     <div class="col-md-4">
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <input type="text" class="form-control" id="searchInput" 
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="searchInput" 
                                    placeholder="Search by name, batch no, or stage...">
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select form-control" id="typeFilter">
+                        <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                             <option value="">All Types</option>
-                            <option value="Injection">Injection</option>
-                            <option value="Suspension">Suspension</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Capsule">Capsule</option>
+                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-secondary w-100" id="clearFilters">
-                            Clear Filters
-                        </button>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1 px-1">Search</button>
+                        <a href="{{ route('products.pending') }}" class="btn btn-secondary flex-grow-1 px-1" id="clearFilters">Clear</a>
                     </div>
                     <div class="col-md-3">
-                        <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="w-100">
+                        <button type="button" class="btn btn-success w-100 fw-bold" id="bulkSubmitBtn" disabled>
+                            <i class="fa fa-check-double me-1"></i> Bulk Submit (<span id="bulkCount">0</span>)
+                        </button>
+                        <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="d-none">
                             @csrf
-                            <button type="button" class="btn btn-success w-100 fw-bold" id="bulkSubmitBtn" disabled>
-                                <i class="fa fa-check-double me-1"></i> Bulk Submit (<span id="bulkCount">0</span>)
-                            </button>
                         </form>
                     </div>
-                </div>
+                </form>
 
                 <!-- Documents Table -->
         @if($products->count() > 0)
@@ -282,6 +281,11 @@
                     </div>
                 @endforeach
             </div>
+            
+            <!-- Pagination -->
+            <div class="mt-4 d-flex justify-content-center">
+                {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
         @else
             <div class="text-center py-5" id="emptyState">
                 <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
@@ -336,89 +340,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const typeFilter = document.getElementById('typeFilter');
-    const clearFiltersBtn = document.getElementById('clearFilters');
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    
-    // Get all product rows (desktop and mobile)
-    const productRows = document.querySelectorAll('.product-row');
-    const productCards = document.querySelectorAll('.product-card');
-    const totalProducts = productRows.length || productCards.length;
-
-    // Filter function
-    function filterProducts() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedType = typeFilter.value;
-        
-        let visibleCount = 0;
-
-        // Filter desktop table rows
-        productRows.forEach(row => {
-            const name = row.getAttribute('data-name');
-            const batch = row.getAttribute('data-batch');
-            const stage = row.getAttribute('data-stage');
-            const type = row.getAttribute('data-type');
-            
-            const matchesSearch = !searchTerm || 
-                name.includes(searchTerm) || 
-                batch.includes(searchTerm) || 
-                stage.includes(searchTerm);
-            
-            const matchesType = !selectedType || type === selectedType;
-            
-            if (matchesSearch && matchesType) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Filter mobile cards
-        productCards.forEach(card => {
-            const name = card.getAttribute('data-name');
-            const batch = card.getAttribute('data-batch');
-            const stage = card.getAttribute('data-stage');
-            const type = card.getAttribute('data-type');
-            
-            const matchesSearch = !searchTerm || 
-                name.includes(searchTerm) || 
-                batch.includes(searchTerm) || 
-                stage.includes(searchTerm);
-            
-            const matchesType = !selectedType || type === selectedType;
-            
-            if (matchesSearch && matchesType) {
-                card.style.display = '';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        // Show/hide no results message
-        if (visibleCount === 0 && totalProducts > 0) {
-            noResultsMessage.classList.remove('d-none');
-        } else {
-            noResultsMessage.classList.add('d-none');
-        }
-    }
-
-    // Event listeners
-    searchInput.addEventListener('input', filterProducts);
-    typeFilter.addEventListener('change', filterProducts);
-    
-    clearFiltersBtn.addEventListener('click', function() {
-        searchInput.value = '';
-        typeFilter.value = '';
-        filterProducts();
-    });
-
-    // Auto-focus on search input if there are products
-    if (totalProducts > 0) {
-        searchInput.focus();
-    }
 
     // Bulk Submit Functionality
     const selectAllDesktop = document.getElementById('selectAllDesktop');

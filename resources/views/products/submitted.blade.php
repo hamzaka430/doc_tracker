@@ -37,31 +37,30 @@
             <div class="card-body">
 
                 <!-- Search and Filter -->
-                <div class="row mb-4">
+                <form action="{{ route('products.submitted') }}" method="GET" class="row mb-4">
                     <div class="col-md-5">
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <input type="text" class="form-control" id="searchInput" 
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="searchInput" 
                                    placeholder="Search by name, batch no, or stage...">
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <select class="form-select form-control" id="typeFilter">
+                        <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                             <option value="">All Types</option>
-                            <option value="Injection">Injection</option>
-                            <option value="Suspension">Suspension</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Capsule">Capsule</option>
+                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <button class="btn btn-secondary w-100" id="clearFilters">
-                            Clear Filters
-                        </button>
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1 px-1">Search</button>
+                        <a href="{{ route('products.submitted') }}" class="btn btn-secondary flex-grow-1 px-1" id="clearFilters">Clear</a>
                     </div>
-                </div>
+                </form>
 
                 <!-- Submitted Documents Table -->
                 @if($submittedProducts->count() > 0)
@@ -143,6 +142,11 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="mt-4 d-flex justify-content-center">
+                        {{ $submittedProducts->appends(request()->query())->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="text-center py-5" id="emptyState">
@@ -229,72 +233,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
-
-    // Search and Filter functionality
-    const searchInput = document.getElementById('searchInput');
-    const typeFilter = document.getElementById('typeFilter');
-    const clearFiltersBtn = document.getElementById('clearFilters');
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    const emptyState = document.getElementById('emptyState');
-    
-    // Get all product rows
-    const productRows = document.querySelectorAll('.product-row');
-    const totalProducts = productRows.length;
-
-    // Filter function
-    function filterProducts() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        const selectedType = typeFilter.value;
-        
-        let visibleCount = 0;
-
-        productRows.forEach(row => {
-            const name = row.getAttribute('data-name');
-            const batch = row.getAttribute('data-batch');
-            const stage = row.getAttribute('data-stage');
-            const type = row.getAttribute('data-type');
-            
-            const matchesSearch = !searchTerm || 
-                name.includes(searchTerm) || 
-                batch.includes(searchTerm) || 
-                stage.includes(searchTerm);
-            
-            const matchesType = !selectedType || type === selectedType;
-            
-            if (matchesSearch && matchesType) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Show/hide no results message
-        if (visibleCount === 0 && totalProducts > 0) {
-            noResultsMessage.classList.remove('d-none');
-            if (emptyState) emptyState.classList.add('d-none');
-        } else {
-            noResultsMessage.classList.add('d-none');
-            if (emptyState && totalProducts === 0) emptyState.classList.remove('d-none');
-        }
-    }
-
-    // Event listeners
-    if (searchInput && typeFilter) {
-        searchInput.addEventListener('input', filterProducts);
-        typeFilter.addEventListener('change', filterProducts);
-        
-        clearFiltersBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            typeFilter.value = '';
-            filterProducts();
-        });
-
-        // Auto-focus on search input if there are products
-        if (totalProducts > 0) {
-            searchInput.focus();
-        }
-    }
 });
 </script>
 @endpush

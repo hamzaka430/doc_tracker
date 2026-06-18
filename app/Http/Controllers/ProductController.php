@@ -12,13 +12,27 @@ class ProductController extends Controller
     /**
      * Display the product list page - ALL documents (both pending and submitted)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::where('user_id', auth()->id())
-            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+        $query = Product::where('user_id', auth()->id());
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%")
+                  ->orWhere('stage', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(25);
         
         return view('products.index', compact('products'));
     }
@@ -28,10 +42,34 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $stages = Product::getStages();
+        $defaultNames = [
+            'Caricef 100mg Suspension',
+            'Caricef DS Suspension',
+            'Caricef 400mg Capsule',
+            'Caricef 200mg Tablet',
+            '2Sum 2g Injection',
+            '2Sum 1g Injection',
+            'Oxidil 500mg IV Injection',
+            'Oxidil 500mg IM Injection',
+            'Oxidil 250mg IV Injection',
+            'Oxidil 250mg IM Injection',
+            'Oxidil 1g IV Injection',
+            'Slate 250mg Capsule',
+            'Slate 500mg Capsule'
+        ];
+
+        $dbNames = Product::distinct()->pluck('name')->toArray();
+        $names = collect(array_merge($defaultNames, $dbNames))->unique()->sort()->values();
+
+        $batchNos = Product::distinct()->pluck('batch_no')->filter()->unique()->sort()->values();
+        
+        $defaultStages = Product::getStages();
+        $dbStages = Product::distinct()->pluck('stage')->toArray();
+        $stages = collect(array_merge($defaultStages, $dbStages))->unique()->sort()->values();
+
         $types = Product::getTypes();
         
-        return view('products.create', compact('stages', 'types'));
+        return view('products.create', compact('names', 'batchNos', 'stages', 'types'));
     }
 
     public function store(Request $request)
@@ -119,7 +157,7 @@ class ProductController extends Controller
             'submission_time' => $now->format('H:i:s'),
         ]);
         
-        return redirect()->route('products.submitted')
+        return redirect()->route('products.pending')
             ->with('success', 'Product submitted successfully!');
     }
 
@@ -174,7 +212,7 @@ class ProductController extends Controller
             $type = 'error';
         }
 
-        return redirect()->route('products.submitted')
+        return redirect()->route('products.pending')
             ->with($type, $message);
     }
 
@@ -185,8 +223,7 @@ class ProductController extends Controller
     {
         $query = Product::where('user_id', auth()->id())->where('status', 'submitted');
 
-        // Search functionality
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -194,12 +231,16 @@ class ProductController extends Controller
                   ->orWhere('stage', 'like', "%{$search}%");
             });
         }
+        
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
 
         $submittedProducts = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('submission_date', 'desc')
             ->orderBy('submission_time', 'desc')
-            ->get();
+            ->paginate(25);
 
         return view('products.submitted', compact('submittedProducts'));
     }
@@ -209,11 +250,25 @@ class ProductController extends Controller
      */
     public function daily(Request $request)
     {
-        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
-            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+        $query = Product::where('user_id', auth()->id())->where('status', 'pending');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%")
+                  ->orWhere('stage', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(25);
 
         return view('products.daily', compact('products'));
     }
@@ -223,11 +278,25 @@ class ProductController extends Controller
      */
     public function pending(Request $request)
     {
-        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
-            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+        $query = Product::where('user_id', auth()->id())->where('status', 'pending');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%")
+                  ->orWhere('stage', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(25);
 
         return view('products.pending', compact('products'));
     }

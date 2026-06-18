@@ -34,49 +34,35 @@
             </div>
             <div class="card-body">
                 <!-- Search and Filter -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
+                <form action="{{ route('products.index') }}" method="GET" class="row mb-4">
+                    <div class="col-md-5">
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-search"></i>
                             </span>
-                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name, batch no, or stage..." />
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="searchInput" placeholder="Search by name, batch no, or stage..." />
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <select class="form-select form-control" id="typeFilter">
+                    <div class="col-md-4">
+                        <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                             <option value="">All Types</option>
-                            <option value="Injection">Injection</option>
-                            <option value="Suspension">Suspension</option>
-                            <option value="Tablet">Tablet</option>
-                            <option value="Capsule">Capsule</option>
+                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-secondary w-100" id="clearFilters">
-                            Clear Filters
-                        </button>
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-50">Search</button>
+                        <a href="{{ route('products.index') }}" class="btn btn-secondary w-50" id="clearFilters">Clear</a>
                     </div>
-                    <div class="col-md-3">
-                        <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="w-100">
-                            @csrf
-                            <button type="button" class="btn btn-success w-100 fw-bold" id="bulkSubmitBtn" disabled>
-                                <i class="fa fa-check-double me-1"></i> Bulk Submit (<span id="bulkCount">0</span>)
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                </form>
 
                 <!-- Table -->
                 <div class="table-responsive">
-                    <table id="productsTable" class="display table table-striped table-hover">
+                    <table class="display table table-striped table-hover">
                         <thead>
                             <tr>
-                                <th style="width: 40px">
-                                    <div class="form-check p-0 m-0">
-                                        <input type="checkbox" class="form-check-input" id="selectAllDesktop">
-                                    </div>
-                                </th>
                                 <th>Document Name</th>
                                 <th>Batch No</th>
                                 <th>Type</th>
@@ -93,13 +79,6 @@
                                     data-batch="{{ strtolower($product->batch_no) }}"
                                     data-stage="{{ strtolower($product->stage) }}"
                                     data-type="{{ $product->type }}">
-                                    <td>
-                                        @if(!$product->isSubmitted())
-                                            <div class="form-check p-0 m-0">
-                                                <input type="checkbox" class="form-check-input product-checkbox" value="{{ $product->id }}">
-                                            </div>
-                                        @endif
-                                    </td>
                                     <td>
                                         <div class="fw-semibold text-deep-navy">{{ $product->name }}</div>
                                         <small class="text-muted">{{ $product->created_at->format('M d, Y') }}</small>
@@ -155,12 +134,6 @@
                                                title="Edit">
                                                 <i class="fa fa-edit"></i>
                                             </a>
-                                            <a href="{{ route('products.create', ['name' => $product->name, 'batch_no' => $product->batch_no, 'stage' => $product->stage, 'type' => $product->type]) }}" 
-                                               class="btn btn-link btn-warning btn-lg p-1" 
-                                               data-bs-toggle="tooltip" 
-                                               title="Duplicate / Copy">
-                                                <i class="fa fa-copy"></i>
-                                            </a>
                                             @if(!$product->isSubmitted())
                                                 <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
                                                     @csrf
@@ -179,7 +152,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center py-5">
+                                    <td colspan="7" class="text-center py-5">
                                         <i class="fas fa-folder-open fa-3x text-muted mb-3 d-block"></i>
                                         <h5 class="text-muted">No Documents Found</h5>
                                         <p class="text-muted">Start by adding your first document to the tracking system.</p>
@@ -192,6 +165,11 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination -->
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>
@@ -201,123 +179,8 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
-    var table = $('#productsTable').DataTable({
-        "pageLength": 10,
-        "ordering": false, // Disable sorting arrows
-        "info": true,
-        "searching": false, // We use custom search
-        "language": {
-            "emptyTable": "No documents available"
-        }
-    });
-
-    // Custom search functionality
-    function filterTable() {
-        var searchTerm = $('#searchInput').val().toLowerCase();
-        var selectedType = $('#typeFilter').val();
-
-        table.rows().every(function() {
-            var row = this.node();
-            var $row = $(row);
-            
-            var name = $row.data('name') || '';
-            var batch = $row.data('batch') || '';
-            var stage = $row.data('stage') || '';
-            var type = $row.data('type') || '';
-            
-            var matchesSearch = !searchTerm || 
-                name.includes(searchTerm) || 
-                batch.includes(searchTerm) || 
-                stage.includes(searchTerm);
-            
-            var matchesType = !selectedType || type === selectedType;
-            
-            if (matchesSearch && matchesType) {
-                $row.show();
-            } else {
-                $row.hide();
-            }
-        });
-    }
-
-    // Event listeners
-    $('#searchInput').on('keyup', filterTable);
-    $('#typeFilter').on('change', filterTable);
-    
-    $('#clearFilters').on('click', function() {
-        $('#searchInput').val('');
-        $('#typeFilter').val('');
-        filterTable();
-        table.search('').draw();
-    });
-
     // Initialize tooltips
     $('[data-bs-toggle="tooltip"]').tooltip();
-
-    // Bulk Submit Functionality
-    const selectAllDesktop = document.getElementById('selectAllDesktop');
-    const checkboxes = document.querySelectorAll('.product-checkbox');
-    const bulkSubmitForm = document.getElementById('bulkSubmitForm');
-    const bulkCountSpan = document.getElementById('bulkCount');
-    const bulkSubmitBtn = document.getElementById('bulkSubmitBtn');
-
-    function updateBulkSubmitVisibility() {
-        const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
-        const uniqueIds = new Set();
-        checkedBoxes.forEach(cb => uniqueIds.add(cb.value));
-        const checkedCount = uniqueIds.size;
-        
-        if(bulkCountSpan) bulkCountSpan.textContent = checkedCount;
-        
-        if (checkedCount > 0) {
-            if(bulkSubmitBtn) bulkSubmitBtn.disabled = false;
-        } else {
-            if(bulkSubmitBtn) bulkSubmitBtn.disabled = true;
-            if (selectAllDesktop) selectAllDesktop.checked = false;
-        }
-    }
-
-    if (selectAllDesktop) {
-        selectAllDesktop.addEventListener('change', function() {
-            const isChecked = this.checked;
-            checkboxes.forEach(cb => {
-                const row = cb.closest('.searchable-row');
-                if (row && row.style.display !== 'none') {
-                    cb.checked = isChecked;
-                }
-            });
-            updateBulkSubmitVisibility();
-        });
-    }
-
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkSubmitVisibility);
-    });
-
-    if(bulkSubmitBtn) {
-        bulkSubmitBtn.addEventListener('click', function() {
-            const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
-            const uniqueIds = new Set();
-            checkedBoxes.forEach(cb => uniqueIds.add(cb.value));
-            
-            if (uniqueIds.size === 0) return;
-
-            if (confirm(`Are you sure you want to bulk submit ${uniqueIds.size} documents?`)) {
-                bulkSubmitForm.querySelectorAll('input[name="product_ids[]"]').forEach(input => input.remove());
-                
-                uniqueIds.forEach(id => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'product_ids[]';
-                    input.value = id;
-                    bulkSubmitForm.appendChild(input);
-                });
-                
-                bulkSubmitForm.submit();
-            }
-        });
-    }
 });
 </script>
 @endpush

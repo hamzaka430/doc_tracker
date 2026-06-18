@@ -153,30 +153,23 @@
                 <!-- Navbar Header -->
                 <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                     <div class="container-fluid">
-                        <nav class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="submit" class="btn btn-search pe-1">
-                                        <i class="fa fa-search search-icon"></i>
-                                    </button>
-                                </div>
-                                <input type="text" placeholder="Search documents..." class="form-control" id="globalSearch" />
+                        <!-- Useful Topbar Elements (Desktop) -->
+                        <div class="d-none d-lg-flex align-items-center gap-3 ms-3">
+                            @php
+                                $pendingCount = \App\Models\Product::where('user_id', auth()->id())->where('status', 'pending')->count();
+                                $submittedCount = \App\Models\Product::where('user_id', auth()->id())->where('status', 'submitted')->count();
+                            @endphp
+                            <div class="d-flex align-items-center px-3 py-1 rounded bg-warning text-white">
+                                <i class="fas fa-hourglass-half me-2"></i> 
+                                <span class="fw-bold" style="font-size: 0.85rem;">{{ $pendingCount }} Pending</span>
                             </div>
-                        </nav>
+                            <div class="d-flex align-items-center px-3 py-1 rounded bg-success text-white">
+                                <i class="fas fa-check-double me-2"></i> 
+                                <span class="fw-bold" style="font-size: 0.85rem;">{{ $submittedCount }} Submitted</span>
+                            </div>
+                        </div>
 
                         <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                            <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false" aria-haspopup="true">
-                                    <i class="fa fa-search"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-search animated fadeIn">
-                                    <form class="navbar-left navbar-form nav-search">
-                                        <div class="input-group">
-                                            <input type="text" placeholder="Search ..." class="form-control" />
-                                        </div>
-                                    </form>
-                                </ul>
-                            </li>
                             
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">

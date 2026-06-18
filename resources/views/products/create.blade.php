@@ -61,7 +61,6 @@
                                                name="stage[]" 
                                                placeholder="Enter stage or select" 
                                                value="{{ request('stage') }}"
-                                               list="stage_options"
                                                required>
                                     </div>
                                 </div>
@@ -92,15 +91,14 @@
                         </div>
                     @endif
 
-                    <datalist id="stage_options">
-                        @foreach($stages as $stage)
-                            <option value="{{ $stage }}">{{ $stage }}</option>
-                        @endforeach
-                    </datalist>
+
 
                     <div class="mb-4 mt-2">
                         <button type="button" id="add-document-btn" class="btn btn-primary btn-border btn-round btn-sm">
                             <i class="fa fa-plus me-2"></i>Add Another Document
+                        </button>
+                        <button type="button" id="duplicate-document-btn" class="btn btn-dark btn-round btn-sm ms-2">
+                            <i class="fa fa-copy me-2"></i>Duplicate Last Document
                         </button>
                     </div>
 
@@ -134,7 +132,171 @@
 
 @push('scripts')
 <script>
+const autocompleteData = {
+    name: @json($names),
+    batch_no: @json($batchNos),
+    stage: @json($stages)
+};
+
+function initAutocomplete(inputElement, dataList) {
+    inputElement.setAttribute('autocomplete', 'off');
+    
+    let wrapper = inputElement.parentNode;
+    if (!wrapper.classList.contains('dropdown')) {
+        wrapper.classList.add('dropdown');
+    }
+    
+    let dropdownMenu = wrapper.querySelector('.autocomplete-menu');
+    if (!dropdownMenu) {
+        dropdownMenu = document.createElement('ul');
+        dropdownMenu.className = 'dropdown-menu w-100 shadow-sm autocomplete-menu';
+        dropdownMenu.style.maxHeight = '200px';
+        dropdownMenu.style.overflowY = 'auto';
+        wrapper.appendChild(dropdownMenu);
+    }
+
+    if (inputElement.dataset.autocompleteInit) return;
+    inputElement.dataset.autocompleteInit = '1';
+    
+    // Determine the type of autocomplete data this is (name, batch_no, stage)
+    // We can infer this from the input's name attribute
+    let storageKeySuffix = inputElement.name.replace('[]', '');
+
+    inputElement.addEventListener('input', function() {
+        const val = this.value.trim();
+        const lowerVal = val.toLowerCase();
+        dropdownMenu.innerHTML = '';
+        
+        if (!val) {
+            dropdownMenu.classList.remove('show');
+            return;
+        }
+        
+        // Load hidden suggestions
+        let hiddenSuggestions = [];
+        try {
+            hiddenSuggestions = JSON.parse(localStorage.getItem('doc_tracker_hidden_suggestions') || '[]');
+        } catch(e) {}
+        
+        // Load custom added suggestions
+        let customSuggestions = [];
+        try {
+            customSuggestions = JSON.parse(localStorage.getItem('doc_tracker_added_' + storageKeySuffix) || '[]');
+        } catch(e) {}
+        
+        // Combine all available data and remove duplicates
+        let combinedData = [...new Set([...dataList, ...customSuggestions])];
+        
+        let matches = combinedData.filter(item => 
+            item.toLowerCase().includes(lowerVal) && !hiddenSuggestions.includes(item)
+        );
+        
+        let exactMatchExists = combinedData.some(item => item.toLowerCase() === lowerVal && !hiddenSuggestions.includes(item));
+        
+        if (matches.length > 0 || !exactMatchExists) {
+            matches.forEach(match => {
+                let li = document.createElement('li');
+                li.className = 'd-flex align-items-center justify-content-between pe-2';
+                
+                let a = document.createElement('a');
+                a.className = 'dropdown-item py-2 flex-grow-1';
+                a.href = '#';
+                
+                const matchIndex = match.toLowerCase().indexOf(lowerVal);
+                if (matchIndex >= 0) {
+                    const before = match.substring(0, matchIndex);
+                    const matchedText = match.substring(matchIndex, matchIndex + lowerVal.length);
+                    const after = match.substring(matchIndex + lowerVal.length);
+                    a.innerHTML = `${before}<strong class="text-primary">${matchedText}</strong>${after}`;
+                } else {
+                    a.textContent = match;
+                }
+                
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    inputElement.value = match;
+                    dropdownMenu.classList.remove('show');
+                    inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+                
+                // Remove button
+                let removeBtn = document.createElement('button');
+                removeBtn.className = 'btn btn-link text-danger p-0 ms-2';
+                removeBtn.innerHTML = '<i class="fa fa-times" title="Remove this suggestion"></i>';
+                removeBtn.style.fontSize = '0.8rem';
+                removeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    hiddenSuggestions.push(match);
+                    localStorage.setItem('doc_tracker_hidden_suggestions', JSON.stringify(hiddenSuggestions));
+                    li.remove();
+                    if (dropdownMenu.children.length === 0) {
+                        dropdownMenu.classList.remove('show');
+                    }
+                });
+                
+                li.appendChild(a);
+                li.appendChild(removeBtn);
+                dropdownMenu.appendChild(li);
+            });
+            
+            // If what they typed doesn't exactly match any existing suggestion, show "Add new" option
+            if (!exactMatchExists && val.length > 0) {
+                if (matches.length > 0) {
+                    let divider = document.createElement('li');
+                    divider.innerHTML = '<hr class="dropdown-divider m-0">';
+                    dropdownMenu.appendChild(divider);
+                }
+                
+                let liAdd = document.createElement('li');
+                let aAdd = document.createElement('a');
+                aAdd.className = 'dropdown-item py-2 text-success fw-bold';
+                aAdd.href = '#';
+                aAdd.innerHTML = `<i class="fa fa-plus-circle me-1"></i> Add "${val}" to suggestions`;
+                
+                aAdd.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    customSuggestions.push(val);
+                    localStorage.setItem('doc_tracker_added_' + storageKeySuffix, JSON.stringify(customSuggestions));
+                    
+                    // Remove from hidden if it was previously hidden
+                    const hiddenIndex = hiddenSuggestions.indexOf(val);
+                    if (hiddenIndex > -1) {
+                        hiddenSuggestions.splice(hiddenIndex, 1);
+                        localStorage.setItem('doc_tracker_hidden_suggestions', JSON.stringify(hiddenSuggestions));
+                    }
+                    
+                    inputElement.value = val;
+                    dropdownMenu.classList.remove('show');
+                    inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+                
+                liAdd.appendChild(aAdd);
+                dropdownMenu.appendChild(liAdd);
+            }
+            
+            dropdownMenu.classList.add('show');
+        } else {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!wrapper.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+}
+
+function bindAllAutocompletes() {
+    document.querySelectorAll('input[name="name[]"]').forEach(el => initAutocomplete(el, autocompleteData.name));
+    document.querySelectorAll('input[name="batch_no[]"]').forEach(el => initAutocomplete(el, autocompleteData.batch_no));
+    document.querySelectorAll('input[name="stage[]"]').forEach(el => initAutocomplete(el, autocompleteData.stage));
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    bindAllAutocompletes();
+
     const container = document.getElementById('documents-container');
     const addBtn = document.getElementById('add-document-btn');
     const form = container.closest('form');
@@ -238,9 +400,71 @@ document.addEventListener('DOMContentLoaded', function() {
             newRow.appendChild(removeBtn);
         }
         
+        // Clean up cloned row for autocomplete
+        newRow.querySelectorAll('.autocomplete-menu').forEach(menu => menu.remove());
+        newRow.querySelectorAll('input').forEach(input => {
+            delete input.dataset.autocompleteInit;
+        });
+        
         container.appendChild(newRow);
+        bindAllAutocompletes();
         saveDraft(); // Update draft when a row is added
     });
+
+    const duplicateBtn = document.getElementById('duplicate-document-btn');
+    if (duplicateBtn) {
+        duplicateBtn.addEventListener('click', function() {
+            const rows = container.querySelectorAll('.document-row');
+            if (rows.length === 0) return;
+            const lastRow = rows[rows.length - 1];
+            const newRow = lastRow.cloneNode(true);
+            
+            // Copy values from the last row
+            const oldInputs = lastRow.querySelectorAll('input, select');
+            const newInputs = newRow.querySelectorAll('input, select');
+            
+            for (let i = 0; i < oldInputs.length; i++) {
+                if (oldInputs[i].name === 'batch_no[]') {
+                    newInputs[i].value = ''; // clear batch number
+                } else {
+                    newInputs[i].value = oldInputs[i].value;
+                }
+            }
+            
+            // Add a delete button to the new row
+            if (!newRow.querySelector('.remove-row-btn')) {
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn btn-icon btn-danger btn-sm remove-row-btn position-absolute';
+                removeBtn.style.top = '-15px';
+                removeBtn.style.right = '-10px';
+                removeBtn.style.zIndex = '10';
+                removeBtn.innerHTML = '<i class="fa fa-times"></i>';
+                removeBtn.onclick = function() {
+                    newRow.remove();
+                    saveDraft();
+                };
+                newRow.appendChild(removeBtn);
+            } else {
+                // Re-bind the click event on the cloned remove button
+                const removeBtn = newRow.querySelector('.remove-row-btn');
+                removeBtn.onclick = function() {
+                    newRow.remove();
+                    saveDraft();
+                };
+            }
+            
+            // Clean up cloned row for autocomplete
+            newRow.querySelectorAll('.autocomplete-menu').forEach(menu => menu.remove());
+            newRow.querySelectorAll('input').forEach(input => {
+                delete input.dataset.autocompleteInit;
+            });
+            
+            container.appendChild(newRow);
+            bindAllAutocompletes();
+            saveDraft();
+        });
+    }
 });
 </script>
 @endpush

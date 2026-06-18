@@ -46,14 +46,16 @@ class Product extends Model
     public static function getStages()
     {
         return [
-            'On Process',
+            'In Process',
             'QA Sign',
-            'Production',
+            'Prd Sign',
             'Return',
             'Transfer Note',
             'Hold',
-            'Specific Person',
-            'Completed'
+            'Completed',
+            'Corrections',
+            'Hamza - On Review',
+            'Rahat - On Review'
         ];
     }
 
