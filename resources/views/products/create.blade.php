@@ -138,6 +138,19 @@ const autocompleteData = {
     stage: @json($stages)
 };
 
+const userPreferences = @json($userPrefs);
+
+function savePreference(key, value) {
+    fetch('{{ route('preferences.update') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({ key: key, value: value })
+    });
+}
+
 function initAutocomplete(inputElement, dataList) {
     inputElement.setAttribute('autocomplete', 'off');
     
@@ -173,16 +186,10 @@ function initAutocomplete(inputElement, dataList) {
         }
         
         // Load hidden suggestions
-        let hiddenSuggestions = [];
-        try {
-            hiddenSuggestions = JSON.parse(localStorage.getItem('doc_tracker_hidden_suggestions') || '[]');
-        } catch(e) {}
+        let hiddenSuggestions = userPreferences['hidden_suggestions'] || [];
         
         // Load custom added suggestions
-        let customSuggestions = [];
-        try {
-            customSuggestions = JSON.parse(localStorage.getItem('doc_tracker_added_' + storageKeySuffix) || '[]');
-        } catch(e) {}
+        let customSuggestions = userPreferences['added_' + storageKeySuffix] || [];
         
         // Combine all available data and remove duplicates
         let combinedData = [...new Set([...dataList, ...customSuggestions])];
@@ -227,8 +234,11 @@ function initAutocomplete(inputElement, dataList) {
                 removeBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    hiddenSuggestions.push(match);
-                    localStorage.setItem('doc_tracker_hidden_suggestions', JSON.stringify(hiddenSuggestions));
+                    if (!hiddenSuggestions.includes(match)) {
+                        hiddenSuggestions.push(match);
+                        userPreferences['hidden_suggestions'] = hiddenSuggestions;
+                        savePreference('hidden_suggestions', hiddenSuggestions);
+                    }
                     li.remove();
                     if (dropdownMenu.children.length === 0) {
                         dropdownMenu.classList.remove('show');
@@ -256,14 +266,18 @@ function initAutocomplete(inputElement, dataList) {
                 
                 aAdd.addEventListener('click', function(e) {
                     e.preventDefault();
-                    customSuggestions.push(val);
-                    localStorage.setItem('doc_tracker_added_' + storageKeySuffix, JSON.stringify(customSuggestions));
+                    if (!customSuggestions.includes(val)) {
+                        customSuggestions.push(val);
+                        userPreferences['added_' + storageKeySuffix] = customSuggestions;
+                        savePreference('added_' + storageKeySuffix, customSuggestions);
+                    }
                     
                     // Remove from hidden if it was previously hidden
                     const hiddenIndex = hiddenSuggestions.indexOf(val);
                     if (hiddenIndex > -1) {
                         hiddenSuggestions.splice(hiddenIndex, 1);
-                        localStorage.setItem('doc_tracker_hidden_suggestions', JSON.stringify(hiddenSuggestions));
+                        userPreferences['hidden_suggestions'] = hiddenSuggestions;
+                        savePreference('hidden_suggestions', hiddenSuggestions);
                     }
                     
                     inputElement.value = val;

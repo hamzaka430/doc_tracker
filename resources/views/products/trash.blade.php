@@ -1,10 +1,10 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Pending Documents')
+@section('title', 'Recycle Bin')
 
 @section('content')
 <div class="page-header">
-    <h3 class="fw-bold mb-3">Pending Documents</h3>
+    <h3 class="fw-bold mb-3">Recycle Bin</h3>
     <ul class="breadcrumbs mb-3">
         <li class="nav-home">
             <a href="{{ route('products.index') }}">
@@ -15,7 +15,7 @@
             <i class="icon-arrow-right"></i>
         </li>
         <li class="nav-item">
-            <a href="#">Pending</a>
+            <a href="#">Trash</a>
         </li>
     </ul>
 </div>
@@ -25,49 +25,34 @@
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <h4 class="card-title">Pending Documents</h4>
-                    <a href="{{ route('products.create') }}" class="btn btn-primary btn-round ms-auto">
-                        <i class="fa fa-plus me-1"></i>
-                        Add Document
-                    </a>
+                    <h4 class="card-title">Deleted Documents</h4>
                 </div>
             </div>
             <div class="card-body">
 
                 <!-- Search and Filter -->
-                <!-- Search and Filter -->
-                <form action="{{ route('products.pending') }}" method="GET" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fa fa-search"></i></span>
-                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
-                            </div>
+                <form action="{{ route('products.trash') }}" method="GET" class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fa fa-search"></i>
+                            </span>
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="searchInput" 
+                                   placeholder="Search by name, batch no, or stage...">
                         </div>
-                        <div class="col-md-2">
-                            <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
-                                <option value="">All Types</option>
-                                <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
-                                <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
-                                <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
-                                <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
-                        </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
-                            <button type="button" class="btn btn-success flex-grow-1 fw-bold" id="bulkSubmitBtn" disabled>
-                                <i class="fa fa-check-double"></i> Submit (<span id="bulkCount">0</span>)
-                            </button>
-                            <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
-                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
+                            <option value="">All Types</option>
+                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1 px-1">Search</button>
+                        <a href="{{ route('products.trash') }}" class="btn btn-secondary flex-grow-1 px-1" id="clearFilters">Clear</a>
                     </div>
                 </form>
 
@@ -145,27 +130,13 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <a href="{{ route('products.show', $product) }}" 
-                                           class="btn btn-link btn-primary btn-lg p-1" 
-                                           data-bs-toggle="tooltip" 
-                                           title="View Details">
-                                            <i class="fa fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('products.edit', $product) }}" 
-                                           class="btn btn-link btn-info btn-lg p-1" 
-                                           data-bs-toggle="tooltip" 
-                                           title="Edit">
-                                            <i class="fa fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
+                                        <form action="{{ route('products.restore', $product) }}" method="POST" class="d-inline m-0">
                                             @csrf
-                                            @method('DELETE')
                                             <button type="submit" 
-                                                    class="btn btn-link btn-danger p-1" 
+                                                    class="btn btn-success btn-sm" 
                                                     data-bs-toggle="tooltip" 
-                                                    title="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this document?')">
-                                                <i class="fa fa-times"></i>
+                                                    title="Restore Document">
+                                                <i class="fa fa-undo me-1"></i> Restore
                                             </button>
                                         </form>
                                     </div>
@@ -262,21 +233,10 @@
 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2 border-top pt-3">
-                                <a href="{{ route('products.show', $product) }}" 
-                                   class="btn btn-sm btn-outline-primary flex-fill">
-                                    <i class="fa fa-eye me-1"></i>View
-                                </a>
-                                <a href="{{ route('products.edit', $product) }}" 
-                                   class="btn btn-sm btn-outline-info">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                <form action="{{ route('products.restore', $product) }}" method="POST" class="w-100">
                                     @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="btn btn-sm btn-outline-danger" 
-                                            onclick="return confirm('Delete this document?')">
-                                        <i class="fa fa-trash"></i>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fa fa-undo me-2"></i>Restore Document
                                     </button>
                                 </form>
                             </div>
@@ -291,12 +251,9 @@
             </div>
         @else
             <div class="text-center py-5" id="emptyState">
-                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                <h5 class="text-muted mb-2">No Pending Documents</h5>
-                <p class="text-muted mb-3">All documents have been submitted!</p>
-                <a href="{{ route('products.create') }}" class="btn btn-dark">
-                    <i class="fas fa-plus me-2"></i>Add New Document
-                </a>
+                <i class="fas fa-trash-restore fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted mb-2">Recycle Bin is Empty</h5>
+                <p class="text-muted mb-3">No deleted documents found.</p>
             </div>
         @endif
         
@@ -343,33 +300,11 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
-    // Bulk Submit Functionality
     const selectAllDesktop = document.getElementById('selectAllDesktop');
     const checkboxes = document.querySelectorAll('.product-checkbox');
-    const bulkSubmitForm = document.getElementById('bulkSubmitForm');
-    const bulkCountSpan = document.getElementById('bulkCount');
-    const bulkSubmitBtn = document.getElementById('bulkSubmitBtn');
-
-    function updateBulkSubmitVisibility() {
-        const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
-        const uniqueIds = new Set();
-        checkedBoxes.forEach(cb => uniqueIds.add(cb.value));
-        const checkedCount = uniqueIds.size;
-        
-        bulkCountSpan.textContent = checkedCount;
-        
-        if (checkedCount > 0) {
-            if (bulkSubmitBtn) bulkSubmitBtn.disabled = false;
-        } else {
-            if (bulkSubmitBtn) bulkSubmitBtn.disabled = true;
-            if (selectAllDesktop) selectAllDesktop.checked = false;
-        }
-    }
 
     if (selectAllDesktop) {
         selectAllDesktop.addEventListener('change', function() {
-            // Only check visible rows
             const isChecked = this.checked;
             checkboxes.forEach(cb => {
                 const row = cb.closest('.product-row') || cb.closest('.product-card');
@@ -377,41 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     cb.checked = isChecked;
                 }
             });
-            updateBulkSubmitVisibility();
         });
     }
-
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkSubmitVisibility);
-    });
-
-    bulkSubmitBtn.addEventListener('click', function() {
-        const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
-        const uniqueIds = new Set();
-        checkedBoxes.forEach(cb => uniqueIds.add(cb.value));
-        
-        if (uniqueIds.size === 0) return;
-
-        if (confirm(`Are you sure you want to bulk submit ${uniqueIds.size} documents?`)) {
-            // Remove old hidden inputs
-            bulkSubmitForm.querySelectorAll('input[name="product_ids[]"]').forEach(input => input.remove());
-            
-            // Add new hidden inputs
-            uniqueIds.forEach(id => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'product_ids[]';
-                input.value = id;
-                bulkSubmitForm.appendChild(input);
-            });
-            
-            // Disable button to prevent double clicks
-            bulkSubmitBtn.disabled = true;
-            bulkSubmitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Submitting...';
-            
-            bulkSubmitForm.submit();
-        }
-    });
 });
 </script>
 @endpush

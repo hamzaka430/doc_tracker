@@ -59,27 +59,33 @@
             </div>
             <div class="card-body p-3">
                 <!-- Search and Filter -->
-                <form action="{{ route('products.daily') }}" method="GET" class="row mb-4">
-                    <div class="col-md-5">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fa fa-search"></i>
-                            </span>
-                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search by name, batch no, or stage...">
+                <form action="{{ route('products.daily') }}" method="GET" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select form-control" name="type" onchange="this.form.submit()">
-                            <option value="">All Types</option>
-                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
-                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
-                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
-                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-grow-1 px-1">Search</button>
-                        <a href="{{ route('products.daily') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        <div class="col-md-2">
+                            <select class="form-select form-control" name="type" onchange="this.form.submit()">
+                                <option value="">All Types</option>
+                                <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                                <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                                <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                                <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
+                            <a href="{{ route('products.daily') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        </div>
                     </div>
                 </form>
 

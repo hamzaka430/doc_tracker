@@ -22,10 +22,23 @@
 
 <div class="row">
     <div class="col-md-12">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card bg-dark text-white shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-white mb-3"><i class="fas fa-chart-line me-2"></i>Submission Analytics (Last 7 Days)</h5>
+                        <div style="height: 250px;">
+                            <canvas id="submissionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <div class="d-flex align-items-center">
-                    <h4 class="card-title">Document List</h4>
+                    <h4 class="card-title">All Documents</h4>
                     <a href="{{ route('products.create') }}" class="btn btn-primary btn-round ms-auto">
                         <i class="fa fa-plus me-1"></i>
                         Add Document
@@ -34,27 +47,33 @@
             </div>
             <div class="card-body">
                 <!-- Search and Filter -->
-                <form action="{{ route('products.index') }}" method="GET" class="row mb-4">
-                    <div class="col-md-5">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fa fa-search"></i>
-                            </span>
-                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" id="searchInput" placeholder="Search by name, batch no, or stage..." />
+                <form action="{{ route('products.index') }}" method="GET" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
-                            <option value="">All Types</option>
-                            <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
-                            <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
-                            <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
-                            <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-50">Search</button>
-                        <a href="{{ route('products.index') }}" class="btn btn-secondary w-50" id="clearFilters">Clear</a>
+                        <div class="col-md-2">
+                            <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
+                                <option value="">All Types</option>
+                                <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
+                                <option value="Suspension" {{ request('type') == 'Suspension' ? 'selected' : '' }}>Suspension</option>
+                                <option value="Tablet" {{ request('type') == 'Tablet' ? 'selected' : '' }}>Tablet</option>
+                                <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
+                            <a href="{{ route('products.index') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        </div>
                     </div>
                 </form>
 
@@ -177,10 +196,64 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 $(document).ready(function() {
     // Initialize tooltips
     $('[data-bs-toggle="tooltip"]').tooltip();
+
+    // Initialize Chart
+    const chartData = @json(json_decode($chartDataJson));
+    const ctx = document.getElementById('submissionChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Documents Submitted',
+                data: chartData.data,
+                borderColor: '#00f2fe',
+                backgroundColor: 'rgba(0, 242, 254, 0.1)',
+                borderWidth: 2,
+                pointBackgroundColor: '#4facfe',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#4facfe',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
 });
 </script>
 @endpush

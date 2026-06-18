@@ -29,12 +29,40 @@ class ProductController extends Controller
             $query->where('type', $request->type);
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
         $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
             ->paginate(25);
+            
+        // Analytics Data for Chart (Last 7 days submissions)
+        $chartData = Product::where('user_id', auth()->id())
+            ->where('status', 'submitted')
+            ->where('submission_date', '>=', now()->subDays(6)->toDateString())
+            ->selectRaw('submission_date as date, count(*) as count')
+            ->groupBy('submission_date')
+            ->orderBy('submission_date')
+            ->get()
+            ->keyBy('date');
+
+        $labels = [];
+        $data = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->toDateString();
+            $labels[] = now()->subDays($i)->format('M d');
+            $data[] = isset($chartData[$date]) ? $chartData[$date]->count : 0;
+        }
         
-        return view('products.index', compact('products'));
+        $chartDataJson = json_encode(['labels' => $labels, 'data' => $data]);
+        
+        return view('products.index', compact('products', 'chartDataJson'));
     }
 
     /**
@@ -69,7 +97,14 @@ class ProductController extends Controller
 
         $types = Product::getTypes();
         
-        return view('products.create', compact('names', 'batchNos', 'stages', 'types'));
+        $userPrefs = \App\Models\UserPreference::where('user_id', auth()->id())
+            ->get()
+            ->keyBy('key')
+            ->map(function($item) {
+                return $item->value;
+            });
+        
+        return view('products.create', compact('names', 'batchNos', 'stages', 'types', 'userPrefs'));
     }
 
     public function store(Request $request)
@@ -236,6 +271,14 @@ class ProductController extends Controller
             $query->where('type', $request->type);
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('submission_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('submission_date', '<=', $request->date_to);
+        }
+
         $submittedProducts = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('submission_date', 'desc')
@@ -265,6 +308,14 @@ class ProductController extends Controller
             $query->where('type', $request->type);
         }
 
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
         $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('created_at', 'desc')
@@ -291,6 +342,14 @@ class ProductController extends Controller
         
         if ($request->filled('type')) {
             $query->where('type', $request->type);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
         }
 
         $products = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
@@ -458,5 +517,43 @@ class ProductController extends Controller
 
         return redirect()->route('products.submitted')
             ->with('success', 'Submission date updated successfully!');
+    }
+
+    public function trash(Request $request)
+    {
+        $query = Product::onlyTrashed()->where('user_id', auth()->id());
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('batch_no', 'like', "%{$search}%")
+                  ->orWhere('stage', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('deleted_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('deleted_at', '<=', $request->date_to);
+        }
+
+        $products = $query->orderBy('deleted_at', 'desc')->paginate(25);
+        
+        return view('products.trash', compact('products'));
+    }
+
+    public function restore($id)
+    {
+        $product = Product::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $product->restore();
+
+        return back()->with('success', 'Document restored successfully from Recycle Bin.');
     }
 }

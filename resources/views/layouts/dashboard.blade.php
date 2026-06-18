@@ -119,6 +119,12 @@
                                 <p>Export to CSV</p>
                             </a>
                         </li>
+                        <li class="nav-item {{ request()->routeIs('products.trash') ? 'active' : '' }}">
+                            <a href="{{ route('products.trash') }}">
+                                <i class="fa fa-trash-restore"></i>
+                                <p>Recycle Bin</p>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

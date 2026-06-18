@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/products/daily', [ProductController::class, 'daily'])->name('products.daily');
     Route::get('/products/export', [ProductController::class, 'exportCsv'])->name('products.export');
     Route::get('/products/daily/pdf', [ProductController::class, 'exportDailyPdf'])->name('products.daily.pdf');
+    Route::get('/products/trash', [ProductController::class, 'trash'])->name('products.trash');
+    Route::post('/products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore')->withTrashed();
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::match(['PUT', 'PATCH'], '/products/{product}/basic', [ProductController::class, 'updateBasic'])->name('products.updateBasic');
@@ -39,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/products/{product}/submit', [ProductController::class, 'submit'])->name('products.submit');
     Route::match(['PUT', 'PATCH'], '/products/{product}/submission-date', [ProductController::class, 'updateSubmissionDate'])->name('products.updateSubmissionDate');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // Preferences routes
+    Route::post('/preferences', [\App\Http\Controllers\UserPreferenceController::class, 'update'])->name('preferences.update');
 
     // SAP Error routes
     Route::resource('sap-errors', SapErrorController::class);
