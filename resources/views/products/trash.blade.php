@@ -251,7 +251,7 @@
             </div>
         @else
             <div class="text-center py-5" id="emptyState">
-                <i class="fas fa-trash-restore fa-3x text-muted mb-3"></i>
+                <i class="fas fa-trash fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted mb-2">Recycle Bin is Empty</h5>
                 <p class="text-muted mb-3">No deleted documents found.</p>
             </div>
