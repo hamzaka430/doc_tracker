@@ -5,6 +5,10 @@ A professional Laravel 11 application for tracking products through various stag
 ## ✨ Features
 
 - **Product Management**: Add, edit, and delete products with custom or predefined stages
+- **Recycle Bin (Soft Deletes)**: Safely delete and restore documents without permanent data loss
+- **Dashboard Analytics**: Visual line charts tracking 7-day document submission progress
+- **Database-Backed Suggestions**: Auto-complete preferences and hidden items are synced securely across devices
+- **Advanced Filters**: Date range and type-based filtering across all document views
 - **Stage Tracking**: Track products through multiple stages like "On Process", "QA Sign", "Production", etc.
 - **Submission System**: Complete pre-line clearance, in-process, and post-line clearance tasks
 - **SAP Error Tracking**: Record SAP errors with T-Codes, rich descriptions, and high-quality screenshots
@@ -147,6 +151,17 @@ http://localhost:8000
 | `remarks` | TEXT | Additional notes |
 | `submission_date` | DATE | Date of submission |
 | `submission_time` | TIME | Time of submission |
+| `created_at` | TIMESTAMP | Record creation time |
+| `updated_at` | TIMESTAMP | Record update time |
+| `deleted_at` | TIMESTAMP | Soft delete timestamp |
+
+### User Preferences Table
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | BIGINT | Primary key (auto-increment) |
+| `user_id` | BIGINT | Foreign key linking to Users |
+| `key` | VARCHAR(255) | Preference key |
+| `value` | JSON | JSON payload of preferences |
 | `created_at` | TIMESTAMP | Record creation time |
 | `updated_at` | TIMESTAMP | Record update time |
 
