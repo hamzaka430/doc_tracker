@@ -44,6 +44,36 @@ A professional Laravel 11 application for tracking products through various stag
 - MySQL >= 5.7 or MariaDB >= 10.3
 - Git
 
+## 🚨 Important Architectural & Security Requirements
+
+Before developing or deploying DocTracker, please review these critical guidelines extracted from the system documentation:
+
+### 1. Dual-Framework Frontend Rule
+DocTracker uses **two CSS frameworks simultaneously** that must never mix:
+* **Dashboard Pages:** Use **Kaiadmin + Bootstrap 5** (loaded from `public/Dashboard/assets/`). Do NOT use Tailwind classes here.
+* **Auth Pages:** Use **TailwindCSS** (compiled via Vite to `public/build/`). Do NOT use Bootstrap/Kaiadmin classes here.
+
+### 2. Required Third-Party Services
+* **AWS S3:** Required for Profile Avatars and SAP Error screenshots. The app will fail if AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`) are not configured.
+* **Mail Service:** Required for Password Reset functionality. Configure Mailgun or SMTP in `.env`.
+
+### 3. Production Security Checklist
+Before pushing to production, ensure the following environment variables are set:
+* `APP_DEBUG=false`
+* `APP_ENV=production`
+* `SESSION_SECURE_COOKIE=true`
+* `SESSION_ENCRYPT=true`
+
+*Note: Public registration is intended for internal use only and should be disabled or restricted in production.*
+
+### 4. System Documentation Reference
+For full details on the system, please refer to the comprehensive documentation included in this repository:
+* [`DocTracker_PRD.md`](DocTracker_PRD.md) - Product Requirements
+* [`DocTracker_TechArchitecture.md`](DocTracker_TechArchitecture.md) - Technical Architecture
+* [`DocTracker_FrontendSpec.md`](DocTracker_FrontendSpec.md) - Frontend & UI Specification
+* [`DocTracker_SecurityDocument.md`](DocTracker_SecurityDocument.md) - Security & Access
+* [`DocTracker_FeatureTickets.md`](DocTracker_FeatureTickets.md) - Feature Roadmap & Tickets
+
 ## 🚀 Installation
 
 1. **Clone the repository:**
