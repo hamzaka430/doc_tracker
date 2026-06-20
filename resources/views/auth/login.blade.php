@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="Sign in to Doc Tracker, your secure Document Tracking System for project management.">
     <title>Sign in - Doc Tracker</title>
     <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.svg') }}" type="image/svg+xml" />
     
@@ -93,7 +94,7 @@
                 </div>
 
                 <div class="aspect-[71/50] w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
-                    <img src="https://readymadeui.com/images/integration-illus.webp" class="w-full object-cover" alt="login img" />
+                    <img src="https://readymadeui.com/images/integration-illus.webp" class="w-full object-cover" alt="login img" width="710" height="500" />
                 </div>
             </div>
         </div>

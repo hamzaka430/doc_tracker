@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Doc Tracker is a comprehensive Document Tracking System designed for secure product management and stage tracking.">
     
     <title>@yield('title', 'Doc Tracker - Document Tracking System')</title>
     
@@ -181,11 +182,11 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                                     <div class="avatar-sm">
                                         @if(Auth::user()->avatar)
-                                            <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded-circle border border-2 border-white">
+                                            <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded-circle border border-2 border-white" width="40" height="40">
                                         @elseif(Auth::user()->email === 'admin@hamzaka.me')
-                                            <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle">
+                                            <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle" width="40" height="40">
                                         @else
-                                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded-circle">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded-circle" width="40" height="40">
                                         @endif
                                     </div>
                                     <span class="profile-username">
@@ -199,11 +200,11 @@
                                             <div class="user-box">
                                                 <div class="avatar-lg">
                                                     @if(Auth::user()->avatar)
-                                                        <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
                                                     @elseif(Auth::user()->email === 'admin@hamzaka.me')
-                                                        <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
                                                     @else
-                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
                                                     @endif
                                                 </div>
                                                 <div class="u-text">
