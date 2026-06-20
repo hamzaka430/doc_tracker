@@ -106,10 +106,10 @@
                 <h4 class="card-title">Update Details</h4>
             </div>
             <div class="card-body">
-                @if($product->isSubmitted())
+                @if(!$product->isEditable())
                     <div class="alert alert-success">
                         <i class="fa fa-check-circle me-2"></i>
-                        This product has been submitted and cannot be modified.
+                        This product's edit window has expired and it can no longer be modified.
                     </div>
                 @else
                     <form action="{{ route('products.update', $product) }}" method="POST">
@@ -200,7 +200,7 @@
                                 <i class="fa fa-check me-2"></i>Save Updates
                             </button>
                             
-                            @if($product->isReadyForSubmission())
+                            @if($product->isReadyForSubmission() && !$product->isSubmitted())
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitModal">
                                     <i class="fa fa-paper-plane me-2"></i>Submit Product
                                 </button>
@@ -210,7 +210,7 @@
                                 <i class="fa fa-edit me-2"></i>Edit Product
                             </a>
                             
-                            @if(!$product->isSubmitted())
+                            @if($product->isEditable())
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa fa-trash me-2"></i>Delete
                                 </button>
@@ -271,7 +271,7 @@
 @endif
 
 <!-- Delete Confirmation Modal -->
-@if(!$product->isSubmitted())
+@if($product->isEditable())
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">

@@ -83,4 +83,26 @@ class Product extends Model
     {
         return $this->status === 'submitted';
     }
+
+    public function isEditable()
+    {
+        if ($this->status !== 'submitted') {
+            return true;
+        }
+
+        if (!$this->submission_date) {
+            return true;
+        }
+
+        $dateStr = is_string($this->submission_date) ? $this->submission_date : $this->submission_date->format('Y-m-d');
+        $timeStr = $this->submission_time ?? '00:00:00';
+        $timeStr = is_string($timeStr) ? $timeStr : $timeStr->format('H:i:s');
+
+        try {
+            $submissionDateTime = \Carbon\Carbon::parse($dateStr . ' ' . $timeStr);
+            return now()->lessThanOrEqualTo($submissionDateTime->addHours(6));
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }

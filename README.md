@@ -5,6 +5,9 @@ A professional Laravel 11 application for tracking products through various stag
 ## ✨ Features
 
 - **Product Management**: Add, edit, and delete products with custom or predefined stages
+- **Smart Auto-Fill**: Auto-fill batch codes based on selected product names using predefined database mapping
+- **Bulk Submit System**: Process and submit multiple pending documents simultaneously with a single click
+- **PDF Generation**: Generate downloadable PDF lists of daily documents with multiple layout options (Single Page, Two Column)
 - **Recycle Bin (Soft Deletes)**: Safely delete and restore documents without permanent data loss
 - **Dashboard Analytics**: Visual line charts tracking 7-day document submission progress
 - **Database-Backed Suggestions**: Auto-complete preferences and hidden items are synced securely across devices
@@ -13,7 +16,8 @@ A professional Laravel 11 application for tracking products through various stag
 - **Submission System**: Complete pre-line clearance, in-process, and post-line clearance tasks
 - **SAP Error Tracking**: Record SAP errors with T-Codes, rich descriptions, and high-quality screenshots
 - **AWS S3 Integration**: Secure, robust cloud storage for user profile pictures and error screenshots
-- **Document Management**: View submitted products with detailed timestamps
+- **Custom Authentication UI**: Modern split-screen login and registration pages tailored to application design
+- **Document Management**: View submitted products with detailed timestamps and sorting based on latest submission
 - **Mobile-First Design**: Responsive sidebar navigation with luxury UI components
 - **Export Functionality**: Export submitted products to CSV format
 - **Search & Filter**: Advanced search for products by name, batch, or stage

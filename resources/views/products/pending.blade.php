@@ -64,11 +64,12 @@
                             <button type="button" class="btn btn-success flex-grow-1 fw-bold" id="bulkSubmitBtn" disabled>
                                 <i class="fa fa-check-double"></i> Submit (<span id="bulkCount">0</span>)
                             </button>
-                            <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
                         </div>
                     </div>
+                </form>
+
+                <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="d-none">
+                    @csrf
                 </form>
 
                 <!-- Documents Table -->
@@ -369,20 +370,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (selectAllDesktop) {
         selectAllDesktop.addEventListener('change', function() {
-            // Only check visible rows
             const isChecked = this.checked;
             checkboxes.forEach(cb => {
-                const row = cb.closest('.product-row') || cb.closest('.product-card');
-                if (row.style.display !== 'none') {
-                    cb.checked = isChecked;
-                }
+                cb.checked = isChecked;
             });
             updateBulkSubmitVisibility();
         });
     }
 
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkSubmitVisibility);
+        cb.addEventListener('change', function() {
+            const isChecked = this.checked;
+            const value = this.value;
+            document.querySelectorAll(`.product-checkbox[value="${value}"]`).forEach(box => {
+                box.checked = isChecked;
+            });
+            updateBulkSubmitVisibility();
+        });
     });
 
     bulkSubmitBtn.addEventListener('click', function() {

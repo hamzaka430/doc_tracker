@@ -138,6 +138,53 @@ const autocompleteData = {
     stage: @json($stages)
 };
 
+const productBatchMap = {
+    "2 Sum 500mg Injection": "014P",
+    "2Sum 1g Injection": "015P",
+    "2Sum 2g Injection": "016P",
+    "Abacus 100mg Suspension": "002P",
+    "Abacus 100mg Tablet": "003P",
+    "Abacus 200mg Tablet": "004P",
+    "Abacus 40mg Suspension": "001P",
+    "Caricef 100mg Suspension": "281P",
+    "Caricef 200mg Tablet": "284P",
+    "Caricef 400mg Capsule": "280P",
+    "Caricef DS Suspension": "283P",
+    "Neucef 100mg/ml Pediatric Drops": "288P",
+    "Neucef 125mg Suspension": "286P",
+    "Neucef 500mg Capsule": "285P",
+    "Neucef DS 250mg Suspension": "287P",
+    "Nivador 1g Injection": "291P",
+    "Nivador 250mg Injection": "289P",
+    "Nivador 500mg Injection": "290P",
+    "Otid 125mg Suspension": "026P",
+    "Otid 1g Injection": "032P",
+    "Otid 250mg Capsule": "028P",
+    "Otid 250mg Suspension": "027P",
+    "Otid 500mg Capsule": "029P",
+    "Otid 500mg Injection": "031P",
+    "Oxidil 1g IV Injection": "296P",
+    "Oxidil 250mg Injection": "292P",
+    "Oxidil 2g IV Injection": "297P",
+    "Oxidil 500mg Injection": "295P",
+    "Slate 125mg Suspension": "005P",
+    "Slate 187mg Suspension": "006P",
+    "Slate 250mg Capsule": "009P",
+    "Slate 250mg Suspension": "007P",
+    "Slate 500mg Capsule": "010P",
+    "Slate 50mg/ml Drops": "008P",
+    "Yorker 1g Injection": "013P",
+    "Yorker 250mg Injection": "011P",
+    "Yorker 500mg Injection": "012P"
+};
+
+// Add the hardcoded products to the suggestion list if not already present
+Object.keys(productBatchMap).forEach(name => {
+    if(!autocompleteData.name.includes(name)) {
+        autocompleteData.name.push(name);
+    }
+});
+
 const userPreferences = @json($userPrefs);
 
 function savePreference(key, value) {
@@ -224,6 +271,18 @@ function initAutocomplete(inputElement, dataList) {
                     inputElement.value = match;
                     dropdownMenu.classList.remove('show');
                     inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    // Auto-fill batch prefix if selecting a name
+                    if (storageKeySuffix === 'name' && productBatchMap[match]) {
+                        const row = inputElement.closest('.document-row');
+                        if (row) {
+                            const batchInput = row.querySelector('input[name="batch_no[]"]');
+                            if (batchInput && !batchInput.value) {
+                                batchInput.value = productBatchMap[match];
+                                batchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        }
+                    }
                 });
                 
                 // Remove button
@@ -303,9 +362,28 @@ function initAutocomplete(inputElement, dataList) {
 }
 
 function bindAllAutocompletes() {
-    document.querySelectorAll('input[name="name[]"]').forEach(el => initAutocomplete(el, autocompleteData.name));
+    document.querySelectorAll('input[name="name[]"]').forEach(el => {
+        initAutocomplete(el, autocompleteData.name);
+        // Also autofill batch on blur/change if typed perfectly
+        el.removeEventListener('change', handleNameChange); // prevent duplicates
+        el.addEventListener('change', handleNameChange);
+    });
     document.querySelectorAll('input[name="batch_no[]"]').forEach(el => initAutocomplete(el, autocompleteData.batch_no));
     document.querySelectorAll('input[name="stage[]"]').forEach(el => initAutocomplete(el, autocompleteData.stage));
+}
+
+function handleNameChange(e) {
+    const val = e.target.value.trim();
+    if (productBatchMap[val]) {
+        const row = e.target.closest('.document-row');
+        if (row) {
+            const batchInput = row.querySelector('input[name="batch_no[]"]');
+            if (batchInput && !batchInput.value) {
+                batchInput.value = productBatchMap[val];
+                batchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

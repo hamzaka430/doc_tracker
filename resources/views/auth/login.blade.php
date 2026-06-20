@@ -4,296 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - Doc Tracker</title>
-    
+    <title>Sign in - Doc Tracker</title>
     <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.svg') }}" type="image/svg+xml" />
     
-    <!-- Fonts and icons -->
-    <script src="{{ asset('Dashboard/assets/js/plugin/webfont/webfont.min.js') }}"></script>
-    <script>
-        WebFont.load({
-            google: { families: ["Public Sans:300,400,500,600,700"] },
-            custom: {
-                families: [
-                    "Font Awesome 5 Solid",
-                    "Font Awesome 5 Regular",
-                    "Font Awesome 5 Brands",
-                    "simple-line-icons",
-                ],
-                urls: ["{{ asset('Dashboard/assets/css/fonts.min.css') }}"],
-            },
-            active: function () {
-                sessionStorage.fonts = true;
-            },
-        });
-    </script>
-
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/plugins.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/kaiadmin.min.css') }}" />
-    
-    <style>
-        body {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Public Sans', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Abstract shapes for a sleek look */
-        body::before {
-            content: '';
-            position: absolute;
-            top: -150px;
-            right: -150px;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(26,32,53,0.05), rgba(76,104,183,0.1));
-            z-index: 0;
-        }
-        body::after {
-            content: '';
-            position: absolute;
-            bottom: -200px;
-            left: -100px;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(76,104,183,0.05), rgba(30,144,255,0.08));
-            z-index: 0;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0,0,0,0.03);
-            padding: 3rem 2.5rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        
-        .login-logo {
-            width: 60px;
-            height: 60px;
-            background: #1a2035;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: #fff;
-            font-size: 28px;
-            box-shadow: 0 8px 15px rgba(26, 32, 53, 0.2);
-            transform: rotate(-5deg);
-        }
-
-        .login-logo i {
-            transform: rotate(5deg);
-        }
-        
-        .login-title {
-            color: #1a2035;
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-        
-        .login-subtitle {
-            color: #686f7a;
-            font-size: 0.9rem;
-        }
-        
-        .form-control {
-            border-radius: 12px;
-            padding: 0.75rem 1.25rem;
-            border: 2px solid #ebedf2;
-            background-color: #f8f9fa;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            box-shadow: 0 0 0 4px rgba(26, 32, 53, 0.1);
-            border-color: #1a2035;
-            background-color: #fff;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #3f4254;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .btn-login {
-            background: #1a2035;
-            color: #fff;
-            border-radius: 12px;
-            padding: 0.8rem;
-            font-weight: 600;
-            width: 100%;
-            border: none;
-            font-size: 1rem;
-            transition: all 0.3s;
-            box-shadow: 0 8px 15px rgba(26, 32, 53, 0.2);
-            margin-top: 1rem;
-        }
-        
-        .btn-login:hover {
-            background: #252d47;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px rgba(26, 32, 53, 0.3);
-            color: #fff;
-        }
-        
-        .form-check-input:checked {
-            background-color: #1a2035;
-            border-color: #1a2035;
-        }
-
-        .link-primary {
-            color: #1a2035 !important;
-            font-weight: 600;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .link-primary:hover {
-            color: #48abf7 !important;
-        }
-        
-        .footer-text {
-            color: #686f7a;
-            font-size: 0.85rem;
-        }
-
-        .footer-text a {
-            color: #1a2035;
-            font-weight: 600;
-        }
-    </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>Doc Tracker</h1>
-                <p>Welcome back! Please login to your account</p>
-            </div>
+<body class="bg-gray-50">
+    <main class="min-h-screen flex flex-col items-center justify-center">
+        <div class="py-2 px-4 md:px-8 w-full">
+            <div class="grid items-center gap-4 max-w-5xl w-full mx-auto lg:grid-cols-2">
+                
+                <div class="border border-slate-300 bg-white rounded-lg p-5 max-w-sm mx-auto shadow-sm md:p-6 lg:mx-0 w-full">
 
-            @if (session('status'))
-                <div class="alert alert-success mb-4">
-                    <i class="fas fa-check-circle me-2"></i>{{ session('status') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="alert alert-danger mb-4">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <strong>Error!</strong> Please check your credentials.
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <!-- Email Address -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">
-                        <i class="fas fa-envelope me-1"></i>Email Address
-                    </label>
-                    <input id="email" type="email" 
-                           class="form-control @error('email') is-invalid @enderror" 
-                           name="email" 
-                           value="{{ old('email') }}" 
-                           required 
-                           autofocus 
-                           autocomplete="username"
-                           placeholder="Enter your email">
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Password -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">
-                        <i class="fas fa-lock me-1"></i>Password
-                    </label>
-                    <input id="password" type="password" 
-                           class="form-control @error('password') is-invalid @enderror" 
-                           name="password" 
-                           required 
-                           autocomplete="current-password"
-                           placeholder="Enter your password">
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Remember Me & Forgot Password -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="remember" id="remember_me">
-                        <label class="form-check-label" for="remember_me">
-                            Remember me
-                        </label>
+                    <!-- Branding -->
+                    <div class="flex items-center gap-2 mb-8">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-xl font-bold text-slate-900 tracking-tight">Doc Tracker</span>
                     </div>
-                    
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="link-primary">
-                            Forgot password?
-                        </a>
+
+                    <div class="mb-5">
+                        <h1 class="text-slate-900 text-2xl font-bold mb-2">Sign in</h1>
+                        <p class="text-slate-600 text-sm leading-relaxed">Sign in to your account to access your dashboard and manage your projects.</p>
+                    </div>
+
+                    <!-- Session Status -->
+                    @if (session('status'))
+                        <div class="mb-3 font-medium text-xs text-green-600">
+                            {{ session('status') }}
+                        </div>
                     @endif
+
+                    <form method="POST" action="{{ route('login') }}" class="space-y-4">
+                        @csrf
+                        
+                        <div>
+                            <label for="email" class="mb-1 text-slate-900 font-medium text-xs inline-block">Email</label>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="hamza@example.com" required autofocus autocomplete="username"
+                                class="px-2.5 py-1.5 text-sm text-slate-900 rounded-md bg-white w-full border outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 @error('email') border-red-500 @enderror" />
+                            @error('email')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        
+                        <div>
+                            <label for="password" class="mb-1 text-slate-900 font-medium text-xs inline-block">Password</label>
+                            <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password"
+                                class="px-2.5 py-1.5 text-sm text-slate-900 rounded-md bg-white w-full border outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 @error('password') border-red-500 @enderror" />
+                            @error('password')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex items-start flex-wrap gap-2">
+                            <label class="flex items-center group has-[input:checked]:text-slate-900 cursor-pointer">
+                                <input id="remember" name="remember" type="checkbox" class="sr-only" />
+                                <!-- Custom box -->
+                                <span class="flex h-4 w-4 shrink-0 items-center justify-center rounded outline-1 outline-slate-300 bg-white border border-slate-300 group-has-[input:checked]:bg-blue-600 group-has-[input:checked]:border-blue-600 group-has-[input:checked]:outline-blue-600 group-focus-within:outline-2 group-focus-within:outline-blue-600" aria-hidden="true">
+                                    <!-- Checkmark -->
+                                    <svg class="size-3 text-white opacity-0 group-has-[input:checked]:opacity-100" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 5l3 3 7-7" />
+                                    </svg>
+                                </span>
+                                <span class="ml-2 text-xs text-slate-700">
+                                    Remember me
+                                </span>
+                            </label>
+
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}"
+                                    class="ml-auto text-xs font-medium text-blue-700 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
+                                    Forgot password?
+                                </a>
+                            @endif
+                        </div>
+
+                        <button type="submit"
+                            class="w-full py-1.5 px-3.5 text-sm rounded-md font-semibold cursor-pointer tracking-wide text-white border border-blue-600 bg-blue-600 hover:bg-blue-700 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
+                            Sign in</button>
+
+                        <div class="text-slate-900 text-xs text-center">Don't have an account? 
+                            <a href="{{ route('register') }}" class="text-blue-700 hover:underline ml-1 font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded">
+                                Sign up
+                            </a>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </button>
-
-                <!-- Register Link -->
-                <div class="text-center mt-4">
-                    <p class="text-muted mb-0">
-                        Don't have an account? 
-                        <a href="{{ route('register') }}" class="link-primary">Register here</a>
-                    </p>
+                <div class="aspect-[71/50] w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
+                    <img src="https://readymadeui.com/images/integration-illus.webp" class="w-full object-cover" alt="login img" />
                 </div>
-            </form>
+            </div>
         </div>
-
-        <!-- Footer -->
-        <div class="text-center mt-4">
-            <p class="text-white-50 mb-0">
-                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://dezignwise.online" target="_blank" class="text-white">Dezignwise</a>
-            </p>
-        </div>
-    </div>
-
-    <!-- Core JS Files -->
-    <script src="{{ asset('Dashboard/assets/js/core/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('Dashboard/assets/js/core/popper.min.js') }}"></script>
-    <script src="{{ asset('Dashboard/assets/js/core/bootstrap.min.js') }}"></script>
+    </main>
 </body>
 </html>

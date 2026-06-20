@@ -161,7 +161,7 @@
                 <div class="row g-3">
                     <!-- Option 1: Single Column -->
                     <div class="col-12">
-                        <a href="{{ route('products.daily.pdf', ['layout' => 'single']) }}" class="text-decoration-none">
+                        <a href="{{ route('products.daily.pdf', ['layout' => 'single']) }}" class="text-decoration-none" onclick="setTimeout(() => document.querySelector('#pdfLayoutModal .btn-close').click(), 100)">
                             <div class="card border-2 hover-shadow" style="cursor: pointer; transition: all 0.3s;">
                                 <div class="card-body p-4">
                                     <div class="d-flex align-items-start">
@@ -182,7 +182,7 @@
                     
                     <!-- Option 2: Two Column -->
                     <div class="col-12">
-                        <a href="{{ route('products.daily.pdf', ['layout' => 'double']) }}" class="text-decoration-none">
+                        <a href="{{ route('products.daily.pdf', ['layout' => 'double']) }}" class="text-decoration-none" onclick="setTimeout(() => document.querySelector('#pdfLayoutModal .btn-close').click(), 100)">
                             <div class="card border-2 hover-shadow" style="cursor: pointer; transition: all 0.3s;">
                                 <div class="card-body p-4">
                                     <div class="d-flex align-items-start">

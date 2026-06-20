@@ -154,6 +154,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        if (!$product->isEditable()) {
+            return redirect()->route('products.show', $product)->with('error', 'This document is no longer editable.');
+        }
+
         $request->validate([
             'line_clearance' => 'nullable|in:0,1',
             'review' => 'nullable|in:0,1',
@@ -279,10 +283,10 @@ class ProductController extends Controller
             $query->whereDate('submission_date', '<=', $request->date_to);
         }
 
-        $submittedProducts = $query->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
-            ->orderBy('batch_no', 'asc')
-            ->orderBy('submission_date', 'desc')
+        $submittedProducts = $query->orderBy('submission_date', 'desc')
             ->orderBy('submission_time', 'desc')
+            ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
+            ->orderBy('batch_no', 'asc')
             ->paginate(25);
 
         return view('products.submitted', compact('submittedProducts'));
@@ -457,6 +461,10 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        if (!$product->isEditable()) {
+            return redirect()->route('products.show', $product)->with('error', 'This document is no longer editable.');
+        }
+
         $stages = Product::getStages();
         $types = Product::getTypes();
         return view('products.edit', compact('product', 'stages', 'types'));
@@ -467,6 +475,10 @@ class ProductController extends Controller
      */
     public function updateBasic(Request $request, Product $product)
     {
+        if (!$product->isEditable()) {
+            return redirect()->route('products.show', $product)->with('error', 'This document is no longer editable.');
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'batch_no' => 'required|string|max:255',
@@ -490,6 +502,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if (!$product->isEditable()) {
+            return redirect()->route('products.show', $product)->with('error', 'This document cannot be deleted because it is no longer editable.');
+        }
+
         $product->delete();
 
         return redirect()->route('products.index')

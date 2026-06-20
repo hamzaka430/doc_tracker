@@ -141,6 +141,14 @@
                                                    title="View Details">
                                                     <i class="fa fa-eye"></i>
                                                 </a>
+                                                @if($product->isEditable())
+                                                    <a href="{{ route('products.edit', $product) }}" 
+                                                       class="btn btn-link btn-info btn-lg p-1" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="Edit">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
