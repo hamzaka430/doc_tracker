@@ -5,6 +5,7 @@ A professional Laravel 11 application for tracking products through various stag
 ## ✨ Features
 
 - **Product Management**: Add, edit, and delete products with custom or predefined stages
+- **Vials Data Tracking**: Specialized daily and all-time tracking for injection vials with batch-specific metrics
 - **Smart Auto-Fill**: Auto-fill batch codes based on selected product names using predefined database mapping
 - **Bulk Submit System**: Process and submit multiple pending documents simultaneously with a single click
 - **PDF Generation**: Generate downloadable PDF lists of daily documents with multiple layout options (Single Page, Two Column)
@@ -18,11 +19,11 @@ A professional Laravel 11 application for tracking products through various stag
 - **AWS S3 Integration**: Secure, robust cloud storage for user profile pictures and error screenshots
 - **Custom Authentication UI**: Modern split-screen login and registration pages tailored to application design
 - **Document Management**: View submitted products with detailed timestamps and sorting based on latest submission
-- **Mobile-First Design**: Responsive sidebar navigation with luxury UI components
-- **Export Functionality**: Export submitted products to CSV format
-- **Search & Filter**: Advanced search for products by name, batch, or stage
+- **SaaS-Style Mobile-First Design**: Intuitive, categorized sidebar navigation with modern sleek data-oriented UI components
+- **Export Functionality**: Export submitted products and vials data to Excel (CSV) format
+- **Search & Filter**: Advanced search for products and vials by name, batch, or stage
 - **Real-time Updates**: Dynamic UI updates without page reloads
-- **Professional UI**: Modern, clean interface with intuitive navigation
+- **Professional UI**: Modern, clean interface with intuitive navigation and persisted sidebar states
 
 ## 🛠️ Technology Stack
 

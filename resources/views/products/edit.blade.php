@@ -64,6 +64,7 @@
                                name="batch_no" 
                                placeholder="Batch Number" 
                                value="{{ old('batch_no', $product->batch_no) }}" 
+                               maxlength="7"
                                required>
                         <label for="batch_no">
                             <i class="fas fa-barcode me-2"></i>Batch Number

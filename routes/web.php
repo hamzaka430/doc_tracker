@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SapErrorController;
+use App\Http\Controllers\InjectionDetailController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -47,6 +48,22 @@ Route::middleware('auth')->group(function () {
 
     // SAP Error routes
     Route::resource('sap-errors', SapErrorController::class);
+
+    // Vials Data / Injection Details routes
+    Route::get('/vials-data/export', [InjectionDetailController::class, 'exportCsv'])->name('injection_details.export');
+    Route::get('/vials-data/daily', [InjectionDetailController::class, 'daily'])->name('injection_details.daily');
+    Route::resource('vials-data', InjectionDetailController::class)->names([
+        'index' => 'injection_details.index',
+        'create' => 'injection_details.create',
+        'store' => 'injection_details.store',
+        'edit' => 'injection_details.edit',
+        'update' => 'injection_details.update',
+        'destroy' => 'injection_details.destroy',
+    ]);
+    // User Management routes
+    Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
+    Route::post('/users/{user}/permissions', [\App\Http\Controllers\UserController::class, 'updatePermissions'])->name('users.updatePermissions');
+
 });
 
 require __DIR__.'/auth.php';

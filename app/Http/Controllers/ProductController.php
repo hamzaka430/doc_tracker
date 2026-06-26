@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\InjectionDetail;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -14,7 +15,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::where('user_id', auth()->id());
+        $query = Product::whereIn('user_id', auth()->user()->getVisibleUserIds());
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -43,7 +44,7 @@ class ProductController extends Controller
             ->paginate(25);
             
         // Analytics Data for Chart (Last 7 days submissions)
-        $chartData = Product::where('user_id', auth()->id())
+        $chartData = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())
             ->where('status', 'submitted')
             ->where('submission_date', '>=', now()->subDays(6)->toDateString())
             ->selectRaw('submission_date as date, count(*) as count')
@@ -127,7 +128,7 @@ class ProductController extends Controller
         $types = $request->type;
 
         for ($i = 0; $i < count($names); $i++) {
-            Product::create([
+            $product = Product::create([
                 'user_id' => $userId,
                 'name' => $names[$i],
                 'batch_no' => $batchNos[$i],
@@ -135,6 +136,15 @@ class ProductController extends Controller
                 'type' => $types[$i],
                 'status' => 'pending'
             ]);
+
+            if ($types[$i] === 'Injection') {
+                InjectionDetail::create([
+                    'user_id' => $userId,
+                    'product_id' => $product->id,
+                    'product_name' => $names[$i],
+                    'batch_no' => $batchNos[$i],
+                ]);
+            }
         }
 
         return redirect()->route('products.index')
@@ -154,6 +164,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (!$product->isEditable()) {
             return redirect()->route('products.show', $product)->with('error', 'This document is no longer editable.');
         }
@@ -181,6 +195,10 @@ class ProductController extends Controller
      */
     public function submit(Product $product)
     {
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Check if all checkboxes are marked
         if (!$product->isReadyForSubmission()) {
             return redirect()->route('products.show', $product)
@@ -210,7 +228,7 @@ class ProductController extends Controller
             'product_ids.*' => 'exists:products,id'
         ]);
 
-        $products = Product::where('user_id', auth()->id())
+        $products = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())
             ->whereIn('id', $request->product_ids)
             ->get();
 
@@ -219,7 +237,7 @@ class ProductController extends Controller
         $now = \Carbon\Carbon::now();
 
         foreach ($products as $product) {
-            if ($product->isSubmitted()) {
+            if ($product->isSubmitted() || !auth()->user()->canModifyData($product->user_id)) {
                 $skippedCount++;
                 continue;
             }
@@ -260,7 +278,7 @@ class ProductController extends Controller
      */
     public function submitted(Request $request)
     {
-        $query = Product::where('user_id', auth()->id())->where('status', 'submitted');
+        $query = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -297,7 +315,7 @@ class ProductController extends Controller
      */
     public function daily(Request $request)
     {
-        $query = Product::where('user_id', auth()->id())->where('status', 'pending');
+        $query = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -333,7 +351,7 @@ class ProductController extends Controller
      */
     public function pending(Request $request)
     {
-        $query = Product::where('user_id', auth()->id())->where('status', 'pending');
+        $query = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -369,7 +387,7 @@ class ProductController extends Controller
      */
     public function exportDailyPdf(Request $request)
     {
-        $products = Product::where('user_id', auth()->id())->where('status', 'pending')
+        $products = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('name', 'asc')
             ->orderBy('batch_no', 'asc')
@@ -410,7 +428,7 @@ class ProductController extends Controller
      */
     public function exportCsv()
     {
-        $products = Product::where('user_id', auth()->id())->where('status', 'submitted')
+        $products = Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted')
             ->orderByRaw("FIELD(type, 'Suspension', 'Injection', 'Capsule', 'Tablet')")
             ->orderBy('batch_no', 'asc')
             ->orderBy('submission_date', 'desc')
@@ -475,6 +493,10 @@ class ProductController extends Controller
      */
     public function updateBasic(Request $request, Product $product)
     {
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (!$product->isEditable()) {
             return redirect()->route('products.show', $product)->with('error', 'This document is no longer editable.');
         }
@@ -486,12 +508,34 @@ class ProductController extends Controller
             'type' => 'required|in:Injection,Suspension,Tablet,Capsule',
         ]);
 
+        $oldType = $product->type;
+
         $product->update([
             'name' => $request->name,
             'batch_no' => $request->batch_no,
             'stage' => $request->stage,
             'type' => $request->type,
         ]);
+
+        if ($oldType !== $request->type) {
+            if ($request->type === 'Injection') {
+                InjectionDetail::firstOrCreate(
+                    ['product_id' => $product->id],
+                    [
+                        'user_id' => auth()->id(),
+                        'product_name' => $product->name,
+                        'batch_no' => $product->batch_no,
+                    ]
+                );
+            } else if ($oldType === 'Injection') {
+                InjectionDetail::where('product_id', $product->id)->delete();
+            }
+        } else if ($request->type === 'Injection') {
+            InjectionDetail::where('product_id', $product->id)->update([
+                'product_name' => $product->name,
+                'batch_no' => $product->batch_no,
+            ]);
+        }
 
         return redirect()->route('products.show', $product)
             ->with('success', 'Product information updated successfully!');
@@ -502,6 +546,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         if (!$product->isEditable()) {
             return redirect()->route('products.show', $product)->with('error', 'This document cannot be deleted because it is no longer editable.');
         }
@@ -517,6 +565,10 @@ class ProductController extends Controller
      */
     public function updateSubmissionDate(Request $request, Product $product)
     {
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'submission_date' => 'required|date',
             'submission_time' => 'nullable|date_format:H:i',
@@ -537,7 +589,7 @@ class ProductController extends Controller
 
     public function trash(Request $request)
     {
-        $query = Product::onlyTrashed()->where('user_id', auth()->id());
+        $query = Product::onlyTrashed()->whereIn('user_id', auth()->user()->getVisibleUserIds());
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -567,7 +619,11 @@ class ProductController extends Controller
 
     public function restore($id)
     {
-        $product = Product::onlyTrashed()->where('user_id', auth()->id())->findOrFail($id);
+        $product = Product::onlyTrashed()->whereIn('user_id', auth()->user()->getVisibleUserIds())->findOrFail($id);
+
+        if (!auth()->user()->canModifyData($product->user_id)) {
+            abort(403, 'Unauthorized action.');
+        }
         $product->restore();
 
         return back()->with('success', 'Document restored successfully from Recycle Bin.');

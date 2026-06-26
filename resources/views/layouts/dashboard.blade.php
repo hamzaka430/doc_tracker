@@ -43,6 +43,12 @@
 </head>
 <body>
     <div class="wrapper">
+        <script>
+            // Apply sidebar state immediately to prevent flicker
+            if (localStorage.getItem('sidebar_collapsed') === 'true') {
+                document.querySelector('.wrapper').classList.add('sidebar_minimize');
+            }
+        </script>
         <!-- Sidebar -->
         <div class="sidebar" data-background-color="dark">
             <div class="sidebar-logo">
@@ -70,59 +76,103 @@
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
-                        <li class="nav-item {{ request()->routeIs('products.index') ? 'active' : '' }}">
-                            <a href="{{ route('products.index') }}">
-                                <i class="fas fa-th-list"></i>
-                                <p>All Documents</p>
+                        
+                        <!-- Document Management Section -->
+                        <li class="nav-section">
+                            <span class="sidebar-mini-icon">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </span>
+                            <h4 class="text-section">Document Management</h4>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('products.daily') ? 'active' : '' }}">
+                            <a href="{{ route('products.daily') }}">
+                                <i class="fas fa-inbox"></i>
+                                <p>Daily Documents</p>
                             </a>
                         </li>
                         <li class="nav-item {{ request()->routeIs('products.pending') ? 'active' : '' }}">
                             <a href="{{ route('products.pending') }}">
-                                <i class="fas fa-hourglass-half"></i>
+                                <i class="fas fa-tasks"></i>
                                 <p>Pending Documents</p>
                             </a>
                         </li>
                         <li class="nav-item {{ request()->routeIs('products.submitted') ? 'active' : '' }}">
                             <a href="{{ route('products.submitted') }}">
-                                <i class="fas fa-check-double"></i>
+                                <i class="fas fa-check-circle"></i>
                                 <p>Submitted Documents</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('products.daily') ? 'active' : '' }}">
-                            <a href="{{ route('products.daily') }}">
-                                <i class="fas fa-calendar-alt"></i>
-                                <p>Daily Documents</p>
+                        <li class="nav-item {{ request()->routeIs('products.index') ? 'active' : '' }}">
+                            <a href="{{ route('products.index') }}">
+                                <i class="fas fa-folder-open"></i>
+                                <p>All Documents</p>
                             </a>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('sap-errors.*') ? 'active' : '' }}">
-                            <a href="{{ route('sap-errors.index') }}">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <p>SAP Errors</p>
-                            </a>
-                        </li>
-                        
+
+                        <!-- Vials & Injections Section -->
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Actions</h4>
+                            <h4 class="text-section">Vials Tracking</h4>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('injection_details.daily') ? 'active' : '' }}">
+                            <a href="{{ route('injection_details.daily') }}">
+                                <i class="fas fa-stream"></i>
+                                <p>Daily Vials Data</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('injection_details.index') ? 'active' : '' }}">
+                            <a href="{{ route('injection_details.index') }}">
+                                <i class="fas fa-database"></i>
+                                <p>All Vials Data</p>
+                            </a>
                         </li>
                         
+                        <!-- Operations & Actions Section -->
+                        <li class="nav-section">
+                            <span class="sidebar-mini-icon">
+                                <i class="fa fa-ellipsis-h"></i>
+                            </span>
+                            <h4 class="text-section">Operations & Actions</h4>
+                        </li>
                         <li class="nav-item {{ request()->routeIs('products.create') ? 'active' : '' }}">
                             <a href="{{ route('products.create') }}">
-                                <i class="fa fa-plus"></i>
+                                <i class="fas fa-plus"></i>
                                 <p>Add New Document</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('products.export') }}">
-                                <i class="fa fa-file-excel"></i>
-                                <p>Export to CSV</p>
+                        <li class="nav-item {{ request()->routeIs('sap-errors.*') ? 'active' : '' }}">
+                            <a href="{{ route('sap-errors.index') }}">
+                                <i class="fas fa-shield-alt"></i>
+                                <p>SAP Errors</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a data-bs-toggle="collapse" href="#exportNav" class="collapsed" aria-expanded="false">
+                                <i class="fas fa-cloud-download-alt"></i>
+                                <p>Export Data</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="exportNav">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <a href="{{ route('products.export') }}">
+                                            <span class="sub-item">Document Data (Excel)</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ route('injection_details.export') }}">
+                                            <span class="sub-item">Vials Data (Excel)</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        
                         <li class="nav-item {{ request()->routeIs('products.trash') ? 'active' : '' }}">
                             <a href="{{ route('products.trash') }}">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash-alt"></i>
                                 <p>Recycle Bin</p>
                             </a>
                         </li>
@@ -163,8 +213,8 @@
                         <!-- Useful Topbar Elements (Desktop) -->
                         <div class="d-none d-lg-flex align-items-center gap-3 ms-3">
                             @php
-                                $pendingCount = \App\Models\Product::where('user_id', auth()->id())->where('status', 'pending')->count();
-                                $submittedCount = \App\Models\Product::where('user_id', auth()->id())->where('status', 'submitted')->count();
+                                $pendingCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending')->count();
+                                $submittedCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted')->count();
                             @endphp
                             <div class="d-flex align-items-center px-3 py-1 rounded bg-warning text-white">
                                 <i class="fas fa-hourglass-half me-2"></i> 
@@ -295,6 +345,53 @@
 
     <!-- jQuery Datatables -->
     <script src="{{ asset('Dashboard/assets/js/plugin/datatables/datatables.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Prevent sidebar from auto-expanding on hover when collapsed
+            $('.sidebar').off('mouseenter mouseleave');
+
+            // Force correct toggle icon on initial load if collapsed
+            if ($('.wrapper').hasClass('sidebar_minimize')) {
+                $('.toggle-sidebar').html('<i class="gg-menu-right"></i>');
+                $('.toggle-sidebar').addClass('toggled');
+            }
+
+            // Add tooltips to sidebar items
+            $('.sidebar .nav-item a').each(function() {
+                var title = $(this).find('p').text().trim();
+                if (title) {
+                    $(this).attr('title', title);
+                    new bootstrap.Tooltip(this, {
+                        placement: 'right',
+                        trigger: 'hover'
+                    });
+                }
+            });
+
+            // Only show tooltips if sidebar is collapsed
+            $('.sidebar .nav-item a').on('show.bs.tooltip', function (e) {
+                if (!$('.wrapper').hasClass('sidebar_minimize')) {
+                    e.preventDefault();
+                }
+            });
+
+            // Keep the same toggle icon for collapse/expand and save state
+            $('.toggle-sidebar').on('click', function() {
+                setTimeout(function() {
+                    $('.toggle-sidebar').html('<i class="gg-menu-right"></i>');
+                    
+                    if ($('.wrapper').hasClass('sidebar_minimize')) {
+                        localStorage.setItem('sidebar_collapsed', 'true');
+                        $('.toggle-sidebar').addClass('toggled');
+                    } else {
+                        localStorage.setItem('sidebar_collapsed', 'false');
+                        $('.toggle-sidebar').removeClass('toggled');
+                    }
+                }, 10);
+            });
+        });
+    </script>
 
     @stack('scripts')
 </body>

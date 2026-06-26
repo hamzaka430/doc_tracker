@@ -147,14 +147,17 @@
                                                title="View Details">
                                                 <i class="fa fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('products.edit', $product) }}" 
+                                            @if(auth()->user()->canModifyData($product->user_id))
+<a href="{{ route('products.edit', $product) }}" 
                                                class="btn btn-link btn-info btn-lg p-1" 
                                                data-bs-toggle="tooltip" 
                                                title="Edit">
                                                 <i class="fa fa-edit"></i>
                                             </a>
+@endif
                                             @if(!$product->isSubmitted())
-                                                <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
+                                                @if(auth()->user()->canModifyData($product->user_id))
+<form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" 
@@ -165,6 +168,7 @@
                                                         <i class="fa fa-times"></i>
                                                     </button>
                                                 </form>
+@endif
                                             @endif
                                         </div>
                                     </td>

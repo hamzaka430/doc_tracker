@@ -39,6 +39,11 @@ class Product extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function injectionDetail()
+    {
+        return $this->hasOne(InjectionDetail::class);
+    }
+
     protected $casts = [
         'line_clearance' => 'boolean',
         'review' => 'boolean',

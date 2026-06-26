@@ -10,12 +10,17 @@ use Illuminate\View\View;
 
 class SapErrorController extends Controller
 {
+    public function __construct()
+    {
+        // Feature permission checks removed, data is controlled by visibility rules
+    }
+
     /**
      * Display all SAP errors for the authenticated user.
      */
     public function index(): View
     {
-        $sapErrors = SapError::where('user_id', auth()->id())
+        $sapErrors = SapError::whereIn('user_id', auth()->user()->getVisibleUserIds())
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -69,7 +74,7 @@ class SapErrorController extends Controller
      */
     public function show(SapError $sapError): View
     {
-        $this->authorizeError($sapError);
+        $this->authorizeView($sapError);
         return view('sap_errors.show', compact('sapError'));
     }
 
@@ -78,7 +83,7 @@ class SapErrorController extends Controller
      */
     public function edit(SapError $sapError): View
     {
-        $this->authorizeError($sapError);
+        $this->authorizeModify($sapError);
         return view('sap_errors.edit', compact('sapError'));
     }
 
@@ -87,7 +92,7 @@ class SapErrorController extends Controller
      */
     public function update(Request $request, SapError $sapError): RedirectResponse
     {
-        $this->authorizeError($sapError);
+        $this->authorizeModify($sapError);
 
         $request->validate([
             'title'       => 'required|string|max:255',
@@ -134,7 +139,7 @@ class SapErrorController extends Controller
      */
     public function destroy(SapError $sapError): RedirectResponse
     {
-        $this->authorizeError($sapError);
+        $this->authorizeModify($sapError);
 
         if ($sapError->image_path) {
             Storage::disk('s3')->delete($sapError->image_path);
@@ -147,12 +152,22 @@ class SapErrorController extends Controller
     }
 
     /**
-     * Ensure the authenticated user owns this record.
+     * Ensure the authenticated user can view this record.
      */
-    private function authorizeError(SapError $sapError): void
+    private function authorizeView(SapError $sapError): void
     {
-        if ($sapError->user_id !== auth()->id()) {
+        if (!in_array($sapError->user_id, auth()->user()->getVisibleUserIds())) {
             abort(403);
+        }
+    }
+
+    /**
+     * Ensure the authenticated user can modify this record.
+     */
+    private function authorizeModify(SapError $sapError): void
+    {
+        if (!auth()->user()->canModifyData($sapError->user_id)) {
+            abort(403, 'Unauthorized action.');
         }
     }
 }

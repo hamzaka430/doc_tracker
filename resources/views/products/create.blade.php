@@ -48,7 +48,7 @@
                                     <div class="form-group mb-0">
                                         <label>Batch Number <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="batch_no[]" 
-                                               placeholder="Enter batch number" value="{{ request('batch_no') }}" required>
+                                               placeholder="Enter batch number" value="{{ request('batch_no') }}" maxlength="7" required>
                                     </div>
                                 </div>
 
@@ -139,21 +139,22 @@ const autocompleteData = {
 };
 
 const productBatchMap = {
-    "2 Sum 500mg Injection": "014P",
     "2Sum 1g Injection": "015P",
     "2Sum 2g Injection": "016P",
+    "2Sum 500mg Injection": "014P",
     "Abacus 100mg Suspension": "002P",
     "Abacus 100mg Tablet": "003P",
     "Abacus 200mg Tablet": "004P",
     "Abacus 40mg Suspension": "001P",
     "Caricef 100mg Suspension": "281P",
+    "Caricef 100mg Suspension (60ml)": "282P",
     "Caricef 200mg Tablet": "284P",
     "Caricef 400mg Capsule": "280P",
     "Caricef DS Suspension": "283P",
-    "Neucef 100mg/ml Pediatric Drops": "288P",
+    "Neucef 100mg/ml P.Drop": "288P",
     "Neucef 125mg Suspension": "286P",
     "Neucef 500mg Capsule": "285P",
-    "Neucef DS 250mg Suspension": "287P",
+    "Neucef DS Suspension": "287P",
     "Nivador 1g Injection": "291P",
     "Nivador 250mg Injection": "289P",
     "Nivador 500mg Injection": "290P",
@@ -164,15 +165,17 @@ const productBatchMap = {
     "Otid 500mg Capsule": "029P",
     "Otid 500mg Injection": "031P",
     "Oxidil 1g IV Injection": "296P",
-    "Oxidil 250mg Injection": "292P",
+    "Oxidil 250mg IM Injection": "292P",
+    "Oxidil 250mg IV Injection": "293P",
     "Oxidil 2g IV Injection": "297P",
-    "Oxidil 500mg Injection": "295P",
+    "Oxidil 500mg IM Injection": "294P",
+    "Oxidil 500mg IV Injection": "295P",
     "Slate 125mg Suspension": "005P",
     "Slate 187mg Suspension": "006P",
-    "Slate 250mg Capsule": "009P",
+    "Slate 250mg Capsule": "009P001",
     "Slate 250mg Suspension": "007P",
     "Slate 500mg Capsule": "010P",
-    "Slate 50mg/ml Drops": "008P",
+    "Slate 50mg/ml P.Drops": "008P",
     "Yorker 1g Injection": "013P",
     "Yorker 250mg Injection": "011P",
     "Yorker 500mg Injection": "012P"
