@@ -45,7 +45,7 @@
                                     <div class="form-group mb-0">
                                         <label>Product Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control autocomplete-input" name="product_name[]"
-                                               placeholder="Abacus 40mg/5ml Injection" required>
+                                               placeholder="Oxidil 1g IV Injection" required>
                                     </div>
                                 </div>
 
@@ -54,7 +54,7 @@
                                     <div class="form-group mb-0">
                                         <label>Batch No <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control px-2 autocomplete-input" name="batch_no[]"
-                                               placeholder="013P056" maxlength="7" required>
+                                               placeholder="296P043" maxlength="7" required>
                                     </div>
                                 </div>
 
@@ -63,7 +63,7 @@
                                     <div class="form-group mb-0">
                                         <label>Batch Size</label>
                                         <input type="text" class="form-control px-2" name="batch_size[]"
-                                               placeholder="100000" maxlength="7">
+                                               placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
@@ -72,7 +72,7 @@
                                     <div class="form-group mb-0">
                                         <label>Optical Qty</label>
                                         <input type="text" class="form-control px-2" name="optical_qty[]"
-                                               placeholder="100000" maxlength="7">
+                                               placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
@@ -81,7 +81,7 @@
                                     <div class="form-group mb-0">
                                         <label>Pkg Qty</label>
                                         <input type="text" class="form-control px-2" name="pkg_qty[]"
-                                               placeholder="100000" maxlength="7">
+                                               placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
