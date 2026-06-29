@@ -114,7 +114,7 @@
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Vials Tracking</h4>
+                            <h4 class="text-section">Vials Management</h4>
                         </li>
                         <li class="nav-item {{ request()->routeIs('injection_details.daily') ? 'active' : '' }}">
                             <a href="{{ route('injection_details.daily') }}">

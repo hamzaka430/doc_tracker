@@ -26,7 +26,7 @@
             <div class="card-header">
                 <div class="d-flex align-items-center">
                     <h4 class="card-title mb-0">
-                        <i class="fas fa-syringe me-2 text-warning"></i>Edit Vials Data
+                        <i class="fas fa-edit me-2 text-warning"></i>Edit Vials Data
                     </h4>
                     <a href="{{ route('injection_details.index') }}" class="btn btn-secondary btn-sm btn-round ms-auto">
                         <i class="fa fa-arrow-left me-1"></i> Back to List

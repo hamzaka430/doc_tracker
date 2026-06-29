@@ -105,7 +105,7 @@
 
                 @else
                 <div class="text-center py-5">
-                    <i class="fas fa-syringe fa-4x text-muted mb-3"></i>
+                    <i class="fas fa-cubes fa-4x text-muted mb-3"></i>
                     <h5 class="text-muted">No Vials Data Found</h5>
                     <p class="text-muted">Add an Injection document to auto-create entries, or click "Add Custom Entry" to manually add one.</p>
                     <a href="{{ route('injection_details.create') }}" class="btn btn-primary mt-2">
