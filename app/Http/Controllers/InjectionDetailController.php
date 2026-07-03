@@ -12,13 +12,7 @@ class InjectionDetailController extends Controller
      */
     public function index(Request $request)
     {
-        $query = InjectionDetail::whereIn('user_id', auth()->user()->getVisibleUserIds())
-                    ->whereNotNull('batch_size')
-                    ->where(function ($q) {
-                        $q->whereDoesntHave('product', function ($q2) {
-                            $q2->where('status', 'pending');
-                        });
-                    });
+        $query = InjectionDetail::whereIn('user_id', auth()->user()->getVisibleUserIds());
 
         if ($request->filled('search')) {
             $search = $request->search;
