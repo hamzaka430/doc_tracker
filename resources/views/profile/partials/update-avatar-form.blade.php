@@ -6,7 +6,7 @@
     <div class="card-body text-center p-4">
         <div class="avatar avatar-xxl position-relative mb-4">
             @if(Auth::user()->avatar)
-                <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Avatar" class="avatar-img rounded-circle border border-3 border-white shadow">
+                <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Avatar" class="avatar-img rounded-circle border border-3 border-white shadow">
             @elseif(Auth::user()->email === 'admin@hamzaka.me')
                 <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Avatar" class="avatar-img rounded-circle border border-3 border-white shadow">
             @else

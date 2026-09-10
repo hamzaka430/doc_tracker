@@ -51,7 +51,8 @@ class SapErrorController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $imagePath = $request->file('image')->store('errors', 's3');
+                $disk = config('filesystems.default', 'public');
+                $imagePath = $request->file('image')->store('errors', $disk);
             } catch (\Exception $e) {
                 return back()->withInput()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
             }
@@ -102,14 +103,15 @@ class SapErrorController extends Controller
         ]);
 
         $imagePath = $sapError->image_path;
+        $disk = config('filesystems.default', 'public');
 
         if ($request->hasFile('image')) {
             try {
-                // Delete old image from S3
+                // Delete old image
                 if ($sapError->image_path) {
-                    Storage::disk('s3')->delete($sapError->image_path);
+                    Storage::disk($disk)->delete($sapError->image_path);
                 }
-                $imagePath = $request->file('image')->store('errors', 's3');
+                $imagePath = $request->file('image')->store('errors', $disk);
             } catch (\Exception $e) {
                 return back()->withInput()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
             }
@@ -118,7 +120,7 @@ class SapErrorController extends Controller
         // Handle image removal
         if ($request->has('remove_image') && $request->remove_image) {
             if ($sapError->image_path) {
-                Storage::disk('s3')->delete($sapError->image_path);
+                Storage::disk($disk)->delete($sapError->image_path);
             }
             $imagePath = null;
         }
@@ -135,14 +137,15 @@ class SapErrorController extends Controller
     }
 
     /**
-     * Delete a SAP error and its S3 image.
+     * Delete a SAP error and its image.
      */
     public function destroy(SapError $sapError): RedirectResponse
     {
         $this->authorizeModify($sapError);
 
         if ($sapError->image_path) {
-            Storage::disk('s3')->delete($sapError->image_path);
+            $disk = config('filesystems.default', 'public');
+            Storage::disk($disk)->delete($sapError->image_path);
         }
 
         $sapError->delete();

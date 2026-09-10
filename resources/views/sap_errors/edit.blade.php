@@ -95,7 +95,7 @@
                                     </label>
                                 </div>
                                 <div class="mt-2">
-                                    <img src="{{ Storage::disk('s3')->url($sapError->image_path) }}" alt="Current Screenshot" class="img-thumbnail" style="max-height: 150px;">
+                                    <img src="{{ Storage::url($sapError->image_path) }}" alt="Current Screenshot" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                             </div>
                             @endif

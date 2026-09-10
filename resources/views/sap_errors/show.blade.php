@@ -80,8 +80,8 @@
             </div>
             <div class="card-body text-center">
                 @if($sapError->image_path)
-                    <a href="{{ Storage::disk('s3')->url($sapError->image_path) }}" target="_blank">
-                        <img src="{{ Storage::disk('s3')->url($sapError->image_path) }}" 
+                    <a href="{{ Storage::url($sapError->image_path) }}" target="_blank">
+                        <img src="{{ Storage::url($sapError->image_path) }}" 
                              alt="Error Screenshot" 
                              class="img-fluid rounded border shadow-sm"
                              style="max-height: 400px; width: auto;">

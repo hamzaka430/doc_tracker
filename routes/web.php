@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SapErrorController;
 use App\Http\Controllers\InjectionDetailController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,6 +64,16 @@ Route::middleware('auth')->group(function () {
     // User Management routes
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
     Route::post('/users/{user}/permissions', [\App\Http\Controllers\UserController::class, 'updatePermissions'])->name('users.updatePermissions');
+
+    // Secret Chat Support routes
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/setup-pin', [ChatController::class, 'setupPin'])->name('chat.setupPin');
+    Route::post('/chat/verify-pin', [ChatController::class, 'verifyPin'])->name('chat.verifyPin');
+    Route::post('/chat/lock', [ChatController::class, 'lock'])->name('chat.lock');
+    Route::get('/chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('/chat/messages', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/settings/names', [ChatController::class, 'updateNames'])->name('chat.updateNames');
+    Route::delete('/chat/messages/clear', [ChatController::class, 'clearChat'])->name('chat.clear');
 
 });
 

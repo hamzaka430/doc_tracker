@@ -49,11 +49,12 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $disk = config('filesystems.default', 'public');
 
         Auth::logout();
 
         if ($user->avatar) {
-            Storage::disk('s3')->delete($user->avatar);
+            Storage::disk($disk)->delete($user->avatar);
         }
 
         $user->delete();
@@ -74,17 +75,18 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $disk = config('filesystems.default', 'public');
 
         try {
-            $path = $request->file('avatar')->store('avatars', 's3');
+            $path = $request->file('avatar')->store('avatars', $disk);
 
             if (!$path) {
                 return back()->withErrors(['avatar' => 'Failed to upload image to storage. Please try again.']);
             }
 
-            // Delete old avatar from S3 if it exists
+            // Delete old avatar if it exists
             if ($user->avatar) {
-                Storage::disk('s3')->delete($user->avatar);
+                Storage::disk($disk)->delete($user->avatar);
             }
 
             $user->update(['avatar' => $path]);
@@ -102,9 +104,10 @@ class ProfileController extends Controller
     public function destroyAvatar(Request $request): RedirectResponse
     {
         $user = $request->user();
+        $disk = config('filesystems.default', 'public');
 
         if ($user->avatar) {
-            Storage::disk('s3')->delete($user->avatar);
+            Storage::disk($disk)->delete($user->avatar);
             $user->update(['avatar' => null]);
         }
 

@@ -137,16 +137,41 @@
                             </span>
                             <h4 class="text-section">Operations & Actions</h4>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('products.create') ? 'active' : '' }}">
-                            <a href="{{ route('products.create') }}">
-                                <i class="fas fa-plus"></i>
-                                <p>Add New Document</p>
+                        @php
+                            $isAddNewActive = request()->routeIs('products.create') || request()->routeIs('injection_details.create');
+                        @endphp
+                        <li class="nav-item {{ $isAddNewActive ? 'active' : '' }}">
+                            <a data-bs-toggle="collapse" href="#addNewNav" class="{{ $isAddNewActive ? '' : 'collapsed' }}" aria-expanded="{{ $isAddNewActive ? 'true' : 'false' }}">
+                                <i class="fas fa-plus-circle"></i>
+                                <p>Add New</p>
+                                <span class="caret"></span>
                             </a>
+                            <div class="collapse {{ $isAddNewActive ? 'show' : '' }}" id="addNewNav">
+                                <ul class="nav nav-collapse">
+                                    <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
+                                        <a href="{{ route('products.create') }}">
+                                            <span class="sub-item">Add New Document</span>
+                                        </a>
+                                    </li>
+                                    <li class="{{ request()->routeIs('injection_details.create') ? 'active' : '' }}">
+                                        <a href="{{ route('injection_details.create') }}">
+                                            <span class="sub-item">Add Manual Vial</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
                         <li class="nav-item {{ request()->routeIs('sap-errors.*') ? 'active' : '' }}">
                             <a href="{{ route('sap-errors.index') }}">
                                 <i class="fas fa-shield-alt"></i>
                                 <p>SAP Errors</p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }}">
+                            <a href="{{ route('chat.index') }}">
+                                <i class="fas fa-comments"></i>
+                                <p>Chat Support</p>
+                                <span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 7px;">Live</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -233,7 +258,7 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                                     <div class="avatar-sm">
                                         @if(Auth::user()->avatar)
-                                            <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded-circle border border-2 border-white" width="40" height="40">
+                                            <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded-circle border border-2 border-white" width="40" height="40">
                                         @elseif(Auth::user()->email === 'admin@hamzaka.me')
                                             <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded-circle" width="40" height="40">
                                         @else
@@ -251,7 +276,7 @@
                                             <div class="user-box">
                                                 <div class="avatar-lg">
                                                     @if(Auth::user()->avatar)
-                                                        <img src="{{ Storage::disk('s3')->url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
+                                                        <img src="{{ Storage::url(Auth::user()->avatar) }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
                                                     @elseif(Auth::user()->email === 'admin@hamzaka.me')
                                                         <img src="{{ asset('Dashboard/assets/img/profile_img/admin.png') }}" alt="Profile" class="avatar-img rounded" style="width: 50px; height: 50px; object-fit: cover;" width="50" height="50">
                                                     @else
