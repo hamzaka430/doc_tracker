@@ -75,7 +75,8 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-        $disk = config('filesystems.default', 'public');
+        $default = config('filesystems.default', 'public');
+        $disk = $default === 'local' ? 'public' : $default;
 
         try {
             $path = $request->file('avatar')->store('avatars', $disk);
@@ -86,12 +87,17 @@ class ProfileController extends Controller
 
             // Delete old avatar if it exists
             if ($user->avatar) {
-                Storage::disk($disk)->delete($user->avatar);
+                try {
+                    Storage::disk($disk)->delete($user->avatar);
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::warning("Failed to delete old avatar {$user->avatar}: " . $e->getMessage());
+                }
             }
 
             $user->update(['avatar' => $path]);
 
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Avatar upload failed: ' . $e->getMessage(), ['exception' => $e]);
             return back()->withErrors(['avatar' => 'Upload failed: ' . $e->getMessage()]);
         }
 
@@ -104,10 +110,15 @@ class ProfileController extends Controller
     public function destroyAvatar(Request $request): RedirectResponse
     {
         $user = $request->user();
-        $disk = config('filesystems.default', 'public');
+        $default = config('filesystems.default', 'public');
+        $disk = $default === 'local' ? 'public' : $default;
 
         if ($user->avatar) {
-            Storage::disk($disk)->delete($user->avatar);
+            try {
+                Storage::disk($disk)->delete($user->avatar);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Failed to delete avatar {$user->avatar}: " . $e->getMessage());
+            }
             $user->update(['avatar' => null]);
         }
 

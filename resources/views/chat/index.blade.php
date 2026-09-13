@@ -114,6 +114,11 @@
 
                     <!-- Right Toolbar Buttons -->
                     <div class="d-flex align-items-center gap-1">
+                        <!-- White / Black Background Theme Toggle -->
+                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" id="btnThemeToggle" onclick="toggleChatTheme()" title="Toggle White / Black Background">
+                            <i class="fas fa-sun me-1" id="themeIcon"></i> <span id="themeBtnText">White BG</span>
+                        </button>
+
                         <!-- Privacy Blur Toggle Button -->
                         <button type="button" class="btn btn-sm btn-telegram-header btn-round px-3" id="btnBlurToggle" onclick="togglePrivacyBlur()" title="Toggle Privacy Blur (Hover on message to reveal text)">
                             <i class="fas fa-eye me-1" id="blurIcon"></i> <span id="blurBtnText">Blur Text</span>
@@ -268,12 +273,12 @@
                 <p class="text-muted small mb-3">Customize the display labels for both participants in this support log.</p>
                 
                 <div class="mb-3">
-                    <label for="inputName1" class="form-label fw-bold" style="color: #2e7d32;">Participant 1 (Right Mint Bubble)</label>
+                    <label for="inputName1" class="form-label fw-bold text-dark">Participant 1</label>
                     <input type="text" class="form-control" id="inputName1" value="{{ $name1 }}" placeholder="e.g. User 1" maxlength="50" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="inputName2" class="form-label fw-bold" style="color: #2481cc;">Participant 2 (Left White Bubble)</label>
+                    <label for="inputName2" class="form-label fw-bold text-dark">Participant 2</label>
                     <input type="text" class="form-control" id="inputName2" value="{{ $name2 }}" placeholder="e.g. User 2" maxlength="50" required>
                 </div>
 
@@ -790,6 +795,152 @@ html, body {
     background: #212329;
     transform: scale(1.2);
 }
+
+/* ========================================================= */
+/* WHITE THEME / LIGHT MODE STYLES                           */
+/* ========================================================= */
+.chat-main-card.chat-theme-white {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.chat-main-card.chat-theme-white .telegram-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .telegram-header h4 {
+    color: #0f172a !important;
+}
+.chat-main-card.chat-theme-white .telegram-header .text-white-50 {
+    color: #64748b !important;
+}
+.chat-main-card.chat-theme-white .btn-telegram-header {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #334155 !important;
+}
+.chat-main-card.chat-theme-white .btn-telegram-header:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+.chat-main-card.chat-theme-white .chat-messages-container {
+    background: #ffffff !important;
+}
+.chat-main-card.chat-theme-white .chat-messages-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+
+/* SENDER 2 (INCOMING / LEFT) IN WHITE THEME */
+.chat-main-card.chat-theme-white .message-row.sender-2-row .message-bubble {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .message-row.sender-2-row .bubble-sender-name {
+    color: #475569 !important;
+}
+.chat-main-card.chat-theme-white .message-row.sender-2-row .bubble-meta {
+    color: #64748b !important;
+}
+.chat-main-card.chat-theme-white .avatar-sender-2 {
+    background: #94a3b8 !important;
+}
+
+/* SENDER 1 (OUTGOING / RIGHT) IN WHITE THEME */
+.chat-main-card.chat-theme-white .message-row.sender-1-row .message-bubble {
+    background: #3875f6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(56, 117, 246, 0.25) !important;
+}
+
+/* DATE DIVIDERS IN WHITE THEME */
+.chat-main-card.chat-theme-white .date-divider span {
+    background: #f8fafc !important;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* INPUT FOOTER & CAPSULE IN WHITE THEME */
+.chat-main-card.chat-theme-white .telegram-footer {
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .telegram-persona-capsule {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .telegram-persona-capsule .persona-tab {
+    color: #64748b !important;
+}
+.chat-main-card.chat-theme-white .telegram-persona-capsule input[type="radio"]:checked + .persona-tab {
+    background: #3875f6 !important;
+    color: #ffffff !important;
+}
+
+.chat-main-card.chat-theme-white .btn-emoji-trigger {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #64748b !important;
+}
+.chat-main-card.chat-theme-white .btn-emoji-trigger:hover {
+    background: #f1f5f9 !important;
+    color: #3875f6 !important;
+    border-color: #3875f6 !important;
+}
+
+.chat-main-card.chat-theme-white .message-textarea {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+.chat-main-card.chat-theme-white .message-textarea::placeholder {
+    color: #94a3b8 !important;
+}
+.chat-main-card.chat-theme-white .message-textarea:focus {
+    border-color: #3875f6 !important;
+    box-shadow: 0 0 0 2px rgba(56, 117, 246, 0.2) !important;
+}
+
+/* EMOJI DRAWER IN WHITE THEME */
+.chat-main-card.chat-theme-white .emoji-picker-drawer {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+.chat-main-card.chat-theme-white .emoji-picker-drawer .bg-light {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .emoji-picker-drawer .form-control {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+}
+.chat-main-card.chat-theme-white .emoji-picker-drawer .input-group-text {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .emoji-category-tabs {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+.chat-main-card.chat-theme-white .btn-emoji-tab {
+    background: #e2e8f0 !important;
+    color: #475569 !important;
+}
+.chat-main-card.chat-theme-white .btn-emoji-tab.active {
+    background: #3875f6 !important;
+    color: #ffffff !important;
+}
+.chat-main-card.chat-theme-white .emoji-grid {
+    background: #ffffff !important;
+}
+.chat-main-card.chat-theme-white .emoji-grid-item:hover {
+    background: #f1f5f9 !important;
+}
 </style>
 
 <!-- JAVASCRIPT LOGIC -->
@@ -907,11 +1058,15 @@ html, body {
     let pollInterval = null;
     let soundEnabled = localStorage.getItem('chat_sound_enabled') !== 'false';
     let blurEnabled = localStorage.getItem('chat_blur_enabled') === 'true';
+    let themeMode = localStorage.getItem('chat_theme_mode') || 'black'; // 'black' or 'white'
     let participantNames = {
         name1: '{{ $name1 }}',
         name2: '{{ $name2 }}'
     };
-    let activePersona = participantNames.name1;
+    let savedPersona = localStorage.getItem('chat_active_persona');
+    let activePersona = (savedPersona && (savedPersona === participantNames.name1 || savedPersona === participantNames.name2)) 
+        ? savedPersona 
+        : participantNames.name1;
     let audioCtx = null;
 
     // Emojis Dataset
@@ -968,6 +1123,30 @@ html, body {
         }
     }
 
+    // WHITE / BLACK THEME TOGGLE
+    function toggleChatTheme() {
+        themeMode = (themeMode === 'black') ? 'white' : 'black';
+        localStorage.setItem('chat_theme_mode', themeMode);
+        applyThemeUi();
+    }
+
+    function applyThemeUi() {
+        const card = document.getElementById('chatMainCard');
+        const icon = document.getElementById('themeIcon');
+        const text = document.getElementById('themeBtnText');
+        if (!card) return;
+
+        if (themeMode === 'white') {
+            card.classList.add('chat-theme-white');
+            if (icon) icon.className = 'fas fa-moon me-1 text-dark';
+            if (text) text.textContent = 'Black BG';
+        } else {
+            card.classList.remove('chat-theme-white');
+            if (icon) icon.className = 'fas fa-sun me-1 text-warning';
+            if (text) text.textContent = 'White BG';
+        }
+    }
+
     // PRIVACY BLUR MODE
     function togglePrivacyBlur() {
         blurEnabled = !blurEnabled;
@@ -996,6 +1175,12 @@ html, body {
 
     function updateActivePersona(persona) {
         activePersona = persona;
+        localStorage.setItem('chat_active_persona', persona);
+        
+        // Re-render conversation stream so sent messages are on the RIGHT and received on the LEFT
+        document.getElementById('messagesStream').innerHTML = '';
+        lastMessageId = 0;
+        fetchMessages(true);
     }
 
     function autoResizeTextarea(textarea) {
@@ -1132,7 +1317,18 @@ html, body {
             icon.className = 'fas fa-volume-mute';
         }
 
+        applyThemeUi();
         applyBlurUi();
+
+        // Sync active persona radio button
+        if (activePersona === participantNames.name2) {
+            const r2 = document.getElementById('persona2');
+            if (r2) r2.checked = true;
+        } else {
+            const r1 = document.getElementById('persona1');
+            if (r1) r1.checked = true;
+        }
+
         fetchMessages(true);
 
         pollInterval = setInterval(() => fetchMessages(false), 1500);
@@ -1225,26 +1421,18 @@ html, body {
         });
     }
 
-    // RENDER SINGLE MESSAGE (STRICT LEFT / RIGHT POSITIONING)
+    // RENDER SINGLE MESSAGE (STANDARD CHAT: SENT -> RIGHT, RECEIVED -> LEFT)
     function renderMessage(msg) {
         const stream = document.getElementById('messagesStream');
         
-        // Determine whether message belongs to Participant 1 (Right) vs Participant 2 (Left)
-        const sender = (msg.sender_name || '').trim().toLowerCase();
-        const p1 = (participantNames.name1 || '').trim().toLowerCase();
-        const p2 = (participantNames.name2 || '').trim().toLowerCase();
+        // Standard chat logic: If message is sent by current active sender -> RIGHT (Outgoing), else -> LEFT (Incoming)
+        const msgSender = (msg.sender_name || '').trim().toLowerCase();
+        const currentSender = (activePersona || '').trim().toLowerCase();
         
-        let isSender1 = true;
-        if (sender === p2 || sender === 'user 2' || sender === 'rahat') {
-            isSender1 = false;
-        } else if (sender === p1 || sender === 'user 1' || sender === 'hamza') {
-            isSender1 = true;
-        } else {
-            isSender1 = (sender === activePersona.toLowerCase());
-        }
+        const isSentByMe = (msgSender === currentSender);
 
-        const rowClass = isSender1 ? 'sender-1-row' : 'sender-2-row';
-        const avatarClass = isSender1 ? 'avatar-sender-1' : 'avatar-sender-2';
+        const rowClass = isSentByMe ? 'sender-1-row' : 'sender-2-row';
+        const avatarClass = isSentByMe ? 'avatar-sender-1' : 'avatar-sender-2';
         const initial = (msg.sender_name || 'U').charAt(0).toUpperCase();
 
         // Check date divider

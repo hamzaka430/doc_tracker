@@ -171,7 +171,7 @@
                             <a href="{{ route('chat.index') }}">
                                 <i class="fas fa-comments"></i>
                                 <p>Chat Support</p>
-                                <span class="badge badge-success" style="font-size: 0.65rem; padding: 2px 7px;">Live</span>
+                                <span class="badge" style="background-color: #ffffff !important; color: #1a2035 !important; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px;">Live</span>
                             </a>
                         </li>
                         <li class="nav-item">

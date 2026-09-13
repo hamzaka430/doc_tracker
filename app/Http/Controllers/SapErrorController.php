@@ -36,7 +36,30 @@ class SapErrorController extends Controller
     }
 
     /**
-     * Store a newly created SAP error in S3 and DB.
+     * Get the active upload storage disk.
+     */
+    protected function getStorageDisk(): string
+    {
+        $default = config('filesystems.default', 'public');
+        return $default === 'local' ? 'public' : $default;
+    }
+
+    /**
+     * Safely delete a stored image if present.
+     */
+    protected function deleteImage(?string $path): void
+    {
+        if ($path) {
+            try {
+                Storage::disk($this->getStorageDisk())->delete($path);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Failed to delete SAP error image {$path}: " . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Store a newly created SAP error in S3/public storage and DB.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -51,9 +74,13 @@ class SapErrorController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $disk = config('filesystems.default', 'public');
+                $disk = $this->getStorageDisk();
                 $imagePath = $request->file('image')->store('errors', $disk);
-            } catch (\Exception $e) {
+                if (!$imagePath) {
+                    throw new \Exception("The storage driver was unable to save the file.");
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('SAP Error screenshot upload failed: ' . $e->getMessage(), ['exception' => $e]);
                 return back()->withInput()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
             }
         }
@@ -103,25 +130,25 @@ class SapErrorController extends Controller
         ]);
 
         $imagePath = $sapError->image_path;
-        $disk = config('filesystems.default', 'public');
 
         if ($request->hasFile('image')) {
             try {
-                // Delete old image
-                if ($sapError->image_path) {
-                    Storage::disk($disk)->delete($sapError->image_path);
+                $disk = $this->getStorageDisk();
+                $newPath = $request->file('image')->store('errors', $disk);
+                if (!$newPath) {
+                    throw new \Exception("The storage driver was unable to save the file.");
                 }
-                $imagePath = $request->file('image')->store('errors', $disk);
-            } catch (\Exception $e) {
+                $this->deleteImage($sapError->image_path);
+                $imagePath = $newPath;
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('SAP Error screenshot update upload failed: ' . $e->getMessage(), ['exception' => $e]);
                 return back()->withInput()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
             }
         }
 
         // Handle image removal
         if ($request->has('remove_image') && $request->remove_image) {
-            if ($sapError->image_path) {
-                Storage::disk($disk)->delete($sapError->image_path);
-            }
+            $this->deleteImage($sapError->image_path);
             $imagePath = null;
         }
 
@@ -143,10 +170,7 @@ class SapErrorController extends Controller
     {
         $this->authorizeModify($sapError);
 
-        if ($sapError->image_path) {
-            $disk = config('filesystems.default', 'public');
-            Storage::disk($disk)->delete($sapError->image_path);
-        }
+        $this->deleteImage($sapError->image_path);
 
         $sapError->delete();
 
