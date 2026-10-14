@@ -99,3 +99,19 @@
 - [x] `heroku logs --tail` or HTTP request to `/chat`.
 **Dependencies:** Task 7
 **Estimated scope:** Small
+
+## Phase 4: Cloudflare R2 Integration
+
+### Task 9: Connect Profile Images with Cloudflare R2
+**Description:** Configure Laravel filesystem disk `s3`/`r2` pointing to Cloudflare R2 object storage with public development URL.
+**Acceptance criteria:**
+- [x] Cloudflare R2 credentials configured in `config/filesystems.php`.
+- [x] Local test upload to Cloudflare R2 passes (put, check exists, url, delete).
+- [x] Heroku config vars set (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION=auto`, `AWS_BUCKET=doctracking-profiles`, `AWS_ENDPOINT`, `AWS_URL`).
+- [x] Code deployed to Heroku (Release v53 live).
+**Verification:**
+- [x] Local test script output: Put succeeded! Exists: YES, Delete succeeded!
+- [x] Heroku dyno booted successfully with 0 errors.
+**Dependencies:** None
+**Files touched:** `config/filesystems.php`, Heroku Config
+**Estimated scope:** Small
