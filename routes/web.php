@@ -70,11 +70,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/setup-pin', [ChatController::class, 'setupPin'])->name('chat.setupPin');
     Route::post('/chat/verify-pin', [ChatController::class, 'verifyPin'])->name('chat.verifyPin');
     Route::post('/chat/lock', [ChatController::class, 'lock'])->name('chat.lock');
-    Route::get('/chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
     Route::post('/chat/messages', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::post('/chat/settings/names', [ChatController::class, 'updateNames'])->name('chat.updateNames');
     Route::delete('/chat/messages/clear', [ChatController::class, 'clearChat'])->name('chat.clear');
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| Chat Poll Route (No auth middleware)
+|--------------------------------------------------------------------------
+| This route is polled every 1.5 s. Removing the auth middleware eliminates
+| 1 DB query per request (User::find from users table on JawsDB).
+| Security is handled inside the controller via session('chat_unlocked').
+*/
+Route::get('/chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
+
 
 require __DIR__.'/auth.php';

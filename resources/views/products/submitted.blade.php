@@ -38,14 +38,14 @@
 
                 <!-- Search and Filter -->
                 <form action="{{ route('products.submitted') }}" method="GET" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6 col-lg-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
-                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search submitted...">
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-3 col-lg-2">
                             <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                                 <option value="">All Types</option>
                                 <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
@@ -54,22 +54,24 @@
                                 <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" title="From Date">
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        <div class="col-6 col-md-6 col-lg-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" title="To Date">
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
-                            <a href="{{ route('products.submitted') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        <div class="col-6 col-md-6 col-lg-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-2">
+                                <i class="fa fa-filter me-1"></i> Filter
+                            </button>
+                            <a href="{{ route('products.submitted') }}" class="btn btn-secondary flex-grow-1 px-2">Clear</a>
                         </div>
                     </div>
                 </form>
 
-                <!-- Submitted Documents Table -->
+                <!-- Submitted Documents Desktop Table -->
                 @if($submittedProducts->count() > 0)
-                    <div class="table-responsive">
+                    <div class="table-responsive d-none d-lg-block">
                         <table class="table table-hover mb-0" id="submittedTable">
                             <thead>
                                 <tr>
@@ -126,7 +128,7 @@
                                                 <span class="text-muted" 
                                                       data-bs-toggle="tooltip" 
                                                       data-bs-title="{{ $product->remarks }}">
-                                                                            <i class="fas fa-comment-dots"></i>
+                                                    <i class="fas fa-comment-dots"></i>
                                                     {{ Str::limit($product->remarks, 20) }}
                                                 </span>
                                             @else
@@ -143,13 +145,13 @@
                                                 </a>
                                                 @if($product->isEditable())
                                                     @if(auth()->user()->canModifyData($product->user_id))
-<a href="{{ route('products.edit', $product) }}" 
-                                                       class="btn btn-link btn-info btn-lg p-1" 
-                                                       data-bs-toggle="tooltip" 
-                                                       title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-@endif
+                                                        <a href="{{ route('products.edit', $product) }}" 
+                                                           class="btn btn-link btn-info btn-lg p-1" 
+                                                           data-bs-toggle="tooltip" 
+                                                           title="Edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </td>
@@ -157,6 +159,88 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Submitted Documents Mobile Card View -->
+                    <div class="d-lg-none" id="mobileSubmittedList">
+                        @foreach($submittedProducts as $product)
+                            <div class="card shadow-sm mb-3 product-card mobile-doc-card"
+                                 data-name="{{ strtolower($product->name) }}"
+                                 data-batch="{{ strtolower($product->batch_no) }}"
+                                 data-stage="{{ strtolower($product->stage) }}"
+                                 data-type="{{ $product->type }}">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold text-dark">{{ $product->name }}</h6>
+                                            <span class="badge badge-success">
+                                                <i class="fas fa-check-circle me-1"></i> Submitted
+                                            </span>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-secondary py-1 px-2" 
+                                                onclick="openDateModal({{ $product->id }}, '{{ $product->submission_date ? $product->submission_date->format('Y-m-d') : '' }}', '{{ $product->submission_time ? substr($product->submission_time, 0, 5) : '' }}')"
+                                                title="Edit Date & Time">
+                                            <i class="fas fa-calendar-alt me-1"></i> Date
+                                        </button>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block" style="font-size: 0.72rem;">BATCH NO</small>
+                                                <code class="bg-white px-2 py-1 rounded d-inline-block mt-1">{{ $product->batch_no }}</code>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block" style="font-size: 0.72rem;">TYPE</small>
+                                                <span class="badge bg-dark text-white mt-1">{{ $product->type ?? 'N/A' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block" style="font-size: 0.72rem;">SUBMITTED DATE</small>
+                                                <span class="fw-semibold text-dark mt-1 d-block" style="font-size: 0.8rem;">
+                                                    {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 bg-light rounded">
+                                                <small class="text-muted d-block" style="font-size: 0.72rem;">SUBMITTED TIME</small>
+                                                <span class="text-dark mt-1 d-block" style="font-size: 0.8rem;">
+                                                    {{ $product->submission_time ?? 'N/A' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="p-2 bg-light rounded d-flex justify-content-between align-items-center">
+                                                <small class="text-muted" style="font-size: 0.72rem;">STAGE</small>
+                                                <span class="stage-badge py-1 px-2">{{ $product->stage }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if($product->remarks)
+                                        <div class="p-2 bg-light rounded mb-3">
+                                            <small class="text-muted d-block" style="font-size: 0.72rem;">REMARKS</small>
+                                            <small class="text-dark">{{ $product->remarks }}</small>
+                                        </div>
+                                    @endif
+
+                                    <div class="d-flex gap-2 pt-2 border-top">
+                                        <a href="{{ route('products.show', $product) }}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                            <i class="fa fa-eye me-1"></i> View Details
+                                        </a>
+                                        @if($product->isEditable() && auth()->user()->canModifyData($product->user_id))
+                                            <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-info btn-sm flex-grow-1">
+                                                <i class="fa fa-edit me-1"></i> Edit
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                     
                     <!-- Pagination -->

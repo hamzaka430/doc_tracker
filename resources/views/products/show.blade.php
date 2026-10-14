@@ -35,34 +35,34 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Document ID</label>
+                <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Document ID</label>
                             <div class="fw-bold">#{{ $product->id }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Batch Number</label>
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Batch Number</label>
                             <div><span class="badge badge-info">{{ $product->batch_no }}</span></div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Stage</label>
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Stage</label>
                             <div><span class="badge badge-primary">{{ $product->stage }}</span></div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Type</label>
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Type</label>
                             <div><span class="badge badge-secondary">{{ $product->type ?? 'N/A' }}</span></div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Status</label>
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Status</label>
                             <div>
                                 @if($product->status === 'submitted')
                                     <span class="badge badge-success">Submitted</span>
@@ -72,25 +72,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="mb-3">
-                            <label class="form-label text-muted">Created At</label>
-                            <div class="fw-bold">{{ $product->created_at->format('M d, Y H:i') }}</div>
+                    <div class="col-6 col-md-4">
+                        <div>
+                            <label class="form-label text-muted small mb-1">Created At</label>
+                            <div class="fw-bold small">{{ $product->created_at->format('M d, Y H:i') }}</div>
                         </div>
                     </div>
                     @if($product->isSubmitted())
-                        <div class="col-md-6 col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label text-muted">Submission Date</label>
-                                <div class="fw-bold">
+                        <div class="col-6 col-md-4">
+                            <div>
+                                <label class="form-label text-muted small mb-1">Submission Date</label>
+                                <div class="fw-bold small">
                                     {{ $product->submission_date ? $product->submission_date->format('M d, Y') : 'N/A' }}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="mb-3">
-                                <label class="form-label text-muted">Submission Time</label>
-                                <div class="text-muted">
+                        <div class="col-6 col-md-4">
+                            <div>
+                                <label class="form-label text-muted small mb-1">Submission Time</label>
+                                <div class="text-muted small">
                                     {{ $product->submission_time ?? 'N/A' }}
                                 </div>
                             </div>
@@ -122,44 +122,41 @@
                         <input type="hidden" name="confirmation" value="0">
 
                         <!-- Checkboxes -->
-                        <div class="row mb-4">
+                        <div class="row g-2 mb-4">
                             <div class="col-12">
-                                <div class="form-check p-3 mb-3 border rounded {{ $product->line_clearance ? 'bg-light' : '' }}">
-                                    <input class="form-check-input" type="checkbox" id="line_clearance" 
-                                           name="line_clearance" value="1" {{ $product->line_clearance ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="line_clearance">
-                                        <i class="fas fa-clipboard-check me-2"></i>
-                                        <strong>Line Clearance</strong>
-                                        <br>
-                                        <small class="text-muted">Pre, In-Process & Post line clearance completed</small>
-                                    </label>
-                                </div>
+                                <label class="form-check p-3 border rounded w-100 d-flex align-items-center mb-0 cursor-pointer {{ $product->line_clearance ? 'bg-light border-success' : '' }}" for="line_clearance" style="cursor: pointer; min-height: 52px;">
+                                    <input class="form-check-input mt-0 me-3" type="checkbox" id="line_clearance" 
+                                           name="line_clearance" value="1" {{ $product->line_clearance ? 'checked' : '' }} style="width: 20px; height: 20px;">
+                                    <span class="form-check-label flex-grow-1">
+                                        <i class="fas fa-clipboard-check text-primary me-2"></i>
+                                        <strong class="d-inline-block">Line Clearance</strong>
+                                        <small class="text-muted d-block mt-1">Pre, In-Process & Post line clearance completed</small>
+                                    </span>
+                                </label>
                             </div>
 
                             <div class="col-12">
-                                <div class="form-check p-3 mb-3 border rounded {{ $product->review ? 'bg-light' : '' }}">
-                                    <input class="form-check-input" type="checkbox" id="review" 
-                                           name="review" value="1" {{ $product->review ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="review">
-                                        <i class="fas fa-eye me-2"></i>
-                                        <strong>Review</strong>
-                                        <br>
-                                        <small class="text-muted">Document review completed</small>
-                                    </label>
-                                </div>
+                                <label class="form-check p-3 border rounded w-100 d-flex align-items-center mb-0 cursor-pointer {{ $product->review ? 'bg-light border-success' : '' }}" for="review" style="cursor: pointer; min-height: 52px;">
+                                    <input class="form-check-input mt-0 me-3" type="checkbox" id="review" 
+                                           name="review" value="1" {{ $product->review ? 'checked' : '' }} style="width: 20px; height: 20px;">
+                                    <span class="form-check-label flex-grow-1">
+                                        <i class="fas fa-eye text-primary me-2"></i>
+                                        <strong class="d-inline-block">Review</strong>
+                                        <small class="text-muted d-block mt-1">Document review completed</small>
+                                    </span>
+                                </label>
                             </div>
 
                             <div class="col-12">
-                                <div class="form-check p-3 mb-3 border rounded {{ $product->confirmation ? 'bg-light' : '' }}">
-                                    <input class="form-check-input" type="checkbox" id="confirmation" 
-                                           name="confirmation" value="1" {{ $product->confirmation ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="confirmation">
-                                        <i class="fas fa-check-double me-2"></i>
-                                        <strong>Confirmation</strong>
-                                        <br>
-                                        <small class="text-muted">Final confirmation completed</small>
-                                    </label>
-                                </div>
+                                <label class="form-check p-3 border rounded w-100 d-flex align-items-center mb-0 cursor-pointer {{ $product->confirmation ? 'bg-light border-success' : '' }}" for="confirmation" style="cursor: pointer; min-height: 52px;">
+                                    <input class="form-check-input mt-0 me-3" type="checkbox" id="confirmation" 
+                                           name="confirmation" value="1" {{ $product->confirmation ? 'checked' : '' }} style="width: 20px; height: 20px;">
+                                    <span class="form-check-label flex-grow-1">
+                                        <i class="fas fa-check-double text-primary me-2"></i>
+                                        <strong class="d-inline-block">Confirmation</strong>
+                                        <small class="text-muted d-block mt-1">Final confirmation completed</small>
+                                    </span>
+                                </label>
                             </div>
                         </div>
 
@@ -186,7 +183,7 @@
                         </div>
 
                         <!-- Remarks -->
-                        <div class="form-group mb-4">
+                        <div class="form-group mb-4 px-0">
                             <label for="remarks">Remarks</label>
                             <textarea class="form-control" id="remarks" name="remarks" rows="4" placeholder="Enter remarks...">{{ old('remarks', $product->remarks) }}</textarea>
                             @error('remarks')
@@ -195,28 +192,28 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="card-action">
-                            <button type="submit" class="btn btn-success">
+                        <div class="card-action d-flex flex-wrap gap-2 pt-3 border-top">
+                            <button type="submit" class="btn btn-success flex-grow-1 flex-sm-grow-0">
                                 <i class="fa fa-check me-2"></i>Save Updates
                             </button>
                             
                             @if($product->isReadyForSubmission() && !$product->isSubmitted())
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#submitModal">
+                                <button type="button" class="btn btn-primary flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#submitModal">
                                     <i class="fa fa-paper-plane me-2"></i>Submit Product
                                 </button>
                             @endif
                             
-                            <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">
+                            <a href="{{ route('products.edit', $product) }}" class="btn btn-warning flex-grow-1 flex-sm-grow-0">
                                 <i class="fa fa-edit me-2"></i>Edit Product
                             </a>
                             
                             @if($product->isEditable())
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa fa-trash me-2"></i>Delete
                                 </button>
                             @endif
                             
-                            <a href="{{ route('products.index') }}" class="btn btn-default">
+                            <a href="{{ route('products.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
                                 <i class="fa fa-arrow-left me-2"></i>Back to List
                             </a>
                         </div>

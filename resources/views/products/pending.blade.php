@@ -35,16 +35,15 @@
             <div class="card-body">
 
                 <!-- Search and Filter -->
-                <!-- Search and Filter -->
                 <form action="{{ route('products.pending') }}" method="GET" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6 col-lg-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
-                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search pending...">
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-3 col-lg-2">
                             <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                                 <option value="">All Types</option>
                                 <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
@@ -53,16 +52,16 @@
                                 <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" title="From Date">
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        <div class="col-6 col-md-6 col-lg-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" title="To Date">
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
-                            <button type="button" class="btn btn-success flex-grow-1 fw-bold" id="bulkSubmitBtn" disabled>
-                                <i class="fa fa-check-double"></i> Submit (<span id="bulkCount">0</span>)
+                        <div class="col-6 col-md-6 col-lg-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-2">Filter</button>
+                            <button type="button" class="btn btn-success flex-grow-1 fw-bold px-2" id="bulkSubmitBtn" disabled>
+                                <i class="fa fa-check-double me-1"></i> Submit (<span id="bulkCount">0</span>)
                             </button>
                         </div>
                     </div>

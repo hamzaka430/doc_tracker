@@ -131,11 +131,15 @@
         
         @media (max-width: 576px) {
             .forgot-card {
-                padding: 2rem 1.5rem;
+                padding: 2rem 1.25rem;
             }
             
             .forgot-header h1 {
-                font-size: 1.75rem;
+                font-size: 1.5rem;
+            }
+
+            .form-control {
+                font-size: 16px !important;
             }
         }
     </style>

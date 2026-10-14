@@ -204,101 +204,196 @@
    RESPONSIVE STYLES FOR ALL DEVICES
    ======================================== */
 
+/* Mobile Card General Layout */
+.mobile-doc-card,
+.product-card.card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1rem;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.mobile-doc-card:hover,
+.product-card.card:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.mobile-doc-card .card-body,
+.product-card .card-body {
+    padding: 1rem;
+}
+
+/* Breadcrumbs Responsive */
+.breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.breadcrumbs li {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.breadcrumbs li.separator {
+    padding: 0 4px;
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.breadcrumbs li a {
+    color: #475569;
+    text-decoration: none;
+}
+
+.breadcrumbs li a:hover {
+    color: #1d4ed8;
+}
+
+/* Topbar Header Responsive Counters */
+.topbar-stat-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.topbar-stat-pill:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+/* Sidebar Backdrop for Mobile Overlay */
+.sidebar-overlay-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.nav_open .sidebar-overlay-backdrop {
+    opacity: 1;
+    visibility: visible;
+}
+
 /* Extra Small Devices (Portrait Phones, less than 576px) */
 @media (max-width: 575.98px) {
     /* Typography */
-    .page-title {
-        font-size: 1.25rem;
+    .page-title, h3.fw-bold {
+        font-size: 1.25rem !important;
     }
     
     .page-subtitle {
-        font-size: 0.875rem;
+        font-size: 0.85rem;
+    }
+
+    .breadcrumbs li {
+        font-size: 0.75rem;
     }
     
-    /* Container adjustments */
+    /* Page Container Grid Alignment */
     .container {
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
     }
     
     .page-inner {
-        padding: 15px 5px;
+        padding: 12px 0 !important;
     }
     
     /* Card adjustments */
     .card {
-        margin-bottom: 1rem;
+        margin-bottom: 0.85rem;
+        border-radius: 10px;
     }
     
     .card-header {
-        padding: 0.75rem;
+        padding: 0.75rem 0.85rem;
+    }
+
+    .card-header .d-flex.align-items-center {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
     
+    .card-title {
+        font-size: 1.05rem;
+    }
+
     .card-body {
-        padding: 0.75rem;
+        padding: 0.85rem;
     }
     
     /* Table responsive */
     .table-responsive {
         border: none;
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .table {
-        font-size: 0.875rem;
+        font-size: 0.825rem;
     }
     
     .table th,
     .table td {
-        padding: 0.5rem 0.25rem;
+        padding: 0.45rem 0.35rem;
         white-space: nowrap;
-    }
-    
-    /* Mobile view adjustments */
-    .product-card {
-        display: block !important;
-    }
-    
-    .d-lg-none {
-        display: block !important;
-    }
-    
-    .d-none.d-lg-block {
-        display: none !important;
     }
     
     /* Button adjustments */
     .btn {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.875rem;
+        padding: 0.45rem 0.75rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
     }
     
     .btn-lg {
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0.85rem;
+        font-size: 0.9rem;
     }
     
     /* Form controls */
     .form-control,
     .form-select {
-        font-size: 0.875rem;
-        padding: 0.5rem 0.75rem;
+        font-size: 16px !important; /* Prevents unwanted iOS zoom */
+        padding: 0.45rem 0.7rem;
+        border-radius: 6px;
     }
     
     /* Badge adjustments */
     .badge {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.5rem;
-    }
-    
-    /* Search and filter section */
-    .row.mb-4 > div {
-        margin-bottom: 0.75rem;
+        font-size: 0.72rem;
+        padding: 0.3rem 0.55rem;
     }
     
     /* Action buttons spacing */
     .d-flex.align-items-center .btn {
-        padding: 0.25rem 0.5rem;
-        margin: 0 0.125rem;
+        padding: 0.3rem 0.5rem;
+        margin: 0 0.1rem;
     }
     
     /* Footer adjustments */
@@ -310,7 +405,7 @@
     .footer .container-fluid {
         flex-direction: column;
         text-align: center;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
     
     /* Progress bar */
@@ -319,30 +414,41 @@
     }
     
     .progress-bar {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
     }
     
     /* Modal adjustments */
     .modal-dialog {
-        margin: 0.5rem;
+        margin: 0.5rem auto;
+        max-width: calc(100vw - 20px);
     }
     
     .modal-header,
     .modal-body,
     .modal-footer {
-        padding: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+
+    /* Autocomplete dropdown positioning on mobile */
+    .autocomplete-menu {
+        max-height: 160px !important;
+        font-size: 0.875rem;
     }
 }
 
 /* Small Devices (Landscape Phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) {
-    .page-title {
-        font-size: 1.5rem;
+    .page-title, h3.fw-bold {
+        font-size: 1.4rem !important;
     }
     
     .container {
-        padding-left: 15px;
-        padding-right: 15px;
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .page-inner {
+        padding: 18px 10px;
     }
     
     .card-body {
@@ -350,88 +456,58 @@
     }
     
     .table {
-        font-size: 0.9rem;
+        font-size: 0.875rem;
     }
-    
-    /* Show mobile cards on small landscape */
-    .d-lg-none {
-        display: block !important;
-    }
-    
-    .d-none.d-lg-block {
-        display: none !important;
+
+    .form-control,
+    .form-select {
+        font-size: 16px !important;
     }
     
     .btn {
-        font-size: 0.9rem;
+        font-size: 0.875rem;
     }
     
     .footer {
         padding: 1rem;
-        font-size: 0.85rem;
+        font-size: 0.825rem;
     }
 }
 
 /* Medium Devices (Tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991.98px) {
-    /* Show tables on tablets */
-    .d-none.d-lg-block {
-        display: block !important;
+    .page-inner {
+        padding: 20px 16px;
     }
-    
-    .d-lg-none {
-        display: none !important;
-    }
-    
-    /* Adjust sidebar on tablets */
+
     .sidebar {
         width: 250px;
     }
     
     .main-panel {
-        width: calc(100% - 250px);
+        width: 100%;
     }
     
-    /* Table adjustments */
     .table th,
     .table td {
-        padding: 0.75rem 0.5rem;
+        padding: 0.65rem 0.5rem;
     }
     
-    /* Card adjustments */
     .card-body {
         padding: 1.25rem;
-    }
-    
-    /* Form layout improvements */
-    .row > .col-md-6,
-    .row > .col-md-4,
-    .row > .col-md-3 {
-        margin-bottom: 1rem;
     }
 }
 
 /* Large Devices (Desktops, 992px and up) */
 @media (min-width: 992px) {
-    /* Full table display */
-    .d-none.d-lg-block {
-        display: block !important;
-    }
-    
-    .d-lg-none {
-        display: none !important;
-    }
-    
-    /* Optimal spacing */
     .page-inner {
-        padding: 24px;
+        padding: 24px 28px;
     }
     
     .card-body {
         padding: 1.5rem;
     }
     
-    /* Table optimal sizing */
     .table th,
     .table td {
         padding: 0.75rem 1rem;
@@ -445,7 +521,7 @@
     }
     
     .page-inner {
-        padding: 30px;
+        padding: 28px 32px;
     }
 }
 
@@ -456,36 +532,51 @@
     }
 }
 
-/* Responsive Sidebar */
+/* Responsive Sidebar & Overlay for screens < 992px */
 @media (max-width: 991.98px) {
     .sidebar {
         position: fixed;
-        left: -260px;
-        transition: left 0.3s ease;
-        z-index: 1001;
+        left: -270px;
+        top: 0;
+        bottom: 0;
+        width: 270px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1005 !important;
     }
     
+    .nav_open .sidebar,
     .sidebar.active {
-        left: 0;
+        left: 0 !important;
     }
     
     .main-panel {
         width: 100% !important;
+        margin-left: 0 !important;
     }
     
     .main-header .main-header-logo {
         display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .main-header .navbar-header {
+        min-height: 54px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 }
 
-/* Landscape orientation fixes */
+/* Landscape orientation on mobile devices */
 @media (orientation: landscape) and (max-height: 575.98px) {
     .sidebar-wrapper {
-        max-height: calc(100vh - 60px);
+        max-height: calc(100vh - 54px);
     }
     
     .page-inner {
-        padding: 15px;
+        padding: 12px 14px;
     }
 }
 
@@ -495,7 +586,8 @@
     .main-header,
     .footer,
     .btn,
-    .action-buttons {
+    .action-buttons,
+    .sidebar-overlay-backdrop {
         display: none !important;
     }
     
@@ -523,42 +615,37 @@
     }
 }
 
-/* Dark mode support (if needed in future) */
-@media (prefers-color-scheme: dark) {
-    /* Can be expanded for dark mode support */
-}
-
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-    /* Larger touch targets */
     .btn {
-        min-height: 44px;
-        min-width: 44px;
+        min-height: 38px;
     }
     
+    .btn-sm {
+        min-height: 34px;
+    }
+
     .form-control,
     .form-select {
-        min-height: 44px;
+        min-height: 42px;
     }
     
-    /* Remove hover effects on touch devices */
-    .btn:hover,
     .product-row:hover,
     .product-card:hover {
         background-color: inherit;
     }
     
-    /* Make links easier to tap */
     a {
-        padding: 0.25rem;
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
     }
 }
 
 /* High DPI screens */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    /* Sharper text rendering */
     body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 }
+

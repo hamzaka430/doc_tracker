@@ -36,10 +36,10 @@
                 <form action="{{ route('sap-errors.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
-                    <div class="row">
-                        <div class="col-md-6 col-lg-6">
-                            <div class="form-group">
-                                <label for="title">Error Title <span class="text-danger">*</span></label>
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="title">Error Title <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="title" name="title" 
                                        placeholder="Enter short description/title" value="{{ old('title') }}" required>
                                 @error('title')
@@ -48,9 +48,9 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 col-lg-6">
-                            <div class="form-group">
-                                <label for="sap_tcode">SAP T-Code</label>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="sap_tcode">SAP T-Code</label>
                                 <input type="text" class="form-control" id="sap_tcode" name="sap_tcode" 
                                        placeholder="e.g. MIGO, ME21N" value="{{ old('sap_tcode') }}">
                                 @error('sap_tcode')
@@ -59,9 +59,9 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="description">Detailed Description</label>
+                        <div class="col-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="description">Detailed Description</label>
                                 <textarea class="form-control" id="description" name="description" rows="5" 
                                           placeholder="Describe the error in detail...">{{ old('description') }}</textarea>
                                 @error('description')
@@ -70,9 +70,9 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="image">Error Screenshot (Max: 5MB)</label>
+                        <div class="col-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label" for="image">Error Screenshot (Max: 5MB)</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
                                 @error('image')
                                     <small class="form-text text-danger">{{ $message }}</small>
@@ -81,11 +81,11 @@
                         </div>
                     </div>
 
-                    <div class="card-action mt-4">
-                        <button type="submit" class="btn btn-success">
+                    <div class="card-action d-flex flex-wrap gap-2 pt-3 border-top mt-4">
+                        <button type="submit" class="btn btn-success flex-grow-1 flex-sm-grow-0">
                             <i class="fa fa-check me-2"></i>Save Error
                         </button>
-                        <a href="{{ route('sap-errors.index') }}" class="btn btn-danger">
+                        <a href="{{ route('sap-errors.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
                             <i class="fa fa-times me-2"></i>Cancel
                         </a>
                     </div>

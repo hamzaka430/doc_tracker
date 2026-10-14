@@ -25,9 +25,9 @@
 
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center">
-                    <h4 class="card-title">Document Information</h4>
-                    <a href="{{ route('products.show', $product) }}" class="btn btn-secondary btn-round ms-auto">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h4 class="card-title mb-0">Document Information</h4>
+                    <a href="{{ route('products.show', $product) }}" class="btn btn-secondary btn-round btn-sm">
                         Back to Details
                     </a>
                 </div>
@@ -150,11 +150,11 @@
                 </div>
             </div>
 
-            <div class="d-flex gap-3 mt-4">
-                <button type="submit" class="btn btn-dark flex-fill">
+            <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
+                <button type="submit" class="btn btn-dark flex-fill py-2">
                     <i class="fas fa-save me-2"></i>Save Changes
                 </button>
-                <a href="{{ route('products.show', $product) }}" class="btn btn-outline-secondary flex-fill">
+                <a href="{{ route('products.show', $product) }}" class="btn btn-outline-secondary flex-fill py-2 text-center">
                     <i class="fas fa-times me-2"></i>Cancel
                 </a>
             </div>

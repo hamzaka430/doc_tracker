@@ -49,7 +49,8 @@
                 </form>
 
                 @if($vialsData->count() > 0)
-                <div class="table-responsive">
+                <!-- Desktop Table View -->
+                <div class="table-responsive d-none d-lg-block">
                     <table class="display table table-striped table-hover">
                         <thead>
                             <tr>
@@ -65,9 +66,6 @@
                         </thead>
                         <tbody>
                             @foreach($vialsData as $data)
-                            @php
-                                $isFilled = $data->batch_size || $data->optical_qty || $data->pkg_qty || $data->rejection;
-                            @endphp
                             <tr>
                                 <td>
                                     <strong>{{ $data->product_name }}</strong>
@@ -98,7 +96,57 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-3">
+                <!-- Mobile Card View -->
+                <div class="d-lg-none" id="mobileVialsList">
+                    @foreach($vialsData as $data)
+                    <div class="card shadow-sm mb-3 border">
+                        <div class="card-body p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-dark">{{ $data->product_name }}</h6>
+                                    <span class="badge badge-info">{{ $data->batch_no }}</span>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('injection_details.edit', $data) }}" class="btn btn-sm btn-warning" title="Edit">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('injection_details.destroy', $data) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this entry?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row g-2 pt-2 border-top">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Batch Size</small>
+                                    <span class="fw-semibold small">{{ $data->batch_size ?? '-' }}</span>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Optical Qty</small>
+                                    <span class="fw-semibold small">{{ $data->optical_qty ?? '-' }}</span>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Pkg Qty</small>
+                                    <span class="fw-semibold small">{{ $data->pkg_qty ?? '-' }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Rejection</small>
+                                    <span class="fw-semibold small text-danger">{{ $data->rejection ?? '-' }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Error</small>
+                                    <span class="fw-semibold small text-warning">{{ $data->error ?? '-' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2 mt-3">
                     <small class="text-muted">Showing {{ $vialsData->firstItem() }}–{{ $vialsData->lastItem() }} of {{ $vialsData->total() }} entries</small>
                     {{ $vialsData->withQueryString()->links('pagination::bootstrap-5') }}
                 </div>

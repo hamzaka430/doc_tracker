@@ -44,6 +44,7 @@
 </head>
 <body>
     <div class="wrapper">
+        <div class="sidebar-overlay-backdrop"></div>
         <script>
             // Apply sidebar state immediately to prevent flicker
             if (localStorage.getItem('sidebar_collapsed') === 'true') {
@@ -61,14 +62,14 @@
                         </span>
                     </a>
                     <div class="nav-toggle">
-                        <button class="btn btn-toggle toggle-sidebar">
+                        <button class="btn btn-toggle toggle-sidebar" aria-label="Toggle Sidebar">
                             <i class="gg-menu-right"></i>
                         </button>
-                        <button class="btn btn-toggle sidenav-toggler">
+                        <button class="btn btn-toggle sidenav-toggler" aria-label="Toggle Sidenav">
                             <i class="gg-menu-left"></i>
                         </button>
                     </div>
-                    <button class="topbar-toggler more">
+                    <button class="topbar-toggler more" aria-label="More Options">
                         <i class="gg-more-vertical-alt"></i>
                     </button>
                 </div>
@@ -236,23 +237,25 @@
                 <!-- Navbar Header -->
                 <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
                     <div class="container-fluid">
-                        <!-- Useful Topbar Elements (Desktop) -->
-                        <div class="d-none d-lg-flex align-items-center gap-3 ms-3">
-                            @php
-                                $pendingCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending')->count();
-                                $submittedCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted')->count();
-                            @endphp
-                            <div class="d-flex align-items-center px-3 py-1 rounded bg-warning text-white">
-                                <i class="fas fa-hourglass-half me-2"></i> 
-                                <span class="fw-bold" style="font-size: 0.85rem;">{{ $pendingCount }} Pending</span>
-                            </div>
-                            <div class="d-flex align-items-center px-3 py-1 rounded bg-success text-white">
-                                <i class="fas fa-check-double me-2"></i> 
-                                <span class="fw-bold" style="font-size: 0.85rem;">{{ $submittedCount }} Submitted</span>
-                            </div>
+                        <!-- Useful Topbar Elements (Mobile & Desktop) -->
+                        @php
+                            $pendingCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending')->count();
+                            $submittedCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted')->count();
+                        @endphp
+                        <div class="d-flex align-items-center gap-2 ms-1 ms-md-3">
+                            <a href="{{ route('products.pending') }}" class="topbar-stat-pill bg-warning text-dark shadow-sm" title="{{ $pendingCount }} Pending Documents">
+                                <i class="fas fa-hourglass-half me-1"></i> 
+                                <span>{{ $pendingCount }}</span>
+                                <span class="d-none d-sm-inline ms-1">Pending</span>
+                            </a>
+                            <a href="{{ route('products.submitted') }}" class="topbar-stat-pill bg-success text-white shadow-sm" title="{{ $submittedCount }} Submitted Documents">
+                                <i class="fas fa-check-double me-1"></i> 
+                                <span>{{ $submittedCount }}</span>
+                                <span class="d-none d-sm-inline ms-1">Submitted</span>
+                            </a>
                         </div>
 
-                        <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                        <ul class="navbar-nav topbar-nav ms-auto align-items-center">
                             
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
@@ -270,7 +273,7 @@
                                         <span class="fw-bold">{{ Auth::user()->name }}</span>
                                     </span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-user animated fadeIn">
+                                <ul class="dropdown-menu dropdown-user dropdown-menu-end animated fadeIn">
                                     <div class="dropdown-user-scroll scrollbar-outer">
                                         <li>
                                             <div class="user-box">
@@ -415,6 +418,12 @@
                         $('.toggle-sidebar').removeClass('toggled');
                     }
                 }, 10);
+            });
+
+            // Close mobile sidebar when backdrop is tapped
+            $('.sidebar-overlay-backdrop').on('click', function() {
+                $('html').removeClass('nav_open');
+                $('.sidebar').removeClass('active');
             });
         });
     </script>

@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'mysql_chat';
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('chat_messages', function (Blueprint $table) {
+        Schema::connection('mysql_chat')->create('chat_messages', function (Blueprint $table) {
             $table->id();
             $table->string('sender_name', 50); // 'Hamza' or 'Rahat'
             $table->text('message');
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_messages');
+        Schema::connection('mysql_chat')->dropIfExists('chat_messages');
     }
 };

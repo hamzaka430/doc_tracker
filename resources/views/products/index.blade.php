@@ -48,14 +48,14 @@
             <div class="card-body">
                 <!-- Search and Filter -->
                 <form action="{{ route('products.index') }}" method="GET" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6 col-lg-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
-                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
+                                <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search documents...">
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-3 col-lg-2">
                             <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                                 <option value="">All Types</option>
                                 <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
@@ -64,22 +64,24 @@
                                 <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" title="From Date">
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        <div class="col-6 col-md-6 col-lg-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" title="To Date">
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
-                            <a href="{{ route('products.index') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        <div class="col-6 col-md-6 col-lg-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-2">
+                                <i class="fa fa-filter me-1"></i> Filter
+                            </button>
+                            <a href="{{ route('products.index') }}" class="btn btn-secondary flex-grow-1 px-2">Clear</a>
                         </div>
                     </div>
                 </form>
 
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="display table table-striped table-hover">
+                <!-- Desktop Table View -->
+                <div class="table-responsive d-none d-lg-block">
+                    <table class="display table table-striped table-hover mb-0">
                         <thead>
                             <tr>
                                 <th>Document Name</th>
@@ -148,27 +150,27 @@
                                                 <i class="fa fa-eye"></i>
                                             </a>
                                             @if(auth()->user()->canModifyData($product->user_id))
-<a href="{{ route('products.edit', $product) }}" 
-                                               class="btn btn-link btn-info btn-lg p-1" 
-                                               data-bs-toggle="tooltip" 
-                                               title="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-@endif
+                                                <a href="{{ route('products.edit', $product) }}" 
+                                                   class="btn btn-link btn-info btn-lg p-1" 
+                                                   data-bs-toggle="tooltip" 
+                                                   title="Edit">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            @endif
                                             @if(!$product->isSubmitted())
                                                 @if(auth()->user()->canModifyData($product->user_id))
-<form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" 
-                                                            class="btn btn-link btn-danger p-1" 
-                                                            data-bs-toggle="tooltip" 
-                                                            title="Delete"
-                                                            onclick="return confirm('Are you sure you want to delete this document?')">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </form>
-@endif
+                                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                                class="btn btn-link btn-danger p-1" 
+                                                                data-bs-toggle="tooltip" 
+                                                                title="Delete"
+                                                                onclick="return confirm('Are you sure you want to delete this document?')">
+                                                            <i class="fa fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             @endif
                                         </div>
                                     </td>
@@ -187,6 +189,100 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div class="d-lg-none" id="mobileProductsList">
+                    @forelse($products as $product)
+                        @php
+                            $completed = 0;
+                            if($product->line_clearance) $completed++;
+                            if($product->review) $completed++;
+                            if($product->confirmation) $completed++;
+                            $percentage = ($completed / 3) * 100;
+                        @endphp
+                        <div class="card shadow-sm mb-3 product-card mobile-doc-card" 
+                             data-name="{{ strtolower($product->name) }}"
+                             data-batch="{{ strtolower($product->batch_no) }}"
+                             data-stage="{{ strtolower($product->stage) }}"
+                             data-type="{{ $product->type }}">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="me-2">
+                                        <h6 class="mb-1 fw-bold text-dark">{{ $product->name }}</h6>
+                                        <small class="text-muted">
+                                            <i class="far fa-calendar-alt me-1"></i>{{ $product->created_at->format('M d, Y') }}
+                                        </small>
+                                    </div>
+                                    @if($product->status === 'submitted')
+                                        <span class="badge badge-success">Submitted</span>
+                                    @else
+                                        <span class="badge badge-warning">Pending</span>
+                                    @endif
+                                </div>
+
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="p-2 bg-light rounded">
+                                            <small class="text-muted d-block" style="font-size: 0.72rem;">BATCH NO</small>
+                                            <code class="bg-white px-2 py-1 rounded d-inline-block mt-1">{{ $product->batch_no }}</code>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 bg-light rounded">
+                                            <small class="text-muted d-block" style="font-size: 0.72rem;">TYPE</small>
+                                            <span class="badge bg-dark text-white mt-1">{{ $product->type ?? 'N/A' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="p-2 bg-light rounded d-flex justify-content-between align-items-center">
+                                            <small class="text-muted" style="font-size: 0.72rem;">STAGE</small>
+                                            <span class="stage-badge py-1 px-2">{{ $product->stage }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-muted fw-semibold">Progress</small>
+                                        <small class="fw-bold text-success">{{ $completed }}/3 ({{ round($percentage) }}%)</small>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" style="width: {{ $percentage }}%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2 pt-2 border-top">
+                                    <a href="{{ route('products.show', $product) }}" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        <i class="fa fa-eye me-1"></i> View
+                                    </a>
+                                    @if(auth()->user()->canModifyData($product->user_id))
+                                        <a href="{{ route('products.edit', $product) }}" class="btn btn-outline-info btn-sm flex-grow-1">
+                                            <i class="fa fa-edit me-1"></i> Edit
+                                        </a>
+                                    @endif
+                                    @if(!$product->isSubmitted() && auth()->user()->canModifyData($product->user_id))
+                                        <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline m-0">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                    title="Delete" onclick="return confirm('Are you sure you want to delete this document?')">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-4">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-2 d-block"></i>
+                            <h6 class="text-muted">No Documents Found</h6>
+                            <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm mt-2">
+                                <i class="fa fa-plus me-1"></i> Add First Document
+                            </a>
+                        </div>
+                    @endforelse
                 </div>
                 
                 <!-- Pagination -->

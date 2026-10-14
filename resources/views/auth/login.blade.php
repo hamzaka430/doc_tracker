@@ -94,7 +94,7 @@
                     </form>
                 </div>
 
-                <div class="aspect-[71/50] w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
+                <div class="hidden lg:block aspect-[71/50] w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
                     <img src="https://readymadeui.com/images/integration-illus.webp" class="w-full object-cover" alt="login img" width="710" height="500" />
                 </div>
             </div>

@@ -33,29 +33,29 @@
                     <div id="documents-container">
                         <!-- First Document Row -->
                         <div class="document-row border rounded p-3 mb-3 position-relative bg-light">
-                            <div class="row">
+                            <div class="row g-3">
                                 <!-- Product Name -->
-                                <div class="col-md-6 col-lg-3">
+                                <div class="col-12 col-md-6 col-lg-3">
                                     <div class="form-group mb-0">
-                                        <label>Document Name <span class="text-danger">*</span></label>
+                                        <label class="form-label mb-1">Document Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="name[]" 
                                                placeholder="Enter document name" value="{{ request('name') }}" required>
                                     </div>
                                 </div>
 
                                 <!-- Batch Number -->
-                                <div class="col-md-6 col-lg-3">
+                                <div class="col-12 col-md-6 col-lg-3">
                                     <div class="form-group mb-0">
-                                        <label>Batch Number <span class="text-danger">*</span></label>
+                                        <label class="form-label mb-1">Batch Number <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="batch_no[]" 
                                                placeholder="Enter batch number" value="{{ request('batch_no') }}" maxlength="7" required>
                                     </div>
                                 </div>
 
                                 <!-- Stage -->
-                                <div class="col-md-6 col-lg-3">
+                                <div class="col-12 col-md-6 col-lg-3">
                                     <div class="form-group mb-0">
-                                        <label>Stage <span class="text-danger">*</span></label>
+                                        <label class="form-label mb-1">Stage <span class="text-danger">*</span></label>
                                         <input type="text" 
                                                class="form-control" 
                                                name="stage[]" 
@@ -66,9 +66,9 @@
                                 </div>
 
                                 <!-- Type -->
-                                <div class="col-md-6 col-lg-3">
+                                <div class="col-12 col-md-6 col-lg-3">
                                     <div class="form-group mb-0">
-                                        <label>Type <span class="text-danger">*</span></label>
+                                        <label class="form-label mb-1">Type <span class="text-danger">*</span></label>
                                         <select class="form-select form-control" name="type[]" required>
                                             <option value="" disabled {{ !request('type') ? 'selected' : '' }}>Select Type</option>
                                             @foreach($types as $type)
@@ -91,22 +91,20 @@
                         </div>
                     @endif
 
-
-
-                    <div class="mb-4 mt-2">
+                    <div class="d-flex flex-wrap gap-2 mb-4 mt-3">
                         <button type="button" id="add-document-btn" class="btn btn-primary btn-border btn-round btn-sm">
                             <i class="fa fa-plus me-2"></i>Add Another Document
                         </button>
-                        <button type="button" id="duplicate-document-btn" class="btn btn-dark btn-round btn-sm ms-2">
+                        <button type="button" id="duplicate-document-btn" class="btn btn-dark btn-round btn-sm">
                             <i class="fa fa-copy me-2"></i>Duplicate Last Document
                         </button>
                     </div>
 
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success">
+                    <div class="card-action d-flex flex-wrap gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-success flex-grow-1 flex-sm-grow-0">
                             <i class="fa fa-check me-2"></i>Save Documents
                         </button>
-                        <a href="{{ route('products.index') }}" class="btn btn-danger">
+                        <a href="{{ route('products.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
                             <i class="fa fa-times me-2"></i>Cancel
                         </a>
                     </div>

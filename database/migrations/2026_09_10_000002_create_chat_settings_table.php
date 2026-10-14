@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'mysql_chat';
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('chat_settings', function (Blueprint $table) {
+        Schema::connection('mysql_chat')->create('chat_settings', function (Blueprint $table) {
             $table->id();
             $table->string('key', 100)->unique();
             $table->text('value')->nullable();
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_settings');
+        Schema::connection('mysql_chat')->dropIfExists('chat_settings');
     }
 };

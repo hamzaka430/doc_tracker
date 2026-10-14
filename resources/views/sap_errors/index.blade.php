@@ -33,7 +33,8 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
+                <!-- Desktop Table View -->
+                <div class="table-responsive d-none d-lg-block">
                     <table id="errorsTable" class="display table table-striped table-hover">
                         <thead>
                             <tr>
@@ -101,6 +102,49 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Cards View -->
+                <div class="d-lg-none" id="mobileErrorsList">
+                    @forelse($sapErrors as $error)
+                        <div class="card shadow-sm mb-3 border">
+                            <div class="card-body p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="fw-bold mb-1 text-dark flex-grow-1 me-2">{{ $error->title }}</h6>
+                                    @if($error->sap_tcode)
+                                        <code class="bg-light px-2 py-1 rounded small">{{ $error->sap_tcode }}</code>
+                                    @endif
+                                </div>
+                                <div class="text-muted small mb-3">
+                                    <i class="far fa-calendar me-1"></i>{{ $error->created_at->format('M d, Y') }}
+                                </div>
+                                <div class="d-flex gap-2 border-top pt-2">
+                                    <a href="{{ route('sap-errors.show', $error) }}" class="btn btn-sm btn-outline-primary flex-fill text-center">
+                                        <i class="fa fa-eye me-1"></i> View
+                                    </a>
+                                    <a href="{{ route('sap-errors.edit', $error) }}" class="btn btn-sm btn-outline-info flex-fill text-center">
+                                        <i class="fa fa-edit me-1"></i> Edit
+                                    </a>
+                                    <form action="{{ route('sap-errors.destroy', $error) }}" method="POST" class="d-inline flex-fill" onsubmit="return confirm('Are you sure you want to delete this error?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                            <i class="fa fa-trash me-1"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-5">
+                            <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3 d-block"></i>
+                            <h5 class="text-muted">No Errors Recorded</h5>
+                            <p class="text-muted">Start by adding your first SAP error.</p>
+                            <a href="{{ route('sap-errors.create') }}" class="btn btn-primary mt-3">
+                                <i class="fa fa-plus me-2"></i>Add First Error
+                            </a>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>

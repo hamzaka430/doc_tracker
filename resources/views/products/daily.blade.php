@@ -39,17 +39,17 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center">
-                    <h4 class="card-title">Remaining Documents ({{ $products->count() }})</h4>
-                    <div class="d-flex ms-auto gap-2">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <h4 class="card-title mb-0">Remaining Documents ({{ $products->count() }})</h4>
+                    <div class="d-flex ms-auto gap-2 flex-wrap">
                         <form id="bulkSubmitForm" action="{{ route('products.bulkSubmit') }}" method="POST" class="d-none">
                             @csrf
-                            <button type="button" class="btn btn-success btn-round" id="bulkSubmitBtn">
+                            <button type="button" class="btn btn-success btn-round btn-sm" id="bulkSubmitBtn">
                                 <i class="fa fa-check-double me-1"></i> Bulk Submit (<span id="bulkCount">0</span>)
                             </button>
                         </form>
                         @if($products->count() > 0)
-                            <button type="button" class="btn btn-danger btn-round" data-bs-toggle="modal" data-bs-target="#pdfLayoutModal">
+                            <button type="button" class="btn btn-danger btn-round btn-sm" data-bs-toggle="modal" data-bs-target="#pdfLayoutModal">
                                 <i class="fa fa-file-pdf me-1"></i>
                                 Download PDF
                             </button>
@@ -60,14 +60,14 @@
             <div class="card-body p-3">
                 <!-- Search and Filter -->
                 <form action="{{ route('products.daily') }}" method="GET" class="mb-4">
-                    <div class="row g-3">
-                        <div class="col-md-3">
+                    <div class="row g-2 g-md-3">
+                        <div class="col-12 col-md-6 col-lg-3">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Search...">
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-3 col-lg-2">
                             <select class="form-select form-control" name="type" onchange="this.form.submit()">
                                 <option value="">All Types</option>
                                 <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
@@ -76,21 +76,24 @@
                                 <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" placeholder="From Date">
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <input type="date" name="date_from" value="{{ request('date_from') }}" class="form-control" title="From Date">
                         </div>
-                        <div class="col-md-2">
-                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" placeholder="To Date">
+                        <div class="col-6 col-md-6 col-lg-2">
+                            <input type="date" name="date_to" value="{{ request('date_to') }}" class="form-control" title="To Date">
                         </div>
-                        <div class="col-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary flex-grow-1 px-1">Filter</button>
-                            <a href="{{ route('products.daily') }}" class="btn btn-secondary flex-grow-1 px-1">Clear</a>
+                        <div class="col-6 col-md-6 col-lg-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-grow-1 px-2">
+                                <i class="fa fa-filter me-1"></i> Filter
+                            </button>
+                            <a href="{{ route('products.daily') }}" class="btn btn-secondary flex-grow-1 px-2">Clear</a>
                         </div>
                     </div>
                 </form>
 
         @if($products->count() > 0)
-            <div class="table-responsive">
+            <!-- Desktop Table View -->
+            <div class="table-responsive d-none d-lg-block">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
@@ -126,6 +129,38 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card View -->
+            <div class="d-lg-none" id="mobileDailyList">
+                <div class="d-flex align-items-center mb-2 px-1">
+                    <div class="form-check p-0 m-0 me-2">
+                        <input type="checkbox" class="form-check-input" id="selectAllMobile">
+                    </div>
+                    <label for="selectAllMobile" class="text-muted small mb-0 fw-semibold">Select All For Bulk Submit</label>
+                </div>
+                @foreach($products as $product)
+                    <div class="card shadow-sm mb-2 product-card mobile-doc-card">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start gap-2 mb-2">
+                                <div class="form-check p-0 m-0 mt-1 me-1">
+                                    <input type="checkbox" class="form-check-input product-checkbox" value="{{ $product->id }}">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0 fw-bold text-dark">{{ $product->name }}</h6>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock me-1"></i>{{ $product->created_at->format('h:i A') }}
+                                    </small>
+                                </div>
+                                <span class="stage-badge py-1 px-2">{{ $product->stage }}</span>
+                            </div>
+                            <div class="p-2 bg-light rounded d-flex justify-content-between align-items-center">
+                                <small class="text-muted" style="font-size: 0.72rem;">BATCH NUMBER</small>
+                                <code class="bg-white px-2 py-1 rounded">{{ $product->batch_no }}</code>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
             
             <!-- Pagination -->
@@ -248,6 +283,19 @@ document.addEventListener('DOMContentLoaded', function() {
             checkboxes.forEach(cb => {
                 cb.checked = isChecked;
             });
+            if (selectAllMobile) selectAllMobile.checked = isChecked;
+            updateBulkSubmitVisibility();
+        });
+    }
+
+    const selectAllMobile = document.getElementById('selectAllMobile');
+    if (selectAllMobile) {
+        selectAllMobile.addEventListener('change', function() {
+            const isChecked = this.checked;
+            checkboxes.forEach(cb => {
+                cb.checked = isChecked;
+            });
+            if (selectAllDesktop) selectAllDesktop.checked = isChecked;
             updateBulkSubmitVisibility();
         });
     }

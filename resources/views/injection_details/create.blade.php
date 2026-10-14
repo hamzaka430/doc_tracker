@@ -39,67 +39,67 @@
                     <div id="vials-container">
                         <!-- First Row -->
                         <div class="vials-row border rounded p-3 mb-3 position-relative bg-light">
-                            <div class="row g-2">
+                            <div class="row g-2 g-md-3">
                                 <!-- Product Name -->
-                                <div class="col-md-12 col-lg-3">
+                                <div class="col-12 col-lg-4">
                                     <div class="form-group mb-0">
-                                        <label>Product Name <span class="text-danger">*</span></label>
+                                        <label class="form-label mb-1">Product Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control autocomplete-input" name="product_name[]"
                                                placeholder="Oxidil 1g IV Injection" required>
                                     </div>
                                 </div>
 
                                 <!-- Batch No -->
-                                <div class="col">
+                                <div class="col-6 col-md-4 col-lg-2">
                                     <div class="form-group mb-0">
-                                        <label>Batch No <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control px-2 autocomplete-input" name="batch_no[]"
+                                        <label class="form-label mb-1">Batch No <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control autocomplete-input" name="batch_no[]"
                                                placeholder="296P043" maxlength="7" required>
                                     </div>
                                 </div>
 
                                 <!-- Batch Size -->
-                                <div class="col">
+                                <div class="col-6 col-md-4 col-lg-2">
                                     <div class="form-group mb-0">
-                                        <label>Batch Size</label>
-                                        <input type="text" class="form-control px-2" name="batch_size[]"
+                                        <label class="form-label mb-1">Batch Size</label>
+                                        <input type="text" class="form-control" name="batch_size[]"
                                                placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
                                 <!-- Optical Qty -->
-                                <div class="col">
+                                <div class="col-6 col-md-3 col-lg-1">
                                     <div class="form-group mb-0">
-                                        <label>Optical Qty</label>
-                                        <input type="text" class="form-control px-2" name="optical_qty[]"
+                                        <label class="form-label mb-1">Opt Qty</label>
+                                        <input type="text" class="form-control px-1 text-center" name="optical_qty[]"
                                                placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
                                 <!-- Pkg Qty -->
-                                <div class="col">
+                                <div class="col-6 col-md-3 col-lg-1">
                                     <div class="form-group mb-0">
-                                        <label>Pkg Qty</label>
-                                        <input type="text" class="form-control px-2" name="pkg_qty[]"
+                                        <label class="form-label mb-1">Pkg Qty</label>
+                                        <input type="text" class="form-control px-1 text-center" name="pkg_qty[]"
                                                placeholder="67867" maxlength="7">
                                     </div>
                                 </div>
 
                                 <!-- Rejection -->
-                                <div class="col-auto">
+                                <div class="col-6 col-md-3 col-lg-1">
                                     <div class="form-group mb-0">
-                                        <label>Rejection</label>
-                                        <input type="text" class="form-control px-2 text-center" name="rejection[]"
-                                               placeholder="10" maxlength="4" style="width: 60px;">
+                                        <label class="form-label mb-1">Rejection</label>
+                                        <input type="text" class="form-control px-1 text-center" name="rejection[]"
+                                               placeholder="10" maxlength="4">
                                     </div>
                                 </div>
 
                                 <!-- Error -->
-                                <div class="col-auto">
+                                <div class="col-6 col-md-3 col-lg-1">
                                     <div class="form-group mb-0">
-                                        <label>Error</label>
-                                        <input type="text" class="form-control px-2 text-center" name="error[]"
-                                               placeholder="05" maxlength="4" style="width: 60px;">
+                                        <label class="form-label mb-1">Error</label>
+                                        <input type="text" class="form-control px-1 text-center" name="error[]"
+                                               placeholder="05" maxlength="4">
                                     </div>
                                 </div>
                             </div>
@@ -116,20 +116,20 @@
                         </div>
                     @endif
 
-                    <div class="mb-4 mt-2">
+                    <div class="d-flex flex-wrap gap-2 mb-4 mt-2">
                         <button type="button" id="add-vials-btn" class="btn btn-primary btn-border btn-round btn-sm">
                             <i class="fa fa-plus me-2"></i>Add Another Entry
                         </button>
-                        <button type="button" id="duplicate-vials-btn" class="btn btn-dark btn-round btn-sm ms-2">
+                        <button type="button" id="duplicate-vials-btn" class="btn btn-dark btn-round btn-sm">
                             <i class="fa fa-copy me-2"></i>Duplicate Last Entry
                         </button>
                     </div>
 
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success" id="save-btn">
+                    <div class="card-action d-flex flex-wrap gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-success flex-grow-1 flex-sm-grow-0" id="save-btn">
                             <i class="fa fa-check me-2"></i>Save Vials Data
                         </button>
-                        <a href="{{ route('injection_details.index') }}" class="btn btn-danger">
+                        <a href="{{ route('injection_details.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
                             <i class="fa fa-times me-2"></i>Cancel
                         </a>
                     </div>

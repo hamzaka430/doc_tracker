@@ -39,11 +39,11 @@
                     @method('PUT')
 
                     <div class="vials-row border rounded p-3 mb-3 bg-light">
-                        <div class="row g-2">
+                        <div class="row g-2 g-md-3">
                             <!-- Product Name -->
-                            <div class="col-md-12 col-lg-3">
+                            <div class="col-12 col-lg-4">
                                 <div class="form-group mb-0">
-                                    <label for="product_name">Product Name <span class="text-danger">*</span></label>
+                                    <label class="form-label mb-1" for="product_name">Product Name <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('product_name') is-invalid @enderror"
                                            id="product_name" name="product_name"
                                            placeholder="Abacus 40mg/5ml Injection"
@@ -55,10 +55,10 @@
                             </div>
 
                             <!-- Batch No -->
-                            <div class="col">
+                            <div class="col-6 col-md-4 col-lg-2">
                                 <div class="form-group mb-0">
-                                    <label for="batch_no">Batch No <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control px-2 @error('batch_no') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="batch_no">Batch No <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('batch_no') is-invalid @enderror"
                                            id="batch_no" name="batch_no"
                                            placeholder="013P056" maxlength="7"
                                            value="{{ old('batch_no', $injectionDetail->batch_no) }}" required>
@@ -69,10 +69,10 @@
                             </div>
 
                             <!-- Batch Size -->
-                            <div class="col">
+                            <div class="col-6 col-md-4 col-lg-2">
                                 <div class="form-group mb-0">
-                                    <label for="batch_size">Batch Size</label>
-                                    <input type="text" class="form-control px-2 @error('batch_size') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="batch_size">Batch Size</label>
+                                    <input type="text" class="form-control @error('batch_size') is-invalid @enderror"
                                            id="batch_size" name="batch_size"
                                            placeholder="100000" maxlength="7"
                                            value="{{ old('batch_size', $injectionDetail->batch_size) }}">
@@ -80,10 +80,10 @@
                             </div>
 
                             <!-- Optical Qty -->
-                            <div class="col">
+                            <div class="col-6 col-md-3 col-lg-1">
                                 <div class="form-group mb-0">
-                                    <label for="optical_qty">Optical Qty</label>
-                                    <input type="text" class="form-control px-2 @error('optical_qty') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="optical_qty">Opt Qty</label>
+                                    <input type="text" class="form-control px-1 text-center @error('optical_qty') is-invalid @enderror"
                                            id="optical_qty" name="optical_qty"
                                            placeholder="100000" maxlength="7"
                                            value="{{ old('optical_qty', $injectionDetail->optical_qty) }}">
@@ -91,10 +91,10 @@
                             </div>
 
                             <!-- Pkg Qty -->
-                            <div class="col">
+                            <div class="col-6 col-md-3 col-lg-1">
                                 <div class="form-group mb-0">
-                                    <label for="pkg_qty">Pkg Qty</label>
-                                    <input type="text" class="form-control px-2 @error('pkg_qty') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="pkg_qty">Pkg Qty</label>
+                                    <input type="text" class="form-control px-1 text-center @error('pkg_qty') is-invalid @enderror"
                                            id="pkg_qty" name="pkg_qty"
                                            placeholder="100000" maxlength="7"
                                            value="{{ old('pkg_qty', $injectionDetail->pkg_qty) }}">
@@ -102,23 +102,23 @@
                             </div>
 
                             <!-- Rejection -->
-                            <div class="col-auto">
+                            <div class="col-6 col-md-3 col-lg-1">
                                 <div class="form-group mb-0">
-                                    <label for="rejection">Rejection</label>
-                                    <input type="text" class="form-control px-2 text-center @error('rejection') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="rejection">Rejection</label>
+                                    <input type="text" class="form-control px-1 text-center @error('rejection') is-invalid @enderror"
                                            id="rejection" name="rejection"
-                                           placeholder="10" maxlength="4" style="width: 60px;"
+                                           placeholder="10" maxlength="4"
                                            value="{{ old('rejection', $injectionDetail->rejection) }}">
                                 </div>
                             </div>
 
                             <!-- Error -->
-                            <div class="col-auto">
+                            <div class="col-6 col-md-3 col-lg-1">
                                 <div class="form-group mb-0">
-                                    <label for="error">Error</label>
-                                    <input type="text" class="form-control px-2 text-center @error('error') is-invalid @enderror"
+                                    <label class="form-label mb-1" for="error">Error</label>
+                                    <input type="text" class="form-control px-1 text-center @error('error') is-invalid @enderror"
                                            id="error" name="error"
-                                           placeholder="05" maxlength="4" style="width: 60px;"
+                                           placeholder="05" maxlength="4"
                                            value="{{ old('error', $injectionDetail->error) }}">
                                     @error('error')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -136,11 +136,11 @@
                         </small>
                     </div>
 
-                    <div class="card-action">
-                        <button type="submit" class="btn btn-success">
+                    <div class="card-action d-flex flex-wrap gap-2 pt-3 border-top">
+                        <button type="submit" class="btn btn-success flex-grow-1 flex-sm-grow-0">
                             <i class="fas fa-save me-2"></i>Update Vials Data
                         </button>
-                        <a href="{{ route('injection_details.index') }}" class="btn btn-danger">
+                        <a href="{{ route('injection_details.index') }}" class="btn btn-secondary flex-grow-1 flex-sm-grow-0">
                             <i class="fas fa-times me-2"></i>Cancel
                         </a>
                     </div>

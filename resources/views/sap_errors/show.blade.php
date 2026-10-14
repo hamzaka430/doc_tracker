@@ -30,10 +30,10 @@
     <div class="col-md-8">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center">
-                    <h4 class="card-title">{{ $sapError->title }}</h4>
-                    <div class="ms-auto">
-                        <a href="{{ route('sap-errors.edit', $sapError) }}" class="btn btn-info btn-round btn-sm me-2">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <h4 class="card-title mb-0 flex-grow-1">{{ $sapError->title }}</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ route('sap-errors.edit', $sapError) }}" class="btn btn-info btn-round btn-sm">
                             <i class="fa fa-edit me-1"></i> Edit
                         </a>
                         <form action="{{ route('sap-errors.destroy', $sapError) }}" method="POST" class="d-inline">
@@ -43,6 +43,9 @@
                                 <i class="fa fa-trash me-1"></i> Delete
                             </button>
                         </form>
+                        <a href="{{ route('sap-errors.index') }}" class="btn btn-secondary btn-round btn-sm">
+                            <i class="fa fa-arrow-left me-1"></i> Back
+                        </a>
                     </div>
                 </div>
             </div>
@@ -84,7 +87,7 @@
                         <img src="{{ Storage::url($sapError->image_path) }}" 
                              alt="Error Screenshot" 
                              class="img-fluid rounded border shadow-sm"
-                             style="max-height: 400px; width: auto;">
+                             style="max-height: 400px; width: 100%; object-fit: contain;">
                     </a>
                     <div class="mt-2 text-muted small">
                         <i class="fas fa-search-plus me-1"></i>Click image to view full size

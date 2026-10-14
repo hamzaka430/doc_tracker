@@ -31,8 +31,8 @@
             <div class="card-body">
 
                 <!-- Search and Filter -->
-                <form action="{{ route('products.trash') }}" method="GET" class="row mb-4">
-                    <div class="col-md-4">
+                <form action="{{ route('products.trash') }}" method="GET" class="row g-2 g-md-3 mb-4">
+                    <div class="col-12 col-md-5">
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="fa fa-search"></i>
@@ -41,7 +41,7 @@
                                    placeholder="Search by name, batch no, or stage...">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-4">
                         <select class="form-select form-control" name="type" id="typeFilter" onchange="this.form.submit()">
                             <option value="">All Types</option>
                             <option value="Injection" {{ request('type') == 'Injection' ? 'selected' : '' }}>Injection</option>
@@ -50,9 +50,9 @@
                             <option value="Capsule" {{ request('type') == 'Capsule' ? 'selected' : '' }}>Capsule</option>
                         </select>
                     </div>
-                    <div class="col-md-2 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-grow-1 px-1">Search</button>
-                        <a href="{{ route('products.trash') }}" class="btn btn-secondary flex-grow-1 px-1" id="clearFilters">Clear</a>
+                    <div class="col-12 col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Search</button>
+                        <a href="{{ route('products.trash') }}" class="btn btn-secondary flex-grow-1" id="clearFilters">Clear</a>
                     </div>
                 </form>
 

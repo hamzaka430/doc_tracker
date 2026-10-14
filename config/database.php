@@ -62,6 +62,34 @@ return [
             ]) : [],
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Chat Database (Aiven MySQL) — Separate from main JawsDB
+        | Chat tables: chat_messages, chat_settings
+        |--------------------------------------------------------------------------
+        */
+        'mysql_chat' => [
+            'driver'    => 'mysql',
+            'url'       => env('CHAT_DB_URL'),
+            'host'      => env('CHAT_DB_HOST'),
+            'port'      => env('CHAT_DB_PORT', '21102'),
+            'database'  => env('CHAT_DB_DATABASE'),
+            'username'  => env('CHAT_DB_USERNAME'),
+            'password'  => env('CHAT_DB_PASSWORD'),
+            'unix_socket' => '',
+            'charset'   => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix'    => '',
+            'prefix_indexes' => true,
+            'strict'    => true,
+            'engine'    => null,
+            'options'   => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => file_exists(env('CHAT_DB_SSL_CA_PATH', base_path('ca.pem')))
+                    ? env('CHAT_DB_SSL_CA_PATH', base_path('ca.pem'))
+                    : null,
+            ]) : [],
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

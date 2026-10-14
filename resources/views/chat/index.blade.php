@@ -89,171 +89,208 @@
 <!-- ========================================== -->
 <!-- SUPPORT LOG / INTERNAL MESSENGER ROOM      -->
 <!-- ========================================== -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card shadow-sm border chat-main-card" id="chatMainCard">
-            
-            <!-- CARD HEADER (TELEGRAM THEME) -->
-            <div class="card-header telegram-header text-white py-2 px-3 flex-shrink-0">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                    <!-- Left Title -->
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="telegram-header-avatar">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <div>
-                            <h4 class="card-title text-white mb-0 fs-5 fw-bold" style="letter-spacing: -0.2px;">Support Communication Log</h4>
-                            <div class="text-white-50 d-flex align-items-center gap-1" style="font-size: 0.72rem;">
-                                <span class="telegram-online-dot"></span> Active Session
-                                <span id="blurBadge" class="badge bg-warning text-dark px-2 py-0 ms-2 d-none" style="font-size: 0.65rem;">
-                                    <i class="fas fa-eye-slash me-1"></i> Blur Active
-                                </span>
-                            </div>
+<div class="chat-page-wrapper">
+    <div class="card shadow-sm border chat-main-card" id="chatMainCard">
+        
+        <!-- CARD HEADER (TELEGRAM THEME) -->
+        <div class="card-header telegram-header text-white py-2 px-2 px-sm-3 flex-shrink-0">
+            <div class="d-flex align-items-center justify-content-between flex-nowrap gap-2 w-100">
+                <!-- Left Title -->
+                <div class="d-flex align-items-center gap-2 min-w-0">
+                    <div class="telegram-header-avatar flex-shrink-0">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="text-truncate">
+                        <h4 class="card-title text-white mb-0 fs-6 fw-bold text-truncate" style="letter-spacing: -0.2px;">
+                            <span class="d-none d-sm-inline">Support Communication Log</span>
+                            <span class="d-sm-none">Support Log</span>
+                        </h4>
+                        <div class="text-white-50 d-flex align-items-center gap-1" style="font-size: 0.68rem;">
+                            <span class="telegram-online-dot"></span> <span>Active Session</span>
+                            <span id="blurBadge" class="badge bg-warning text-dark px-1 py-0 ms-1 d-none" style="font-size: 0.6rem;">
+                                <i class="fas fa-eye-slash"></i> Blur
+                            </span>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Right Toolbar Buttons -->
-                    <div class="d-flex align-items-center gap-1">
-                        <!-- White / Black Background Theme Toggle -->
-                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" id="btnThemeToggle" onclick="toggleChatTheme()" title="Toggle White / Black Background">
-                            <i class="fas fa-sun me-1" id="themeIcon"></i> <span id="themeBtnText">White BG</span>
-                        </button>
+                <!-- Right Toolbar Buttons -->
+                <div class="d-flex align-items-center gap-1 flex-nowrap ms-auto flex-shrink-0">
+                    <!-- White / Black Background Theme Toggle (Always visible) -->
+                    <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" id="btnThemeToggle" onclick="toggleChatTheme()" title="Toggle White / Black Background">
+                        <i class="fas fa-sun" id="themeIcon"></i> <span class="d-none d-md-inline ms-1" id="themeBtnText">White BG</span>
+                    </button>
 
-                        <!-- Privacy Blur Toggle Button -->
-                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-3" id="btnBlurToggle" onclick="togglePrivacyBlur()" title="Toggle Privacy Blur (Hover on message to reveal text)">
-                            <i class="fas fa-eye me-1" id="blurIcon"></i> <span id="blurBtnText">Blur Text</span>
-                        </button>
+                    <!-- Privacy Blur Toggle Button (Always visible) -->
+                    <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2 px-sm-2" id="btnBlurToggle" onclick="togglePrivacyBlur()" title="Toggle Privacy Blur">
+                        <i class="fas fa-eye" id="blurIcon"></i> <span class="d-none d-md-inline ms-1" id="blurBtnText">Blur</span>
+                    </button>
 
+                    <!-- Desktop Extra Buttons (Visible on tablet & desktop >= 768px) -->
+                    <div class="d-none d-md-flex align-items-center gap-1">
                         <!-- Participant Settings -->
-                        <button type="button" class="btn btn-sm btn-telegram-header btn-round" data-bs-toggle="modal" data-bs-target="#editNamesModal" title="Edit Participant Labels">
-                            <i class="fas fa-user-edit me-1"></i> Labels
+                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" data-bs-toggle="modal" data-bs-target="#editNamesModal" title="Edit Participant Labels">
+                            <i class="fas fa-user-edit"></i> <span class="d-none d-lg-inline ms-1">Labels</span>
                         </button>
 
                         <!-- Notification Chime Toggle -->
-                        <button type="button" class="btn btn-sm btn-telegram-header btn-round" id="btnSoundToggle" onclick="toggleSound()" title="Toggle Notification Sound">
+                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" id="btnSoundToggle" onclick="toggleSound()" title="Toggle Notification Sound">
                             <i class="fas fa-volume-up" id="soundIcon"></i>
                         </button>
 
                         <!-- Clear Log -->
-                        <button type="button" class="btn btn-sm btn-telegram-header btn-round" onclick="confirmClearChat()" title="Clear Log History">
+                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" onclick="confirmClearChat()" title="Clear Log History">
                             <i class="fas fa-trash-alt"></i>
                         </button>
 
                         <!-- Lock Session -->
-                        <form method="POST" action="{{ route('chat.lock') }}" class="d-inline">
+                        <form method="POST" action="{{ route('chat.lock') }}" class="d-inline m-0">
                             @csrf
-                            <button type="submit" class="btn btn-sm btn-telegram-header btn-round text-danger" title="Lock Session">
+                            <button type="submit" class="btn btn-sm btn-telegram-header btn-round text-danger px-2" title="Lock Session">
                                 <i class="fas fa-lock"></i>
                             </button>
                         </form>
                     </div>
-                </div>
-            </div>
 
-            <!-- CARD BODY / MESSAGES STREAM (LEFT & RIGHT SEPARATION) -->
-            <div class="card-body p-3 p-md-4 chat-messages-container flex-grow-1" id="chatContainer">
-                
-                <!-- Loading State -->
-                <div id="loadingChat" class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading logs...</span>
-                    </div>
-                    <p class="text-muted small mt-2">Syncing communication log...</p>
-                </div>
-
-                <!-- Empty State -->
-                <div id="emptyChat" class="text-center py-5 d-none">
-                    <div class="mb-3">
-                        <i class="fas fa-inbox fa-3x text-muted opacity-25"></i>
-                    </div>
-                    <h6 class="fw-bold text-dark">No entries found</h6>
-                    <p class="text-muted small">Type a message below to start communicating.</p>
-                </div>
-
-                <!-- Messages Stream -->
-                <div id="messagesStream"></div>
-            </div>
-
-            <!-- SCROLL DOWN FLOATING PILL -->
-            <button type="button" class="btn btn-dark btn-round shadow-sm scroll-down-btn d-none" id="btnScrollBottom" onclick="scrollToBottom(true)">
-                <i class="fas fa-arrow-down me-1"></i> Latest Entries
-            </button>
-
-            <!-- FULL EMOJI PICKER POPUP (OPENS ONLY ON EMOJI BUTTON CLICK) -->
-            <div id="emojiPickerPopup" class="emoji-picker-drawer shadow-lg border d-none">
-                <div class="d-flex align-items-center justify-content-between p-2 border-bottom bg-light">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
-                        <input type="text" id="emojiSearchInput" class="form-control border-start-0" placeholder="Search emojis..." onkeyup="filterEmojis()">
-                    </div>
-                    <button type="button" class="btn btn-sm btn-link text-muted ms-2 p-0 text-decoration-none" onclick="toggleEmojiPicker()"><i class="fas fa-times fs-6"></i></button>
-                </div>
-
-                <!-- Category Tabs -->
-                <div class="d-flex gap-1 p-2 border-bottom bg-white overflow-x-auto emoji-category-tabs">
-                    <button type="button" class="btn btn-sm btn-emoji-tab active" onclick="switchEmojiCategory('all', event)">All</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('smileys', event)">😀 Faces</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('gestures', event)">👍 Hands</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('hearts', event)">❤️ Hearts</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('objects', event)">🚀 Objects</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('animals', event)">🐶 Animals</button>
-                    <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('food', event)">🍔 Food</button>
-                </div>
-
-                <!-- Emoji Grid -->
-                <div class="emoji-grid p-2" id="emojiGrid"></div>
-            </div>
-
-            <!-- CARD FOOTER (TELEGRAM INPUT BAR) -->
-            <div class="card-footer bg-white py-2 px-3 border-top flex-shrink-0 position-relative telegram-footer">
-                
-                <!-- Top Row: Active Sender Capsule Switcher -->
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="d-flex align-items-center gap-2 active-sender-wrap">
-                        <span class="text-muted small fw-semibold" style="font-size: 0.78rem;">
-                            <i class="fas fa-user-circle me-1 text-primary"></i> Active:
-                        </span>
-                        <div class="telegram-persona-capsule" role="group">
-                            <input type="radio" class="btn-check" name="activePersona" id="persona1" value="{{ $name1 }}" checked onchange="updateActivePersona(this.value)">
-                            <label class="persona-tab sender-label-blur" for="persona1" id="radioLabel1">{{ $name1 }}</label>
-
-                            <input type="radio" class="btn-check" name="activePersona" id="persona2" value="{{ $name2 }}" onchange="updateActivePersona(this.value)">
-                            <label class="persona-tab sender-label-blur" for="persona2" id="radioLabel2">{{ $name2 }}</label>
-                        </div>
-                    </div>
-                    <small class="text-muted" style="font-size: 0.72rem;">Press <strong>Enter</strong> to send</small>
-                </div>
-
-                <!-- Input Row: [Emoji Icon] [Telegram Input Box] [Circular Send Button] -->
-                <div class="chat-input-bar-wrap">
-                    <div class="chat-input-inner">
-                        <!-- Emoji Button -->
-                        <button type="button" class="btn btn-emoji-trigger" onclick="toggleEmojiPicker()" title="Browse all emojis">
-                            <i class="far fa-smile fs-5"></i>
+                    <!-- Mobile 3-Dots Dropdown Menu (Visible on mobile < 768px) -->
+                    <div class="dropdown d-md-none">
+                        <button type="button" class="btn btn-sm btn-telegram-header btn-round px-2" data-bs-toggle="dropdown" aria-expanded="false" title="More Options">
+                            <i class="fas fa-ellipsis-v"></i>
                         </button>
-
-                        <!-- Message Textarea Box -->
-                        <div class="input-field-box">
-                            <textarea 
-                                id="messageInput" 
-                                name="message"
-                                class="form-control message-textarea" 
-                                rows="1" 
-                                placeholder="Write a message..."
-                                onkeydown="handleInputKey(event)"
-                                oninput="autoResizeTextarea(this)"></textarea>
-                        </div>
-
-                        <!-- Single Send Action Button (Telegram Round Plane Button) -->
-                        <button type="button" class="btn btn-send-main" onclick="sendMessage(activePersona)" id="btnMainSend" title="Send message (Enter)">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border telegram-dropdown-menu">
+                            <li>
+                                <a class="dropdown-item py-2" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#editNamesModal">
+                                    <i class="fas fa-user-edit me-2 text-primary"></i> Edit Labels
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="javascript:void(0)" onclick="toggleSound()">
+                                    <i class="fas fa-volume-up me-2 text-info" id="mobileSoundIcon"></i> <span id="mobileSoundText">Sound Notification</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="confirmClearChat()">
+                                    <i class="fas fa-trash-alt me-2"></i> Clear History
+                                </a>
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ route('chat.lock') }}" class="m-0">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item py-2 text-danger">
+                                        <i class="fas fa-lock me-2"></i> Lock Session
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+        </div>
 
+        <!-- CARD BODY / MESSAGES STREAM (LEFT & RIGHT SEPARATION) -->
+        <div class="card-body p-2 p-sm-3 chat-messages-container flex-grow-1" id="chatContainer">
+            
+            <!-- Loading State -->
+            <div id="loadingChat" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading logs...</span>
+                </div>
+                <p class="text-muted small mt-2">Syncing communication log...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyChat" class="text-center py-5 d-none">
+                <div class="mb-3">
+                    <i class="fas fa-inbox fa-3x text-muted opacity-25"></i>
+                </div>
+                <h6 class="fw-bold text-dark">No entries found</h6>
+                <p class="text-muted small">Type a message below to start communicating.</p>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="messagesStream"></div>
+        </div>
+
+        <!-- SCROLL DOWN FLOATING PILL -->
+        <button type="button" class="btn btn-dark btn-round shadow-sm scroll-down-btn d-none" id="btnScrollBottom" onclick="scrollToBottom(true)">
+            <i class="fas fa-arrow-down me-1"></i> Latest Entries
+        </button>
+
+        <!-- FULL EMOJI PICKER POPUP (OPENS ONLY ON EMOJI BUTTON CLICK) -->
+        <div id="emojiPickerPopup" class="emoji-picker-drawer shadow-lg border d-none">
+            <div class="d-flex align-items-center justify-content-between p-2 border-bottom bg-light">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-white border-end-0"><i class="fa fa-search text-muted"></i></span>
+                    <input type="text" id="emojiSearchInput" class="form-control border-start-0" placeholder="Search emojis..." onkeyup="filterEmojis()">
+                </div>
+                <button type="button" class="btn btn-sm btn-link text-muted ms-2 p-0 text-decoration-none" onclick="toggleEmojiPicker()"><i class="fas fa-times fs-6"></i></button>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="d-flex gap-1 p-2 border-bottom bg-white overflow-x-auto emoji-category-tabs">
+                <button type="button" class="btn btn-sm btn-emoji-tab active" onclick="switchEmojiCategory('all', event)">All</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('smileys', event)">😀 Faces</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('gestures', event)">👍 Hands</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('hearts', event)">❤️ Hearts</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('objects', event)">🚀 Objects</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('animals', event)">🐶 Animals</button>
+                <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('food', event)">🍔 Food</button>
+            </div>
+
+            <!-- Emoji Grid -->
+            <div class="emoji-grid p-2" id="emojiGrid"></div>
+        </div>
+
+        <!-- CARD FOOTER (TELEGRAM INPUT BAR) -->
+        <div class="card-footer bg-white py-2 px-2 px-sm-3 border-top flex-shrink-0 position-relative telegram-footer">
+            
+            <!-- Top Row: Active Sender Capsule Switcher -->
+            <div class="d-flex align-items-center justify-content-between mb-1 mb-sm-2 flex-wrap gap-1">
+                <div class="d-flex align-items-center gap-1 gap-sm-2 active-sender-wrap">
+                    <span class="text-muted small fw-semibold text-nowrap" style="font-size: 0.74rem;">
+                        <i class="fas fa-user-circle me-1 text-primary"></i> Active:
+                    </span>
+                    <div class="telegram-persona-capsule" role="group">
+                        <input type="radio" class="btn-check" name="activePersona" id="persona1" value="{{ $name1 }}" checked onchange="updateActivePersona(this.value)">
+                        <label class="persona-tab sender-label-blur text-truncate" for="persona1" id="radioLabel1">{{ $name1 }}</label>
+
+                        <input type="radio" class="btn-check" name="activePersona" id="persona2" value="{{ $name2 }}" onchange="updateActivePersona(this.value)">
+                        <label class="persona-tab sender-label-blur text-truncate" for="persona2" id="radioLabel2">{{ $name2 }}</label>
+                    </div>
+                </div>
+                <small class="text-muted d-none d-sm-inline" style="font-size: 0.72rem;">Press <strong>Enter</strong> to send</small>
+            </div>
+
+            <!-- Input Row: [Emoji Icon] [Telegram Input Box] [Circular Send Button] -->
+            <div class="chat-input-bar-wrap">
+                <div class="chat-input-inner">
+                    <!-- Emoji Button -->
+                    <button type="button" class="btn btn-emoji-trigger" onclick="toggleEmojiPicker()" title="Browse all emojis">
+                        <i class="far fa-smile"></i>
+                    </button>
+
+                    <!-- Message Textarea Box -->
+                    <div class="input-field-box">
+                        <textarea 
+                            id="messageInput" 
+                            name="message"
+                            class="form-control message-textarea" 
+                            rows="1" 
+                            placeholder="Write a message..."
+                            onkeydown="handleInputKey(event)"
+                            oninput="autoResizeTextarea(this)"></textarea>
+                    </div>
+
+                    <!-- Single Send Action Button (Telegram Round Plane Button) -->
+                    <button type="button" class="btn btn-send-main" onclick="sendMessage(activePersona)" id="btnMainSend" title="Send message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
 
         </div>
+
     </div>
 </div>
 
@@ -295,32 +332,81 @@
 
 <!-- STYLES -->
 <style>
-/* Full Viewport Fit: No outer page scroll */
+@if($state === 'unlocked')
+/* Full Viewport Fit for Active Chat Session: No outer page scroll */
 html, body {
     height: 100%;
+    height: 100dvh;
     overflow: hidden !important;
 }
 .main-panel {
     height: 100vh !important;
+    height: 100dvh !important;
     max-height: 100vh !important;
+    max-height: 100dvh !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 .main-panel > .container {
     margin-top: 65px !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
     height: calc(100vh - 65px) !important;
+    height: calc(100dvh - 65px) !important;
     max-height: calc(100vh - 65px) !important;
-    overflow: hidden !important;
-}
-.main-panel .page-inner {
-    padding: 8px 18px 8px 18px !important;
-    height: 100% !important;
-    max-height: 100% !important;
+    max-height: calc(100dvh - 65px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
 }
+@media (max-width: 991.98px) {
+    .main-panel > .container {
+        margin-top: 56px !important;
+        height: calc(100dvh - 56px) !important;
+        max-height: calc(100dvh - 56px) !important;
+    }
+}
+.main-panel .page-inner {
+    padding: 8px 12px 8px 12px !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 0 !important;
+}
+@media (max-width: 575.98px) {
+    .main-panel .page-inner {
+        padding: 4px 6px !important;
+    }
+}
+@else
+/* PIN Security Verification Screen: Allow scrolling so keypad & unlock button are accessible */
+.main-panel {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto !important;
+}
+.main-panel > .container {
+    margin-top: 65px !important;
+    min-height: calc(100vh - 65px) !important;
+}
+@media (max-width: 991.98px) {
+    .main-panel > .container {
+        margin-top: 56px !important;
+        min-height: calc(100dvh - 56px) !important;
+    }
+}
+.main-panel .page-inner {
+    padding: 16px 12px !important;
+    overflow-y: auto !important;
+}
+@endif
+
 .main-panel .footer {
     display: none !important;
 }
@@ -331,9 +417,23 @@ html, body {
 /* ========================================================= */
 /* BLACK THEME: MAIN CARD & HEADER (MATCHING REFERENCE)      */
 /* ========================================================= */
+.chat-page-wrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 .chat-main-card {
-    height: calc(100vh - 82px) !important;
-    max-height: calc(100vh - 82px) !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 1 0 !important;
     display: flex !important;
     flex-direction: column !important;
     border-radius: 12px !important;
@@ -342,10 +442,17 @@ html, body {
     border: 1px solid #262930 !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
+@media (max-width: 575.98px) {
+    .chat-main-card {
+        border-radius: 8px !important;
+    }
+}
 
 .telegram-header {
     background: #16181d !important;
     border-bottom: 1px solid #262930 !important;
+    min-height: 48px !important;
+    flex-shrink: 0 !important;
 }
 .telegram-header-avatar {
     width: 36px;
@@ -941,6 +1048,127 @@ html, body {
 .chat-main-card.chat-theme-white .emoji-grid-item:hover {
     background: #f1f5f9 !important;
 }
+
+/* ========================================================= */
+/* TELEGRAM DROPDOWN MENU FOR MOBILE ACTIONS                 */
+/* ========================================================= */
+.telegram-dropdown-menu {
+    background: #1e2026 !important;
+    border: 1px solid #2c2f38 !important;
+    border-radius: 12px !important;
+    padding: 6px 0 !important;
+    min-width: 200px !important;
+    z-index: 1050 !important;
+}
+.telegram-dropdown-menu .dropdown-item {
+    color: #e2e8f0 !important;
+    font-size: 0.83rem !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: background 0.15s ease;
+}
+.telegram-dropdown-menu .dropdown-item:hover,
+.telegram-dropdown-menu .dropdown-item:focus {
+    background: #282b34 !important;
+    color: #ffffff !important;
+}
+.telegram-dropdown-menu .dropdown-divider {
+    border-color: #2c2f38 !important;
+    margin: 4px 0 !important;
+}
+.chat-main-card.chat-theme-white .telegram-dropdown-menu {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+.chat-main-card.chat-theme-white .telegram-dropdown-menu .dropdown-item {
+    color: #334155 !important;
+}
+.chat-main-card.chat-theme-white .telegram-dropdown-menu .dropdown-item:hover,
+.chat-main-card.chat-theme-white .telegram-dropdown-menu .dropdown-item:focus {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+.chat-main-card.chat-theme-white .telegram-dropdown-menu .dropdown-divider {
+    border-color: #e2e8f0 !important;
+}
+
+/* ========================================================= */
+/* MOBILE RESPONSIVENESS MEDIA QUERIES                       */
+/* ========================================================= */
+@media (max-width: 767.98px) {
+    .message-row.sender-1-row .message-wrapper,
+    .message-row.sender-2-row .message-wrapper {
+        max-width: 85% !important;
+    }
+    .message-bubble {
+        padding: 7px 12px !important;
+        font-size: 0.88rem !important;
+    }
+    .btn-telegram-header {
+        padding: 4px 8px !important;
+        font-size: 0.75rem !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .telegram-header-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.85rem !important;
+    }
+    .bubble-avatar {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.72rem !important;
+    }
+    .telegram-persona-capsule .persona-tab {
+        padding: 2px 8px !important;
+        font-size: 0.72rem !important;
+        max-width: 95px !important;
+    }
+    .btn-emoji-trigger, .btn-send-main {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 0.95rem !important;
+    }
+    .message-textarea {
+        min-height: 38px !important;
+        padding: 8px 12px !important;
+        font-size: 16px !important; /* Prevents auto zoom on mobile */
+    }
+    .emoji-picker-drawer {
+        width: calc(100vw - 20px) !important;
+        left: 10px !important;
+        bottom: 68px !important;
+        height: 240px !important;
+    }
+    .emoji-grid {
+        grid-template-columns: repeat(6, 1fr) !important;
+    }
+    .scroll-down-btn {
+        bottom: 70px !important;
+        right: 12px !important;
+        font-size: 0.75rem !important;
+        padding: 4px 10px !important;
+    }
+    .btn-pin-key, .btn-pin-key-sub {
+        height: 48px !important;
+        font-size: 1.2rem !important;
+    }
+    .keypad-grid {
+        max-width: 230px !important;
+        gap: 8px !important;
+    }
+    .pin-dot {
+        width: 13px !important;
+        height: 13px !important;
+    }
+}
 </style>
 
 <!-- JAVASCRIPT LOGIC -->
@@ -1114,12 +1342,24 @@ html, body {
     function toggleSound() {
         soundEnabled = !soundEnabled;
         localStorage.setItem('chat_sound_enabled', soundEnabled);
-        const icon = document.getElementById('soundIcon');
+        applySoundUi();
         if (soundEnabled) {
-            icon.className = 'fas fa-volume-up';
             playNotificationChime();
+        }
+    }
+
+    function applySoundUi() {
+        const icon = document.getElementById('soundIcon');
+        const mobileIcon = document.getElementById('mobileSoundIcon');
+        const mobileText = document.getElementById('mobileSoundText');
+        if (soundEnabled) {
+            if (icon) icon.className = 'fas fa-volume-up';
+            if (mobileIcon) mobileIcon.className = 'fas fa-volume-up me-2 text-info';
+            if (mobileText) mobileText.textContent = 'Sound: Enabled';
         } else {
-            icon.className = 'fas fa-volume-mute';
+            if (icon) icon.className = 'fas fa-volume-mute';
+            if (mobileIcon) mobileIcon.className = 'fas fa-volume-mute me-2 text-muted';
+            if (mobileText) mobileText.textContent = 'Sound: Muted';
         }
     }
 
@@ -1312,11 +1552,7 @@ html, body {
 
     // INITIAL LOAD
     document.addEventListener('DOMContentLoaded', function() {
-        const icon = document.getElementById('soundIcon');
-        if (!soundEnabled && icon) {
-            icon.className = 'fas fa-volume-mute';
-        }
-
+        applySoundUi();
         applyThemeUi();
         applyBlurUi();
 
@@ -1331,7 +1567,28 @@ html, body {
 
         fetchMessages(true);
 
-        pollInterval = setInterval(() => fetchMessages(false), 1500);
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(() => fetchMessages(false), 1500);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        startPolling();
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopPolling();
+            } else {
+                fetchMessages(false);
+                startPolling();
+            }
+        });
 
         const container = document.getElementById('chatContainer');
         container.addEventListener('scroll', function() {

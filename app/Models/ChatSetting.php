@@ -10,6 +10,12 @@ class ChatSetting extends Model
 {
     use HasFactory;
 
+    /**
+     * Use the dedicated Aiven MySQL connection for all chat data.
+     * This keeps chat queries off JawsDB (which has a 3600 query/hour limit).
+     */
+    protected $connection = 'mysql_chat';
+
     protected $fillable = [
         'key',
         'value',

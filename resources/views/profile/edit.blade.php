@@ -1,7 +1,6 @@
 @extends('layouts.dashboard')
 
 @section('content')
-<div class="page-inner">
     <div class="page-header">
         <h3 class="fw-bold mb-3">Profile</h3>
         <ul class="breadcrumbs mb-3">
@@ -33,7 +32,7 @@
                     <h4 class="card-title mb-0">Profile Information</h4>
                     <p class="text-muted mb-0 small">Update your account's profile information and email address.</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
@@ -43,7 +42,7 @@
                     <h4 class="card-title mb-0">Update Password</h4>
                     <p class="text-muted mb-0 small">Ensure your account is using a long, random password to stay secure.</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
@@ -53,14 +52,13 @@
                     <h4 class="card-title mb-0 text-danger">Delete Account</h4>
                     <p class="text-muted mb-0 small">Once your account is deleted, all of its resources and data will be permanently deleted.</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-md-4">
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>
 
         </div>
     </div>
-</div>
 
 <style>
 /* Refined styling overrides to integrate Breeze forms into Bootstrap gracefully */
