@@ -227,15 +227,41 @@
     padding: 1rem;
 }
 
-/* Breadcrumbs Responsive */
-.breadcrumbs {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+/* Page Header & Breadcrumbs Global Layout */
+.main-panel .page-header,
+.page-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    margin-bottom: 20px !important;
     gap: 4px;
-    padding: 0;
-    margin: 0;
-    list-style: none;
+}
+
+.main-panel .page-header h3,
+.main-panel .page-header .page-title,
+.page-header h3,
+.page-header .page-title {
+    margin-bottom: 0 !important;
+    line-height: 1.25;
+}
+
+.main-panel .page-header .breadcrumbs,
+.page-header .breadcrumbs,
+.breadcrumbs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 4px;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-left: none !important;
+    list-style: none !important;
+    width: 100% !important;
 }
 
 .breadcrumbs li {
@@ -254,10 +280,18 @@
 .breadcrumbs li a {
     color: #475569;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.15s ease-in-out;
 }
 
 .breadcrumbs li a:hover {
     color: #1d4ed8;
+}
+
+.breadcrumbs li a i,
+.breadcrumbs li i {
+    font-size: 0.85rem;
 }
 
 /* Topbar Header Responsive Counters */

@@ -151,7 +151,7 @@
 
         <div class="text-center mt-4">
             <p class="text-white-50 mb-0">
-                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://dezignwise.online" target="_blank" class="text-white">Dezignwise</a>
+                &copy; {{ date('Y') }} Doc Tracker - Powered by <a href="https://dezignwise.com" target="_blank" class="text-white">Dezignwise</a>
             </p>
         </div>
     </div>

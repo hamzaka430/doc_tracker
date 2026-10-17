@@ -38,7 +38,7 @@
     <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/kaiadmin.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('Dashboard/assets/css/custom.css') }}?v={{ file_exists(public_path('Dashboard/assets/css/custom.css')) ? filemtime(public_path('Dashboard/assets/css/custom.css')) : '1.1' }}" />
     
     @stack('styles')
 </head>
@@ -239,8 +239,9 @@
                     <div class="container-fluid">
                         <!-- Useful Topbar Elements (Mobile & Desktop) -->
                         @php
-                            $pendingCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'pending')->count();
-                            $submittedCount = \App\Models\Product::whereIn('user_id', auth()->user()->getVisibleUserIds())->where('status', 'submitted')->count();
+                            $visibleIds = auth()->user()?->getVisibleUserIds() ?? [];
+                            $pendingCount = !empty($visibleIds) ? \App\Models\Product::whereIn('user_id', $visibleIds)->where('status', 'pending')->count() : 0;
+                            $submittedCount = !empty($visibleIds) ? \App\Models\Product::whereIn('user_id', $visibleIds)->where('status', 'submitted')->count() : 0;
                         @endphp
                         <div class="d-flex align-items-center gap-2 ms-1 ms-md-3">
                             <a href="{{ route('products.pending') }}" class="topbar-stat-pill bg-warning text-dark shadow-sm" title="{{ $pendingCount }} Pending Documents">
@@ -354,7 +355,7 @@
                         {{ date('Y') }} © Doc Tracker - Document Tracking System
                     </div>
                     <div>
-                        Powered by <a href="https://dezignwise.online" target="_blank" class="text-decoration-none">Dezignwise</a>
+                        Powered by <a href="https://dezignwise.com" target="_blank" class="text-decoration-none">Dezignwise</a>
                     </div>
                 </div>
             </footer>

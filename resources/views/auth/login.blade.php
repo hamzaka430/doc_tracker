@@ -10,13 +10,30 @@
     <link rel="icon" href="{{ asset('Dashboard/assets/img/favicon.svg') }}" type="image/svg+xml" />
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        .auth-illustration-desktop {
+            display: none;
+        }
+        @media (min-width: 1024px) {
+            .auth-illustration-desktop {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-50">
-    <main class="min-h-screen flex flex-col items-center justify-center">
+    <main class="min-h-screen flex flex-col items-center justify-center py-6 px-4">
         <div class="py-2 px-4 md:px-8 w-full">
-            <div class="grid items-center gap-4 max-w-5xl w-full mx-auto lg:grid-cols-2">
+            <div class="grid items-center gap-6 max-w-5xl w-full mx-auto lg:grid-cols-2">
                 
                 <div class="border border-slate-300 bg-white rounded-lg p-5 max-w-sm mx-auto shadow-sm md:p-6 lg:mx-0 w-full">
+
+                    <!-- Mobile Illustration (Visible on screens < 1024px) -->
+                    <div class="lg:hidden flex justify-center mb-5">
+                        <img src="{{ asset('login_signup_illustration.webp') }}" class="w-40 sm:w-48 h-auto object-contain drop-shadow-sm" alt="Doc Tracker Illustration" />
+                    </div>
 
                     <!-- Branding -->
                     <div class="flex items-center gap-2 mb-8">
@@ -94,8 +111,8 @@
                     </form>
                 </div>
 
-                <div class="hidden lg:block aspect-[71/50] w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
-                    <img src="https://readymadeui.com/images/integration-illus.webp" class="w-full object-cover" alt="login img" width="710" height="500" />
+                <div class="auth-illustration-desktop w-11/12 lg:w-5/6 xl:w-[85%] mx-auto">
+                    <img src="{{ asset('login_signup_illustration.webp') }}" class="w-full h-auto max-h-[500px] object-contain drop-shadow-sm" alt="Doc Tracker Illustration" width="710" height="500" />
                 </div>
             </div>
         </div>
