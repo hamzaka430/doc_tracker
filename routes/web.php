@@ -86,5 +86,31 @@ Route::middleware('auth')->group(function () {
 */
 Route::get('/chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
 
+/*
+|--------------------------------------------------------------------------
+| Chat DB Keep-Alive Heartbeat Route
+|--------------------------------------------------------------------------
+| Pinged periodically by GitHub Actions workflow to prevent the Aiven
+| cloud database from sleeping / powering off due to inactivity.
+*/
+Route::get('/api/chat-db-keepalive', function () {
+    try {
+        $start = microtime(true);
+        \Illuminate\Support\Facades\DB::connection('mysql_chat')->select('SELECT 1 as ping');
+        $duration = round((microtime(true) - $start) * 1000, 2);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Chat database is active and connected',
+            'latency_ms' => $duration,
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Chat database ping failed: ' . $e->getMessage(),
+        ], 500);
+    }
+})->name('chat.keepalive');
 
 require __DIR__.'/auth.php';
