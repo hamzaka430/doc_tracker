@@ -1,49 +1,49 @@
-# Implementation Plan: Decouple Chat to Aiven MySQL & Zero-JawsDB Chat Polling
+# Implementation Plan: Chat Speed Optimization, Reliable PIN Lock, & Daily Documents Selection Fix
 
 ## Overview
-Move all Secret Chat database storage (`chat_messages`, `chat_settings`) from the JawsDB MySQL database (which has a strict 3,600 query/hour free plan limit) to a dedicated Aiven Cloud MySQL database with SSL. Reconfigure session storage to `file` and eliminate all JawsDB queries on the 1.5s chat polling endpoint, so that all document operations remain on JawsDB while chat operates with zero impact on JawsDB query quotas.
+This plan addresses 3 core areas requested by the user:
+1. **Daily Documents Selection Bug (`/products/daily`)**: When user selects all documents, they get selected, but unmarking does not unmark individual items or clear bulk selection due to unsynchronized desktop/mobile checkboxes.
+2. **Chat Lock Glitch**: The chat lock should ONLY open with a PIN code, and must never open automatically on page refresh. Fix the session lifecycle and dual-view transition so that every page refresh or entry requires the 4-digit security code.
+3. **Chat System Performance & Speed**: Make all chat features (reactions, last seen activity, typing indicators, replies, unsend, receipts) lightning-fast and responsive using optimistic UI updates and backend query optimizations (throttled presence writes, conditional read receipts, targeted indexes).
 
-## Architecture Decisions
-1. **Multi-Database Connection in Laravel:**
-   - Keep default `mysql` connection pointing to JawsDB (products, vials, users, sap errors, user preferences, jobs).
-   - Dedicated `mysql_chat` connection pointing to Aiven Cloud MySQL (`mysql-doctracking-doctracking.b.aivencloud.com:21102`, database `defaultdb`, SSL mode REQUIRED with `ca.pem`).
-2. **Models Bound to `mysql_chat`:**
-   - `ChatMessage` and `ChatSetting` models explicitly declare `protected $connection = 'mysql_chat';`.
-3. **Zero JawsDB Polling Pipeline:**
-   - `SESSION_DRIVER=file`: Moves session reads/writes off JawsDB to disk.
-   - `CACHE_STORE=file` (or `CACHE_DRIVER=file`).
-   - The `/chat/messages` polling route is excluded from `auth` middleware (already secured via `session('chat_unlocked')` in controller), eliminating `User::find()` queries against JawsDB during polling.
-4. **Defense-in-Depth Polling Safeguards:**
-   - Verify tab visibility pauses and backoff in `index.blade.php` to prevent unnecessary polls when the user is away.
-5. **Heroku Configuration & Deployment:**
-   - Authenticate Heroku CLI using user's API key.
-   - Set Heroku Config Vars for Aiven connection (`CHAT_DB_*`) and session/cache drivers (`SESSION_DRIVER=file`, `CACHE_STORE=file`).
-   - Run migrations on `mysql_chat` to create `chat_messages` and `chat_settings` tables in Aiven MySQL.
-   - Deploy codebase with `ca.pem` included.
+---
 
-## Task List
+## Architecture & Design Decisions
 
-### Phase 1: Configuration & Migration
-- [ ] Task 1: Verify & update `config/database.php` for `mysql_chat` with SSL CA options and fallback.
-- [ ] Task 2: Configure local `.env` with Aiven credentials and run database migrations on `mysql_chat`.
-- [ ] Task 3: Verify models (`ChatMessage`, `ChatSetting`) and verify table schemas in Aiven.
+### 1. Daily Documents Selection Fix (`resources/views/products/daily.blade.php`)
+- Both Desktop table (`selectAllDesktop`) and Mobile card list (`selectAllMobile`) render checkboxes with `.product-checkbox`.
+- When an individual checkbox changes, synchronize all checkboxes with the matching value (`.product-checkbox[value="${this.value}"]`).
+- Update `selectAllDesktop.checked` and `selectAllMobile.checked` based on whether all visible items are selected.
+- When `selectAll` is clicked (checked or unchecked), apply `isChecked` to all checkboxes and update the bulk submit count.
 
-### Checkpoint: Foundation
-- [ ] Direct connection to Aiven MySQL tested and verified.
-- [ ] `chat_messages` and `chat_settings` tables exist on Aiven MySQL.
+### 2. Lock System Security Fix (`ChatController.php` & `resources/views/chat/index.blade.php`)
+- In `ChatController::index()`, ensure `GET /chat` resets the active unlock state (`session()->forget('chat_unlocked')`) so that accessing or refreshing the page ALWAYS requires the PIN.
+- In `resources/views/chat/index.blade.php`, render the PIN Security Verification Card as the active view and the Chat Container ready in the DOM.
+- When `verifyPin` succeeds via AJAX, verify PIN on server, set `session(['chat_unlocked' => true])`, and smoothly transition the UI from the PIN keypad to the Chat interface without full page reload.
+- If the user reloads the page (`F5`) or navigates away and comes back, the page is securely locked again, strictly requiring the 4-digit PIN code.
 
-### Phase 2: Polling & Zero-JawsDB Verification
-- [ ] Task 4: Verify `ChatController` and `routes/web.php` for complete zero-query isolation from JawsDB during message polling.
-- [ ] Task 5: Verify tab visibility handling in `chat/index.blade.php`.
+### 3. Chat Speed & Performance Optimization
+- **Optimistic UI for Reactions**: When a user double-taps or taps a reaction emoji, immediately update the DOM in 0ms (toggle reaction count/pill, play heart burst) before waiting for the network. Background sync reconciliation handles server state.
+- **Backend Presence Throttling (`fetchMessages`)**: Throttles writes to `chat_settings` — only writes to database if `is_typing` state changed or if >8 seconds have elapsed since last write.
+- **Conditional Read Receipt Updates**: Only executes `UPDATE chat_messages SET is_read = true` if there are unread messages from the other user.
+- **Theme Caching**: Avoid re-querying `chat_theme` from MySQL on every 1.6s polling cycle.
+- **Database Indexes Migration**: Add index on `updated_at`, `is_pinned`, and `(sender_name, is_read)` to `chat_messages` on `mysql_chat` connection for sub-millisecond query execution.
 
-### Phase 3: Heroku Deployment & Verification
-- [ ] Task 6: Authenticate Heroku CLI and set Heroku config vars (`CHAT_DB_*`, `SESSION_DRIVER=file`, `CACHE_STORE=file`).
-- [ ] Task 7: Ensure `ca.pem` is committed to git and push changes to Heroku (`git push heroku main`).
-- [ ] Task 8: Run migrations on Heroku / verify production logs and test chat endpoint.
+---
 
-## Risks & Mitigations
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Aiven SSL requirement fails on Heroku | High | `ca.pem` is committed to repository root; `config/database.php` points `PDO::MYSQL_ATTR_SSL_CA` to `base_path('ca.pem')`. |
-| Session driver `file` loses sessions across Heroku dyno restarts | Low | Standard for single web dyno; chat unlock session simply re-prompts 4-digit PIN on restart. |
-| Existing chat messages on JawsDB are left behind | Low | User specified chat can start fresh or table created on Aiven; clean migration setup. |
+## Task Breakdown
+
+### Phase 1: Daily Documents Selection Bug Fix
+- [ ] Task 1: Fix checkbox synchronization and unmarking in `resources/views/products/daily.blade.php`.
+
+### Phase 2: Lock System Glitch Fix
+- [ ] Task 2: Update `ChatController.php` to enforce lock-on-fresh-visit/refresh and support in-page unlock.
+- [ ] Task 3: Update `resources/views/chat/index.blade.php` to transition into chat upon PIN verification without page reload and stay locked on refresh.
+
+### Phase 3: Chat Speed & Performance Optimizations
+- [ ] Task 4: Add MySQL performance migration for `chat_messages` indexes on `mysql_chat`.
+- [ ] Task 5: Optimize backend queries in `ChatController.php` (`fetchMessages` presence throttling, conditional updates, cached theme).
+- [ ] Task 6: Implement Optimistic UI for reactions, typing indicators, and message unsend in `resources/views/chat/index.blade.php`.
+
+### Phase 4: Verification & Testing
+- [ ] Task 7: Run PHP syntax validation, verify Daily Documents unmarking, test PIN lock on refresh, and verify instant reaction speeds.

@@ -71,6 +71,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/verify-pin', [ChatController::class, 'verifyPin'])->name('chat.verifyPin');
     Route::post('/chat/lock', [ChatController::class, 'lock'])->name('chat.lock');
     Route::post('/chat/messages', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::post('/chat/react', [ChatController::class, 'reactMessage'])->name('chat.react');
+    Route::post('/chat/edit', [ChatController::class, 'editMessage'])->name('chat.edit');
+    Route::delete('/chat/delete/{id}', [ChatController::class, 'deleteMessage'])->name('chat.delete');
+    Route::post('/chat/pin', [ChatController::class, 'togglePin'])->name('chat.pin');
+    Route::post('/chat/preferences', [ChatController::class, 'updatePreferences'])->name('chat.preferences');
     Route::post('/chat/settings/names', [ChatController::class, 'updateNames'])->name('chat.updateNames');
     Route::delete('/chat/messages/clear', [ChatController::class, 'clearChat'])->name('chat.clear');
 

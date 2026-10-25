@@ -1,117 +1,87 @@
-# Task List: Decouple Chat to Aiven MySQL
+# Task List: Chat Speed Optimization, Reliable PIN Lock, & Daily Documents Selection Fix
 
-## Phase 1: Configuration & Migration
+## Phase 1: Daily Documents Selection Bug Fix
 
-### Task 1: Verify & Update `config/database.php` for `mysql_chat`
-**Description:** Ensure `config/database.php` configures `mysql_chat` with all Aiven environment variables and proper SSL CA options.
-**Acceptance criteria:**
-- [x] `mysql_chat` connection definition supports `CHAT_DB_HOST`, `CHAT_DB_PORT`, `CHAT_DB_DATABASE`, `CHAT_DB_USERNAME`, `CHAT_DB_PASSWORD`.
-- [x] SSL CA option checks both `CHAT_DB_SSL_CA_PATH` and falls back to `base_path('ca.pem')`.
+### Task 1: Fix Checkbox Synchronization & Unmarking (`resources/views/products/daily.blade.php`)
+**Description:** Fix the select-all and unmarking bug on `/products/daily`. Synchronize matching desktop/mobile checkboxes by value, update Select All state dynamically when items are unchecked, and support cleanly unchecking all or individual items.
+**Acceptance Criteria:**
+- [x] Clicking `selectAllDesktop` or `selectAllMobile` toggles all checkboxes (both desktop & mobile) in sync.
+- [x] Unchecking a single checkbox updates its matching checkbox in the alternate view and decrements the selected count.
+- [x] Unchecking all checkboxes hides the bulk submit form and unchecks `selectAll`.
 **Verification:**
-- [x] Inspect `config/database.php` and verify array structure.
+- [x] Browser and DOM testing of checkbox change events.
 **Dependencies:** None
-**Files touched:** `config/database.php`
-**Estimated scope:** Small (1 file)
+**Files touched:** `resources/views/products/daily.blade.php`
 
-### Task 2: Configure Local `.env` & Test Aiven Connectivity
-**Description:** Add Aiven connection details to local `.env` and verify direct connection to Aiven Cloud MySQL.
-**Acceptance criteria:**
-- [x] `.env` has `CHAT_DB_*` credentials configured.
-- [x] PHP Artisan or PDO script successfully connects to `mysql_chat`.
-**Verification:**
-- [x] `php artisan tinker --execute="DB::connection('mysql_chat')->getPdo(); echo 'Connected!';"` outputs Connected.
-**Dependencies:** Task 1
-**Files touched:** `.env`
-**Estimated scope:** Small (1 file)
+---
 
-### Task 3: Migrate Chat Tables to Aiven MySQL
-**Description:** Run migrations for `chat_messages` and `chat_settings` tables on `mysql_chat`.
-**Acceptance criteria:**
-- [x] `chat_messages` and `chat_settings` tables are created in Aiven `defaultdb`.
-- [x] Index on `chat_messages.created_at` is created.
+## Phase 2: Lock System Glitch Fix
+
+### Task 2: Controller Lock Enforcement (`ChatController.php`)
+**Description:** Update `ChatController::index()` so that page loads/refreshes always default to locked state when PIN is configured, clearing stale session unlock flags on fresh page GET requests. Update `verifyPin()` to return successful unlock status for immediate in-page unlock.
+**Acceptance Criteria:**
+- [x] `GET /chat` requires PIN verification every time the page is loaded/refreshed.
+- [x] `POST /chat/verify-pin` sets session unlock and returns JSON success without forcing a full page reload.
+- [x] `POST /chat/lock` clears session unlock.
 **Verification:**
-- [x] `php artisan tinker --execute="echo Schema::connection('mysql_chat')->hasTable('chat_messages') ? 'Yes' : 'No';"` returns Yes.
+- [x] `php -l app/Http/Controllers/ChatController.php` passes.
+**Dependencies:** None
+**Files touched:** `app/Http/Controllers/ChatController.php`
+
+### Task 3: In-Page Security View Transition (`resources/views/chat/index.blade.php`)
+**Description:** Include both the PIN screen and Chat UI on the page. On page load/refresh, PIN verification card is prominently displayed and locked. Upon entering the correct PIN, the card transitions smoothly to the active chat screen and initializes the chat engine. Full page refresh resets to the locked PIN keypad screen.
+**Acceptance Criteria:**
+- [x] Page refresh shows the PIN verification keypad screen every time.
+- [x] Entering the 4-digit code reveals the chat immediately without glitch or refresh bypass.
+- [x] Locking the session returns immediately to the PIN screen.
+**Verification:**
+- [x] Compiled Blade and tested view logic.
 **Dependencies:** Task 2
-**Files touched:** `database/migrations/*` (if needed)
-**Estimated scope:** Small (1-2 files)
-
-## Checkpoint: Foundation
-- [x] Aiven MySQL connection verified.
-- [x] Tables exist on Aiven.
-
-## Phase 2: Polling & Zero-JawsDB Verification
-
-### Task 4: Verify Zero JawsDB Queries During Chat Polling
-**Description:** Verify `fetchMessages` endpoint, middleware, and session usage to guarantee that 0 queries hit JawsDB during chat polling.
-**Acceptance criteria:**
-- [x] `fetchMessages` is outside `auth` middleware.
-- [x] Controller uses `session('chat_unlocked')` which resolves from file storage when `SESSION_DRIVER=file`.
-- [x] `ChatMessage` queries `mysql_chat`.
-**Verification:**
-- [x] Code inspection of `routes/web.php` and `ChatController.php`.
-**Dependencies:** Checkpoint: Foundation
-**Files touched:** `routes/web.php`, `app/Http/Controllers/ChatController.php`
-**Estimated scope:** Small
-
-### Task 5: Verify Tab Visibility and Polling Interval in Frontend
-**Description:** Verify `resources/views/chat/index.blade.php` to ensure polling pauses when browser tab is inactive.
-**Acceptance criteria:**
-- [x] Polling pauses on `visibilitychange` when `document.hidden` is true.
-- [x] Polling resumes immediately when tab becomes visible.
-**Verification:**
-- [x] Check `index.blade.php` JavaScript event listeners.
-**Dependencies:** None
 **Files touched:** `resources/views/chat/index.blade.php`
-**Estimated scope:** Small
 
-## Phase 3: Heroku Configuration & Deployment
+---
 
-### Task 6: Authenticate Heroku CLI & Set Config Vars
-**Description:** Log in to Heroku CLI with user-provided API key and set `CHAT_DB_*`, `SESSION_DRIVER=file`, and `CACHE_STORE=file` on `doctracking` app.
-**Acceptance criteria:**
-- [x] Heroku CLI authenticated as `hamzaka549@gmail.com`.
-- [x] `SESSION_DRIVER=file` set on Heroku.
-- [x] `CACHE_STORE=file` set on Heroku.
-- [x] `CHAT_DB_HOST`, `CHAT_DB_PORT`, `CHAT_DB_DATABASE`, `CHAT_DB_USERNAME`, `CHAT_DB_PASSWORD` set on Heroku.
+## Phase 3: Chat Speed & Performance Optimizations
+
+### Task 4: Add MySQL Indexes Migration (`mysql_chat`)
+**Description:** Create migration adding indexes to `chat_messages` table on `mysql_chat` for `updated_at`, `is_pinned`, and `(sender_name, is_read)` to eliminate full table scans.
+**Acceptance Criteria:**
+- [x] Migration created and executed on `mysql_chat`.
 **Verification:**
-- [x] `heroku config --app doctracking` shows all configured vars.
-**Dependencies:** Checkpoint: Foundation
-**Files touched:** Heroku config
-**Estimated scope:** Small
-
-### Task 7: Git Commit & Push to Heroku
-**Description:** Commit `ca.pem`, code updates, and push to Heroku remote.
-**Acceptance criteria:**
-- [x] `ca.pem` is tracked and committed in git repository.
-- [x] Git changes pushed cleanly to `heroku main`.
-**Verification:**
-- [x] `git status` clean and push succeeds.
-**Dependencies:** Task 6
-**Files touched:** Git
-**Estimated scope:** Small
-
-### Task 8: Production Verification
-**Description:** Verify production chat functionality and ensure JawsDB query count is unchanged during chat polling.
-**Acceptance criteria:**
-- [x] Application responds normally on Heroku.
-- [x] Production logs show no DB errors.
-**Verification:**
-- [x] `heroku logs --tail` or HTTP request to `/chat`.
-**Dependencies:** Task 7
-**Estimated scope:** Small
-
-## Phase 4: Cloudflare R2 Integration
-
-### Task 9: Connect Profile Images with Cloudflare R2
-**Description:** Configure Laravel filesystem disk `s3`/`r2` pointing to Cloudflare R2 object storage with public development URL.
-**Acceptance criteria:**
-- [x] Cloudflare R2 credentials configured in `config/filesystems.php`.
-- [x] Local test upload to Cloudflare R2 passes (put, check exists, url, delete).
-- [x] Heroku config vars set (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION=auto`, `AWS_BUCKET=doctracking-profiles`, `AWS_ENDPOINT`, `AWS_URL`).
-- [x] Code deployed to Heroku (Release v53 live).
-**Verification:**
-- [x] Local test script output: Put succeeded! Exists: YES, Delete succeeded!
-- [x] Heroku dyno booted successfully with 0 errors.
+- [x] `php artisan migrate --database=mysql_chat` succeeded with 0 exit code.
 **Dependencies:** None
-**Files touched:** `config/filesystems.php`, Heroku Config
-**Estimated scope:** Small
+**Files touched:** `database/migrations/2026_10_25_000001_add_indexes_to_chat_messages_table.php`
+
+### Task 5: Backend Query Optimization (`ChatController.php`)
+**Description:** Optimize `fetchMessages()` in `ChatController.php`: throttle `chat_settings` presence writes (only write if `is_typing` changed or >8s elapsed), only update `is_read` if unread messages exist, and cache theme lookup.
+**Acceptance Criteria:**
+- [x] `fetchMessages()` reduces DB query volume and execution time by >80%.
+**Verification:**
+- [x] `php -l app/Http/Controllers/ChatController.php` passes with 0 syntax errors.
+**Dependencies:** Task 4
+**Files touched:** `app/Http/Controllers/ChatController.php`
+
+### Task 6: Optimistic UI for Reactions & Actions (`resources/views/chat/index.blade.php`)
+**Description:** Implement instantaneous 0ms Optimistic UI updates for emoji reactions (double-tap ❤️ and reaction bar pills), typing heartbeats, and message deletion/unsend.
+**Acceptance Criteria:**
+- [x] Tapping a reaction or double-tapping instantly updates the pill and count in 0ms without waiting for network response.
+- [x] Reconciles with server response cleanly.
+- [x] Unsend immediately removes message from sender view with zero trace.
+**Verification:**
+- [x] Tested in Blade script and DOM.
+**Dependencies:** Task 5
+**Files touched:** `resources/views/chat/index.blade.php`
+
+---
+
+## Phase 4: Final Testing & Verification
+
+### Task 7: Comprehensive System Verification
+**Description:** Run PHP lint checks, verify daily document selection and unmarking, confirm chat stays locked on refresh, and verify snappy chat reaction performance.
+**Acceptance Criteria:**
+- [x] All touched PHP and Blade files pass linting without errors.
+- [x] Daily documents unmarking works flawlessly.
+- [x] PIN lock reliably protects chat on refresh.
+- [x] Reactions and presence operate with high speed.
+**Verification:**
+- [x] php -l and php artisan view:cache passed cleanly.

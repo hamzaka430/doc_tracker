@@ -256,10 +256,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Bulk Submit Functionality
     const selectAllDesktop = document.getElementById('selectAllDesktop');
+    const selectAllMobile = document.getElementById('selectAllMobile');
     const checkboxes = document.querySelectorAll('.product-checkbox');
     const bulkSubmitForm = document.getElementById('bulkSubmitForm');
     const bulkCountSpan = document.getElementById('bulkCount');
     const bulkSubmitBtn = document.getElementById('bulkSubmitBtn');
+
+    // Total unique products available on this page
+    const totalUniqueProductIds = new Set(Array.from(checkboxes).map(cb => cb.value)).size;
 
     function updateBulkSubmitVisibility() {
         const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
@@ -267,44 +271,55 @@ document.addEventListener('DOMContentLoaded', function() {
         checkedBoxes.forEach(cb => uniqueIds.add(cb.value));
         const checkedCount = uniqueIds.size;
         
-        if(bulkCountSpan) bulkCountSpan.textContent = checkedCount;
+        if (bulkCountSpan) bulkCountSpan.textContent = checkedCount;
         
         if (checkedCount > 0) {
-            if(bulkSubmitForm) bulkSubmitForm.classList.remove('d-none');
+            if (bulkSubmitForm) bulkSubmitForm.classList.remove('d-none');
         } else {
-            if(bulkSubmitForm) bulkSubmitForm.classList.add('d-none');
-            if (selectAllDesktop) selectAllDesktop.checked = false;
+            if (bulkSubmitForm) bulkSubmitForm.classList.add('d-none');
         }
+
+        // Keep Select All checkboxes in sync with current checked count
+        const allSelected = totalUniqueProductIds > 0 && checkedCount === totalUniqueProductIds;
+        if (selectAllDesktop) selectAllDesktop.checked = allSelected;
+        if (selectAllMobile) selectAllMobile.checked = allSelected;
+    }
+
+    function toggleAll(isChecked) {
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+        });
+        if (selectAllDesktop) selectAllDesktop.checked = isChecked;
+        if (selectAllMobile) selectAllMobile.checked = isChecked;
+        updateBulkSubmitVisibility();
     }
 
     if (selectAllDesktop) {
         selectAllDesktop.addEventListener('change', function() {
-            const isChecked = this.checked;
-            checkboxes.forEach(cb => {
-                cb.checked = isChecked;
-            });
-            if (selectAllMobile) selectAllMobile.checked = isChecked;
-            updateBulkSubmitVisibility();
+            toggleAll(this.checked);
         });
     }
 
-    const selectAllMobile = document.getElementById('selectAllMobile');
     if (selectAllMobile) {
         selectAllMobile.addEventListener('change', function() {
-            const isChecked = this.checked;
-            checkboxes.forEach(cb => {
-                cb.checked = isChecked;
-            });
-            if (selectAllDesktop) selectAllDesktop.checked = isChecked;
-            updateBulkSubmitVisibility();
+            toggleAll(this.checked);
         });
     }
 
+    // Synchronize individual checkboxes between Desktop and Mobile views
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateBulkSubmitVisibility);
+        cb.addEventListener('change', function() {
+            const isChecked = this.checked;
+            const val = this.value;
+            // Mirror state to any other checkbox with the same product ID
+            document.querySelectorAll(`.product-checkbox[value="${val}"]`).forEach(box => {
+                box.checked = isChecked;
+            });
+            updateBulkSubmitVisibility();
+        });
     });
 
-    if(bulkSubmitBtn) {
+    if (bulkSubmitBtn) {
         bulkSubmitBtn.addEventListener('click', function() {
             const checkedBoxes = document.querySelectorAll('.product-checkbox:checked');
             const uniqueIds = new Set();

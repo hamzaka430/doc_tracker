@@ -21,10 +21,21 @@ class ChatMessage extends Model
         'message',
         'attachment_path',
         'is_read',
+        'reactions',
+        'reply_to_id',
+        'reply_to_text',
+        'reply_to_sender',
+        'is_edited',
+        'is_deleted',
+        'is_pinned',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
+        'is_edited' => 'boolean',
+        'is_deleted' => 'boolean',
+        'is_pinned' => 'boolean',
+        'reactions' => 'array',
     ];
 
     protected $appends = [
@@ -57,6 +68,6 @@ class ChatMessage extends Model
             return 'Yesterday';
         }
 
-        return $this->created_at->format('M j, Y');
+        return $this->created_at->format('l, M j, Y');
     }
 }
