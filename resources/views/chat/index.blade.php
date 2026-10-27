@@ -30,125 +30,115 @@
 <!-- ========================================== -->
 <!-- PIN SECURITY INITIAL SETUP SCREEN          -->
 <!-- ========================================== -->
-<div id="pinSecurityScreen" class="row justify-content-center py-4 mx-0">
-    <div class="col-md-6 col-lg-5 col-xl-4">
-        <div class="card shadow-sm border text-center" style="border-radius: 16px;">
-            <div class="card-header telegram-header text-white py-3" style="border-radius: 16px 16px 0 0;">
-                <div class="card-title text-white mb-0 fs-5">
-                    <i class="fas fa-key me-2"></i> Security PIN Setup
-                </div>
-            </div>
-            <div class="card-body p-4">
-                <p class="text-muted small mb-4">
-                    Create a 4-digit security PIN to initialize this support session.
-                </p>
-
-                <!-- Alert message container -->
-                <div id="pinAlert" class="alert alert-danger py-2 px-3 small d-none mb-3" style="border-radius: 10px;"></div>
-
-                <!-- Visual PIN Dots -->
-                <div class="d-flex justify-content-center gap-3 mb-4" id="pinDots">
-                    <div class="pin-dot" id="dot-0"></div>
-                    <div class="pin-dot" id="dot-1"></div>
-                    <div class="pin-dot" id="dot-2"></div>
-                    <div class="pin-dot" id="dot-3"></div>
-                </div>
-
-                <!-- Hidden Form for submission -->
-                <form id="pinForm" method="POST" action="{{ route('chat.setupPin') }}">
-                    @csrf
-                    <input type="password" id="pinInput" name="pin" maxlength="4" pattern="\d*" inputmode="numeric" style="display: none;" autocomplete="off">
-                </form>
-
-                <!-- Keypad -->
-                <div class="keypad-grid mb-3">
-                    @foreach([1, 2, 3, 4, 5, 6, 7, 8, 9] as $num)
-                        <button type="button" class="btn btn-pin-key" onclick="enterDigit('{{ $num }}')">{{ $num }}</button>
-                    @endforeach
-                    <button type="button" class="btn btn-pin-key-sub text-danger" onclick="clearPin()" title="Clear">
-                        <i class="fas fa-undo"></i>
-                    </button>
-                    <button type="button" class="btn btn-pin-key" onclick="enterDigit('0')">0</button>
-                    <button type="button" class="btn btn-pin-key-sub text-muted" onclick="backspacePin()" title="Backspace">
-                        <i class="fas fa-backspace"></i>
-                    </button>
-                </div>
-
-                <div class="d-grid mt-4">
-                    <button type="button" id="btnSubmitPin" class="btn btn-primary btn-round fw-bold py-2" style="background: #3390ec; border-color: #3390ec;" onclick="submitPin()">
-                        <i class="fas fa-unlock-alt me-2"></i> Set PIN & Continue
-                    </button>
-                </div>
-            </div>
+<div id="pinSecurityScreen" class="pin-screen-container">
+    <div class="pin-card">
+        <!-- Badge icon -->
+        <div class="pin-badge pin-badge-setup">
+            <i class="fas fa-key"></i>
         </div>
+
+        <!-- Typography -->
+        <h3 class="pin-title">Security PIN Setup</h3>
+        <p class="pin-subtitle">Create a 4-digit security PIN to initialize this support session</p>
+
+        <!-- Alert message container -->
+        <div id="pinAlert" class="alert alert-danger pin-alert d-none"></div>
+
+        <!-- Visual PIN Dots -->
+        <div class="pin-dots-wrap" id="pinDots">
+            <div class="pin-dot" id="dot-0"></div>
+            <div class="pin-dot" id="dot-1"></div>
+            <div class="pin-dot" id="dot-2"></div>
+            <div class="pin-dot" id="dot-3"></div>
+        </div>
+
+        <!-- Hidden Form for submission -->
+        <form id="pinForm" method="POST" action="{{ route('chat.setupPin') }}">
+            @csrf
+            <input type="password" id="pinInput" name="pin" maxlength="4" pattern="\d*" inputmode="numeric" style="display: none;" autocomplete="off">
+        </form>
+
+        <!-- Keypad -->
+        <div class="pin-keypad">
+            @foreach([1, 2, 3, 4, 5, 6, 7, 8, 9] as $num)
+                <button type="button" class="btn btn-pin-num" onclick="enterDigit('{{ $num }}')">{{ $num }}</button>
+            @endforeach
+            <button type="button" class="btn btn-pin-action text-danger" onclick="clearPin()" title="Clear PIN" aria-label="Clear PIN">
+                <i class="fas fa-undo"></i>
+            </button>
+            <button type="button" class="btn btn-pin-num" onclick="enterDigit('0')">0</button>
+            <button type="button" class="btn btn-pin-action text-secondary" onclick="backspacePin()" title="Backspace" aria-label="Backspace">
+                <i class="fas fa-backspace"></i>
+            </button>
+        </div>
+
+        <!-- Action Button -->
+        <button type="button" id="btnSubmitPin" class="btn btn-pin-unlock" onclick="submitPin()">
+            <i class="fas fa-unlock-alt me-2"></i> Set PIN &amp; Continue
+        </button>
     </div>
 </div>
 @else
 <!-- ========================================== -->
 <!-- PIN SECURITY VERIFICATION SCREEN           -->
 <!-- ========================================== -->
-<div id="pinSecurityScreen" class="row justify-content-center py-4 mx-0 {{ $isUnlocked ? 'd-none' : '' }}">
-    <div class="col-md-6 col-lg-5 col-xl-4">
-        <div class="card shadow-sm border text-center" style="border-radius: 16px;">
-            <div class="card-header telegram-header text-white py-3" style="border-radius: 16px 16px 0 0;">
-                <div class="card-title text-white mb-0 fs-5">
-                    <i class="fas fa-lock me-2"></i> Security Verification
-                </div>
-            </div>
-            <div class="card-body p-4">
-                <p class="text-muted small mb-4">
-                    Enter your 4-digit security PIN code to access the support log.
-                </p>
-
-                <!-- Alert message container -->
-                <div id="pinAlert" class="alert alert-danger py-2 px-3 small d-none mb-3" style="border-radius: 10px;"></div>
-
-                <!-- Visual PIN Dots -->
-                <div class="d-flex justify-content-center gap-3 mb-4" id="pinDots">
-                    <div class="pin-dot" id="dot-0"></div>
-                    <div class="pin-dot" id="dot-1"></div>
-                    <div class="pin-dot" id="dot-2"></div>
-                    <div class="pin-dot" id="dot-3"></div>
-                </div>
-
-                <!-- Hidden Form for submission -->
-                <form id="pinForm" method="POST" action="{{ route('chat.verifyPin') }}">
-                    @csrf
-                    <input type="password" id="pinInput" name="pin" maxlength="4" pattern="\d*" inputmode="numeric" style="display: none;" autocomplete="off">
-                </form>
-
-                <!-- Keypad -->
-                <div class="keypad-grid mb-3">
-                    @foreach([1, 2, 3, 4, 5, 6, 7, 8, 9] as $num)
-                        <button type="button" class="btn btn-pin-key" onclick="enterDigit('{{ $num }}')">{{ $num }}</button>
-                    @endforeach
-                    <button type="button" class="btn btn-pin-key-sub text-danger" onclick="clearPin()" title="Clear">
-                        <i class="fas fa-undo"></i>
-                    </button>
-                    <button type="button" class="btn btn-pin-key" onclick="enterDigit('0')">0</button>
-                    <button type="button" class="btn btn-pin-key-sub text-muted" onclick="backspacePin()" title="Backspace">
-                        <i class="fas fa-backspace"></i>
-                    </button>
-                </div>
-
-                <div class="d-grid mt-4">
-                    <button type="button" id="btnSubmitPin" class="btn btn-primary btn-round fw-bold py-2" style="background: #3390ec; border-color: #3390ec;" onclick="submitPin()">
-                        <i class="fas fa-unlock-alt me-2"></i> Verify & Unlock
-                    </button>
-                </div>
-            </div>
+<div id="pinSecurityScreen" class="pin-screen-container {{ $isUnlocked ? 'd-none' : '' }}">
+    <div class="pin-card">
+        <!-- Badge icon -->
+        <div class="pin-badge">
+            <i class="fas fa-lock"></i>
         </div>
+
+        <!-- Typography -->
+        <h3 class="pin-title">Security Verification</h3>
+        <p class="pin-subtitle">Enter your 4-digit PIN code to access the support log</p>
+
+        <!-- Alert message container -->
+        <div id="pinAlert" class="alert alert-danger pin-alert d-none"></div>
+
+        <!-- Visual PIN Dots -->
+        <div class="pin-dots-wrap" id="pinDots">
+            <div class="pin-dot" id="dot-0"></div>
+            <div class="pin-dot" id="dot-1"></div>
+            <div class="pin-dot" id="dot-2"></div>
+            <div class="pin-dot" id="dot-3"></div>
+        </div>
+
+        <!-- Hidden Form for submission -->
+        <form id="pinForm" method="POST" action="{{ route('chat.verifyPin') }}">
+            @csrf
+            <input type="password" id="pinInput" name="pin" maxlength="4" pattern="\d*" inputmode="numeric" style="display: none;" autocomplete="off">
+        </form>
+
+        <!-- Keypad -->
+        <div class="pin-keypad">
+            @foreach([1, 2, 3, 4, 5, 6, 7, 8, 9] as $num)
+                <button type="button" class="btn btn-pin-num" onclick="enterDigit('{{ $num }}')">{{ $num }}</button>
+            @endforeach
+            <button type="button" class="btn btn-pin-action text-danger" onclick="clearPin()" title="Clear PIN" aria-label="Clear PIN">
+                <i class="fas fa-undo"></i>
+            </button>
+            <button type="button" class="btn btn-pin-num" onclick="enterDigit('0')">0</button>
+            <button type="button" class="btn btn-pin-action text-secondary" onclick="backspacePin()" title="Backspace" aria-label="Backspace">
+                <i class="fas fa-backspace"></i>
+            </button>
+        </div>
+
+        <!-- Action Button -->
+        <button type="button" id="btnSubmitPin" class="btn btn-pin-unlock" onclick="submitPin()">
+            <i class="fas fa-unlock-alt me-2"></i> Verify &amp; Unlock
+        </button>
     </div>
 </div>
 
 <!-- ========================================== -->
 <!-- SUPPORT LOG / INTERNAL MESSENGER ROOM      -->
 <!-- ========================================== -->
-<div id="chatPageWrapper" class="chat-page-wrapper" style="{{ $isUnlocked ? '' : 'display: none;' }}">
+<div id="chatPageWrapper" class="chat-page-wrapper {{ $isUnlocked ? '' : 'd-none' }}" style="{{ $isUnlocked ? '' : 'display: none !important;' }}">
     <div class="card shadow-sm border chat-main-card" id="chatMainCard">
         
         <!-- CARD HEADER (TELEGRAM THEME) -->
-        <div class="card-header telegram-header text-white py-2 px-2 px-sm-3 flex-shrink-0">
+        <div class="card-header telegram-header text-white py-2 px-2 px-sm-3 flex-shrink-0" style="margin-top: 15px;">
             <div class="d-flex align-items-center justify-content-between flex-nowrap gap-2 w-100">
                 <!-- Left Title -->
                 <div class="d-flex align-items-center gap-2 min-w-0">
@@ -175,22 +165,27 @@
 
                 <!-- Right Toolbar Buttons -->
                 <div class="d-flex align-items-center gap-1.5 flex-nowrap ms-auto flex-shrink-0">
-                    <!-- Search Conversation Toggle Button -->
+                    <!-- Search Conversation Toggle Button (Visible on Mobile & Desktop) -->
                     <button type="button" class="btn btn-telegram-header" id="btnToggleSearch" onclick="toggleSearch()" title="Search conversation" aria-label="Search conversation">
                         <i class="fas fa-search" id="searchHeaderIcon"></i>
                     </button>
 
-                    <!-- White / Black Background Theme Toggle (Visible on desktop/tablet >= 768px) -->
-                    <button type="button" class="btn btn-telegram-header d-none d-md-inline-flex" id="btnThemeToggle" onclick="toggleChatTheme()" title="Switch Theme (Dark / Light)" aria-label="Toggle theme">
+                    <!-- White / Black Background Theme Toggle (Visible on Mobile & Desktop) -->
+                    <button type="button" class="btn btn-telegram-header" id="btnThemeToggle" onclick="toggleChatTheme()" title="Switch Theme (Dark / Light)" aria-label="Toggle theme">
                         <i class="fas fa-sun" id="themeIcon"></i> <span class="d-none d-md-inline ms-1" id="themeBtnText">White BG</span>
                     </button>
 
-                    <!-- Privacy Blur Toggle Button (Always visible) -->
+                    <!-- Clear / Delete Conversation Log (Visible on Mobile & Desktop) -->
+                    <button type="button" class="btn btn-telegram-header" id="btnClearChatHeader" onclick="confirmClearChat()" title="Clear Conversation Log" aria-label="Clear chat log">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+
+                    <!-- Privacy Blur Toggle Button (Visible on Mobile & Desktop) -->
                     <button type="button" class="btn btn-telegram-header" id="btnBlurToggle" onclick="togglePrivacyBlur()" title="Privacy Blur (Obscure entire chat)" aria-label="Toggle privacy blur">
                         <i class="fas fa-eye-slash" id="blurIcon"></i> <span class="d-none d-md-inline ms-1" id="blurBtnText">Blur</span>
                     </button>
 
-                    <!-- Desktop Extra Buttons (Visible on tablet & desktop >= 768px) -->
+                    <!-- Desktop Extra Buttons (Visible on tablet & desktop >= 768px, Hidden on Mobile) -->
                     <div class="d-none d-md-flex align-items-center gap-1.5">
                         <!-- Chat Settings & Customization -->
                         <button type="button" class="btn btn-telegram-header" data-bs-toggle="modal" data-bs-target="#chatSettingsModal" title="Settings, Themes & Nicknames" aria-label="Chat Settings">
@@ -202,11 +197,6 @@
                             <i class="fas fa-volume-up" id="soundIcon"></i>
                         </button>
 
-                        <!-- Clear Log -->
-                        <button type="button" class="btn btn-telegram-header" onclick="confirmClearChat()" title="Clear Conversation Log" aria-label="Clear chat log">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-
                         <!-- Lock Session -->
                         <form method="POST" action="{{ route('chat.lock') }}" class="d-inline m-0">
                             @csrf
@@ -214,49 +204,6 @@
                                 <i class="fas fa-lock"></i>
                             </button>
                         </form>
-                    </div>
-
-                    <!-- Mobile 3-Dots Dropdown Menu (Visible on mobile < 768px) -->
-                    <div class="dropdown d-md-none">
-                        <button type="button" class="btn btn-telegram-header" data-bs-toggle="dropdown" aria-expanded="false" title="More options" aria-label="More options">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border telegram-dropdown-menu">
-                            <li>
-                                <a class="dropdown-item py-2" href="javascript:void(0)" onclick="toggleChatTheme()">
-                                    <i class="fas fa-adjust me-2 text-warning" id="mobileThemeIcon"></i> <span id="mobileThemeText">Theme (Dark / Light)</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="javascript:void(0)" onclick="togglePrivacyBlur()">
-                                    <i class="fas fa-eye-slash me-2 text-info" id="mobileBlurIcon"></i> <span id="mobileBlurText">Privacy Blur Mode</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#chatSettingsModal">
-                                    <i class="fas fa-sliders-h me-2 text-primary"></i> Chat Settings & Themes
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item py-2" href="javascript:void(0)" onclick="toggleSound()">
-                                    <i class="fas fa-volume-up me-2 text-info" id="mobileSoundIcon"></i> <span id="mobileSoundText">Sound Notification</span>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider my-1"></li>
-                            <li>
-                                <a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="confirmClearChat()">
-                                    <i class="fas fa-trash-alt me-2"></i> Clear History
-                                </a>
-                            </li>
-                            <li>
-                                <form method="POST" action="{{ route('chat.lock') }}" class="m-0">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item py-2 text-danger">
-                                        <i class="fas fa-lock me-2"></i> Lock Session
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -326,7 +273,7 @@
         <!-- EMOJI PICKER DRAWER -->
         <div id="emojiPickerPopup" class="emoji-picker-drawer shadow-lg border d-none">
             <!-- Header: Clean Title & Close -->
-            <div class="d-flex align-items-center justify-content-between p-2 border-bottom bg-dark drawer-main-nav">
+            <div class="d-flex align-items-center justify-content-between p-2 border-bottom bg-dark drawer-main-nav flex-shrink-0">
                 <span class="text-white fw-bold small ps-1">
                     <i class="far fa-smile text-primary me-1.5"></i> Emojis
                 </span>
@@ -336,14 +283,8 @@
             </div>
 
             <!-- Emojis View -->
-            <div id="drawerMediaEmojis">
-                <div class="p-2 border-bottom bg-dark">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-transparent border-end-0 text-white-50"><i class="fa fa-search"></i></span>
-                        <input type="text" id="emojiSearchInput" class="form-control border-start-0 bg-transparent text-white" placeholder="Search emojis..." onkeyup="filterEmojis()">
-                    </div>
-                </div>
-                <div class="d-flex gap-1 p-2 border-bottom bg-dark overflow-x-auto emoji-category-tabs">
+            <div id="drawerMediaEmojis" class="d-flex flex-column flex-grow-1 overflow-hidden" style="flex: 1 1 0; min-height: 0;">
+                <div class="d-flex gap-1 p-2 border-bottom bg-dark overflow-x-auto emoji-category-tabs flex-shrink-0">
                     <button type="button" class="btn btn-sm btn-emoji-tab active" onclick="switchEmojiCategory('all', event)">All</button>
                     <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('smileys', event)">😀 Faces</button>
                     <button type="button" class="btn btn-sm btn-emoji-tab" onclick="switchEmojiCategory('gestures', event)">👍 Hands</button>
@@ -362,10 +303,6 @@
             <!-- Top Row: Active Sender Segmented Switcher -->
             <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 participant-switcher-bar">
                 <div class="d-flex align-items-center gap-2 active-sender-wrap">
-                    <span class="switcher-label d-flex align-items-center gap-1.5 text-slate-400 fw-semibold" style="font-size: 0.78rem;">
-                        <i class="fas fa-paper-plane text-primary me-0.5" style="font-size: 0.72rem;"></i>
-                        <span class="d-none d-sm-inline">Sending as:</span>
-                    </span>
                     <div class="telegram-persona-capsule" role="group" aria-label="Sending persona switcher">
                         <input type="radio" class="btn-check" name="activePersona" id="persona1" value="{{ $name1 }}" checked onchange="updateActivePersona(this.value)">
                         <label class="persona-tab sender-label-blur text-truncate" for="persona1" id="radioLabel1">
@@ -380,7 +317,6 @@
                         </label>
                     </div>
                 </div>
-                <small class="text-muted d-none d-sm-inline" style="font-size: 0.72rem;">Press <strong>Enter ↵</strong> to send</small>
             </div>
 
             <!-- Reply Quote Banner -->
@@ -561,7 +497,6 @@
 </div>
 <!-- Backward compatibility alias for modal ID -->
 <div id="editNamesModal" class="d-none"></div>
-</div>
 @endif
 
 <!-- STYLES -->
@@ -635,34 +570,77 @@ body.chat-unlocked-mode .main-panel .page-inner {
     }
 }
 
-/* PIN Security Verification Screen: Allow scrolling so keypad & unlock button are accessible */
+/* PIN Security Verification Screen: Flex centering and clean scrolling */
 body:not(.chat-unlocked-mode) .main-panel {
     min-height: 100vh;
     min-height: 100dvh;
+    display: flex !important;
+    flex-direction: column !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+    background: #f4f6f9;
 }
 body:not(.chat-unlocked-mode) .main-panel > .container {
     margin-top: 65px !important;
-    min-height: calc(100vh - 65px) !important;
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
     padding: 0 !important;
-    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 @media (max-width: 991.98px) {
     body:not(.chat-unlocked-mode) .main-panel > .container {
         margin-top: 56px !important;
-        min-height: calc(100dvh - 56px) !important;
     }
 }
 body:not(.chat-unlocked-mode) .main-panel .page-inner {
-    padding: 16px 12px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px 16px !important;
+    width: 100% !important;
 }
 
-.main-panel .footer,
+/* ========================================================= */
+/* FOOTER VISIBILITY & POSITIONING (ALL SCREENS & MOBILE)    */
+/* ========================================================= */
+/* Mobile & Tablet: Hide footer everywhere on chat page */
+@media (max-width: 991.98px) {
+    footer,
+    .footer,
+    .main-panel .footer {
+        display: none !important;
+    }
+}
+
+/* Unlocked chat: Always hide footer and page header */
+body.chat-unlocked-mode footer,
+body.chat-unlocked-mode .footer,
+body.chat-unlocked-mode .main-panel .footer,
 .page-header,
 .main-panel .page-header {
+    display: none !important;
+}
+
+/* Desktop PIN lock screen: Footer neatly at the bottom */
+body:not(.chat-unlocked-mode) footer,
+body:not(.chat-unlocked-mode) .footer {
+    position: static !important;
+    margin-top: auto !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+/* Ensure chat wrapper is strictly hidden on lock screen to eliminate line/scrollbar artifact */
+body:not(.chat-unlocked-mode) #chatPageWrapper {
+    display: none !important;
+}
+
+body.chat-unlocked-mode #pinSecurityScreen {
     display: none !important;
 }
 
@@ -703,11 +681,13 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
 }
 
 .telegram-header {
+    margin-top: 15px !important;
     background: #1a2035 !important;
     border-bottom: 1px solid #2a3454 !important;
     min-height: 52px !important;
     flex-shrink: 0 !important;
     backdrop-filter: blur(8px);
+    border-radius: 12px 12px 0 0 !important;
 }
 .telegram-header-avatar {
     width: 38px;
@@ -986,7 +966,8 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
 .avatar-sender-2 {
     background: #202940 !important;
     border: 1px solid #2a3454 !important;
-    color: #48abf7 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
 }
 
 /* AVATAR STYLES & CONSECUTIVE HIDING */
@@ -1238,8 +1219,9 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
 }
 
 /* ========================================================= */
-/* COMPREHENSIVE PRIVACY BLUR (OBSCURE EVERYTHING)           */
+/* DEEP PRIVACY BLUR: OBSCURE CHAT IDENTITY & CONTENT       */
 /* ========================================================= */
+/* Heavy overall blur: masks bubbles, text, avatars, header buttons, badge, input bar, and send button */
 .privacy-blur-active .message-bubble,
 .privacy-blur-active .bubble-avatar,
 .privacy-blur-active .bubble-reactions,
@@ -1251,102 +1233,334 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
 .privacy-blur-active .telegram-header h4,
 .privacy-blur-active #presenceStatusText,
 .privacy-blur-active #presencePulse,
+.privacy-blur-active #blurBadge,
+.privacy-blur-active .btn-telegram-header,
 .privacy-blur-active #pinnedMessageBanner,
-.privacy-blur-active .active-sender-wrap,
-.privacy-blur-active #typingIndicator,
+.privacy-blur-active .telegram-persona-capsule,
 .privacy-blur-active #replyBar,
 .privacy-blur-active #editBar,
-.privacy-blur-active .message-textarea {
-    filter: blur(10px) !important;
-    opacity: 0.22 !important;
+.privacy-blur-active .chat-input-bar-wrap,
+.privacy-blur-active .btn-emoji-trigger,
+.privacy-blur-active .input-field-box,
+.privacy-blur-active .message-textarea,
+.privacy-blur-active .btn-send-main,
+.privacy-blur-active #emptyChat {
+    filter: blur(14px) !important;
+    opacity: 0.18 !important;
     user-select: none !important;
     pointer-events: auto;
-    transition: filter 0.25s ease, opacity 0.25s ease;
+    transition: filter 0.22s ease, opacity 0.22s ease;
 }
 
-/* Hover peek: discreetly inspect a single message without exposing the rest */
-.privacy-blur-active .message-bubble:hover,
-.privacy-blur-active .message-row:hover .message-bubble {
+/* Individual peek on direct hover (NEVER unblurs whole sections/headers/footers/rows) */
+.privacy-blur-active .message-bubble:hover {
     filter: blur(0px) !important;
     opacity: 1 !important;
     user-select: text !important;
 }
-.privacy-blur-active .message-row:hover .bubble-avatar,
-.privacy-blur-active .message-row:hover .bubble-meta,
-.privacy-blur-active .message-row:hover .bubble-reactions,
-.privacy-blur-active .message-row:hover .bubble-reply-preview {
+
+.privacy-blur-active .message-bubble:hover .message-text,
+.privacy-blur-active .message-bubble:hover .bubble-sender-name,
+.privacy-blur-active .message-bubble:hover .bubble-meta,
+.privacy-blur-active .message-bubble:hover .bubble-reactions,
+.privacy-blur-active .message-bubble:hover .bubble-reply-preview {
     filter: blur(0px) !important;
     opacity: 1 !important;
 }
-.privacy-blur-active .telegram-header:hover .telegram-header-avatar,
-.privacy-blur-active .telegram-header:hover h4,
-.privacy-blur-active .telegram-header:hover #presenceStatusText,
-.privacy-blur-active .telegram-header:hover #presencePulse {
+
+.privacy-blur-active .chat-input-bar-wrap:hover,
+.privacy-blur-active .chat-input-bar-wrap:focus-within,
+.privacy-blur-active .chat-input-bar-wrap:hover .btn-emoji-trigger,
+.privacy-blur-active .chat-input-bar-wrap:hover .input-field-box,
+.privacy-blur-active .chat-input-bar-wrap:hover .message-textarea,
+.privacy-blur-active .chat-input-bar-wrap:hover .btn-send-main,
+.privacy-blur-active .chat-input-bar-wrap:focus-within .btn-emoji-trigger,
+.privacy-blur-active .chat-input-bar-wrap:focus-within .input-field-box,
+.privacy-blur-active .chat-input-bar-wrap:focus-within .message-textarea,
+.privacy-blur-active .chat-input-bar-wrap:focus-within .btn-send-main {
     filter: blur(0px) !important;
     opacity: 1 !important;
+    user-select: text !important;
 }
-.privacy-blur-active .telegram-footer:hover .active-sender-wrap,
-.privacy-blur-active .telegram-footer:hover .message-textarea {
+
+/* Desktop: Header elements unblur on hover */
+.privacy-blur-active .btn-telegram-header:hover,
+.privacy-blur-active #blurBadge:hover,
+.privacy-blur-active .telegram-header h4:hover,
+.privacy-blur-active #presenceStatusText:hover,
+.privacy-blur-active #presencePulse:hover,
+.privacy-blur-active .telegram-header .text-truncate:hover h4,
+.privacy-blur-active .telegram-header .text-truncate:hover #presenceStatusText,
+.privacy-blur-active .telegram-header .text-truncate:hover #presencePulse,
+.privacy-blur-active .telegram-persona-capsule:hover,
+.privacy-blur-active #pinnedMessageBanner:hover {
     filter: blur(0px) !important;
     opacity: 1 !important;
 }
 
 /* ========================================================= */
-/* PIN SCREEN & MODAL STYLES                                 */
+/* PREMIUM SECURITY PIN LOCK SCREEN                          */
 /* ========================================================= */
-.pin-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 2px solid #cbd5e1;
-    background: transparent;
-    transition: all 0.2s ease;
+.pin-screen-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 12px;
+    margin: auto 0;
 }
+
+.pin-card {
+    width: 100%;
+    max-width: 380px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 20px 48px -12px rgba(15, 23, 42, 0.12);
+    padding: 32px 28px 28px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pin-badge {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(51, 144, 236, 0.12) 0%, rgba(51, 144, 236, 0.24) 100%);
+    border: 1.5px solid rgba(51, 144, 236, 0.3);
+    color: #3390ec;
+    font-size: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 12px rgba(51, 144, 236, 0.15);
+}
+
+.pin-badge-setup {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.24) 100%);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+.pin-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.pin-subtitle {
+    font-size: 0.86rem;
+    color: #64748b;
+    line-height: 1.45;
+    margin-bottom: 22px;
+    max-width: 290px;
+}
+
+.pin-alert {
+    width: 100%;
+    border-radius: 12px;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+}
+
+.pin-dots-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.pin-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    border: 2px solid #cbd5e1;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .pin-dot.filled {
     background: #3390ec;
     border-color: #3390ec;
-    transform: scale(1.15);
+    transform: scale(1.22);
+    box-shadow: 0 0 0 4px rgba(51, 144, 236, 0.22);
 }
+
 .pin-dot.shake {
-    animation: shakeAnim 0.35s ease-in-out;
+    animation: shakeAnim 0.38s ease-in-out;
 }
+
 @keyframes shakeAnim {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
 }
+
+.pin-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 22px;
+}
+
+.btn-pin-num {
+    height: 56px;
+    border-radius: 16px;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+}
+
+.btn-pin-num:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #3390ec;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(15, 23, 42, 0.06);
+}
+
+.btn-pin-num:active {
+    background: #e2e8f0;
+    transform: scale(0.96);
+    box-shadow: none;
+}
+
+.btn-pin-action {
+    height: 56px;
+    border-radius: 16px;
+    font-size: 1.15rem;
+    background: transparent;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+}
+
+.btn-pin-action:hover {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+}
+
+.btn-pin-action:active {
+    transform: scale(0.94);
+}
+
+.btn-pin-unlock {
+    width: 100%;
+    max-width: 280px;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #3390ec 0%, #2076d2 100%);
+    border: none;
+    box-shadow: 0 4px 14px rgba(51, 144, 236, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-pin-unlock:hover {
+    background: linear-gradient(135deg, #2b84dc 0%, #1a6ac2 100%);
+    box-shadow: 0 6px 20px rgba(51, 144, 236, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-pin-unlock:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(51, 144, 236, 0.25);
+}
+
+/* Backward compatibility aliases */
 .keypad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    max-width: 260px;
-    margin: 0 auto;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 22px;
 }
 .btn-pin-key {
-    height: 52px;
-    border-radius: 12px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #2a2f5b;
-    background: #f4f6f9;
-    border: 1px solid #ebedf2;
+    height: 56px;
+    border-radius: 16px;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     transition: all 0.15s ease;
 }
-.btn-pin-key:hover, .btn-pin-key:active {
-    background: #ebedf2;
-    color: #3390ec;
-    transform: scale(1.04);
-}
 .btn-pin-key-sub {
-    height: 52px;
-    border-radius: 12px;
-    font-size: 1.1rem;
+    height: 56px;
+    border-radius: 16px;
+    font-size: 1.15rem;
     background: transparent;
     border: none;
     transition: all 0.15s ease;
 }
-.btn-pin-key-sub:hover {
-    background: #f4f6f9;
+
+@media (max-width: 575.98px) {
+    .pin-card {
+        padding: 24px 20px 22px 20px;
+        border-radius: 20px;
+    }
+    .pin-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+    }
+    .pin-title {
+        font-size: 1.18rem;
+    }
+    .pin-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 18px;
+    }
+    .pin-keypad, .keypad-grid {
+        gap: 10px;
+        max-width: 260px;
+        margin-bottom: 18px;
+    }
+    .btn-pin-num, .btn-pin-action, .btn-pin-key, .btn-pin-key-sub {
+        height: 52px;
+        font-size: 1.25rem;
+        border-radius: 14px;
+    }
+    .btn-pin-unlock {
+        height: 46px;
+        max-width: 260px;
+    }
 }
 
 /* Scroll Bottom Button */
@@ -1371,13 +1585,20 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
     left: 20px;
     width: 320px;
     max-width: 90vw;
-    height: 300px;
+    height: 320px;
     background: #16181d;
     border: 1px solid #2c2f38 !important;
     border-radius: 12px;
     z-index: 50;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+#drawerMediaEmojis {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
     overflow: hidden;
 }
 .emoji-picker-drawer .bg-light {
@@ -1412,12 +1633,26 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
     font-weight: 600;
 }
 .emoji-grid {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto !important;
+    overflow-x: hidden;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 4px;
     background: #16181d;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.emoji-grid::-webkit-scrollbar {
+    width: 6px;
+}
+.emoji-grid::-webkit-scrollbar-thumb {
+    background: #2c2f38;
+    border-radius: 10px;
+}
+.emoji-grid::-webkit-scrollbar-thumb:hover {
+    background: #3875f6;
 }
 .emoji-grid-item {
     font-size: 1.3rem;
@@ -1477,13 +1712,17 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
     border: 1px solid #e2e8f0 !important;
 }
 .chat-main-card.chat-theme-white .message-row.sender-2-row .bubble-sender-name {
-    color: #475569 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
 }
 .chat-main-card.chat-theme-white .message-row.sender-2-row .bubble-meta {
     color: #64748b !important;
 }
 .chat-main-card.chat-theme-white .avatar-sender-2 {
-    background: #94a3b8 !important;
+    background: #e2e8f0 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
 }
 
 /* SENDER 1 (OUTGOING / RIGHT) IN WHITE THEME */
@@ -1638,8 +1877,25 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
         font-size: 0.88rem !important;
     }
     .telegram-header {
+        margin-top: 15px !important;
         padding: 6px 10px !important;
         min-height: 48px !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+    /* Mobile: Top section and toolbar options are strictly excluded from blur */
+    .privacy-blur-active .telegram-header,
+    .privacy-blur-active .telegram-header *,
+    .privacy-blur-active .telegram-header-avatar,
+    .privacy-blur-active .telegram-header h4,
+    .privacy-blur-active #presenceStatusText,
+    .privacy-blur-active #presencePulse,
+    .privacy-blur-active #blurBadge,
+    .privacy-blur-active .btn-telegram-header {
+        filter: none !important;
+        -webkit-filter: none !important;
+        opacity: 1 !important;
+        user-select: auto !important;
+        pointer-events: auto !important;
     }
     .btn-telegram-header {
         height: 36px !important;
@@ -2102,7 +2358,10 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
         const pinScreen = document.getElementById('pinSecurityScreen');
         const chatWrapper = document.getElementById('chatPageWrapper');
         if (pinScreen) pinScreen.classList.add('d-none');
-        if (chatWrapper) chatWrapper.style.display = 'block';
+        if (chatWrapper) {
+            chatWrapper.classList.remove('d-none');
+            chatWrapper.style.display = '';
+        }
         document.body.classList.add('chat-unlocked-mode');
         document.documentElement.classList.add('chat-unlocked-mode');
         startChatEngine();
@@ -2370,6 +2629,7 @@ body:not(.chat-unlocked-mode) .main-panel .page-inner {
     function renderEmojiCategory(cat) {
         const grid = document.getElementById('emojiGrid');
         if (!grid) return;
+        grid.scrollTop = 0;
         grid.innerHTML = '';
         let list = [];
 
