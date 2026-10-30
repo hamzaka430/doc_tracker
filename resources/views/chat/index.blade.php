@@ -142,9 +142,6 @@
             <div class="d-flex align-items-center justify-content-between flex-nowrap gap-2 w-100">
                 <!-- Left Title -->
                 <div class="d-flex align-items-center gap-2 min-w-0">
-                    <div class="telegram-header-avatar flex-shrink-0">
-                        <i class="fas fa-comments"></i>
-                    </div>
                     <div class="text-truncate">
                         <h4 class="card-title text-white mb-0 fs-6 fw-bold text-truncate" style="letter-spacing: -0.2px;">
                             <span class="d-none d-sm-inline">Support Communication Log</span>
@@ -358,7 +355,7 @@
             </div>
 
             <!-- Input Row: [Emoji Icon] [Telegram Input Box] [Circular Send Button] -->
-            <div class="chat-input-bar-wrap">
+            <div class="chat-input-bar-wrap" onmouseenter="handleInputHover(true)" onmouseleave="handleInputHover(false)">
                 <div class="chat-input-inner">
                     <!-- Emoji Button -->
                     <button type="button" class="btn btn-emoji-trigger" onclick="toggleEmojiPicker()" title="Browse emojis" aria-label="Browse emojis">
@@ -366,16 +363,17 @@
                     </button>
 
                     <!-- Message Textarea Box -->
-                    <div class="input-field-box">
+                    <div class="input-field-box position-relative">
                         <textarea 
                             id="messageInput" 
                             name="message"
                             class="form-control message-textarea" 
                             rows="1" 
-                            placeholder="Write a message..."
+                            placeholder=""
                             aria-label="Write a message"
                             onkeydown="handleInputKey(event)"
                             oninput="handleMessageInput(this)"></textarea>
+                        <span id="inputPlaceholderOverlay" class="input-placeholder-overlay" onclick="focusMessageInput()">Write a message...</span>
                     </div>
 
                     <!-- Single Send Action Button (Telegram Round Plane Button) -->
@@ -1009,37 +1007,78 @@ body.chat-unlocked-mode #pinSecurityScreen {
     color: rgba(255, 255, 255, 0.45) !important;
 }
 
-/* QUICK MESSAGE ACTIONS (HOVER & FOCUS) */
+/* QUICK MESSAGE ACTIONS (BESIDE BUBBLE, INSTAGRAM DM STYLE) */
+.bubble-actions-row {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    max-width: 100%;
+}
+.bubble-actions-row.flex-row-reverse {
+    flex-direction: row-reverse;
+}
 .bubble-quick-actions {
-    position: absolute;
-    top: 4px;
-    right: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
+    flex-shrink: 0;
 }
-.message-bubble:hover .bubble-quick-actions,
-.message-bubble:focus-within .bubble-quick-actions {
-    opacity: 1;
-    pointer-events: auto;
+.bubble-actions-row:hover .bubble-quick-actions,
+.bubble-actions-row.group:hover .bubble-quick-actions {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 .btn-bubble-action {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: #cbd5e1;
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    font-size: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    font-size: 11px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 .btn-bubble-action:hover {
     color: #ffffff;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: scale(1.08);
+}
+.btn-bubble-action i {
+    pointer-events: none;
+}
+
+/* INPUT PLACEHOLDER OVERLAY (NOT BLURRED) */
+.input-field-box {
+    position: relative;
+}
+.input-placeholder-overlay {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.93rem;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.15s ease;
+    z-index: 2;
+}
+.chat-theme-white .input-placeholder-overlay {
+    color: rgba(0, 0, 0, 0.45);
+}
+.privacy-blur-active .input-placeholder-overlay {
+    filter: none !important;
+    opacity: 0.85 !important;
 }
 
 /* ========================================================= */
@@ -1221,8 +1260,7 @@ body.chat-unlocked-mode #pinSecurityScreen {
 /* ========================================================= */
 /* DEEP PRIVACY BLUR: OBSCURE CHAT IDENTITY & CONTENT       */
 /* ========================================================= */
-/* Heavy overall blur: masks bubbles, text, avatars, header buttons, badge, input bar, and send button */
-.privacy-blur-active .message-bubble,
+/* Heavy overall blur: masks avatars, header buttons, badge, banners, and empty chat */
 .privacy-blur-active .bubble-avatar,
 .privacy-blur-active .bubble-reactions,
 .privacy-blur-active .bubble-meta,
@@ -1239,11 +1277,6 @@ body.chat-unlocked-mode #pinSecurityScreen {
 .privacy-blur-active .telegram-persona-capsule,
 .privacy-blur-active #replyBar,
 .privacy-blur-active #editBar,
-.privacy-blur-active .chat-input-bar-wrap,
-.privacy-blur-active .btn-emoji-trigger,
-.privacy-blur-active .input-field-box,
-.privacy-blur-active .message-textarea,
-.privacy-blur-active .btn-send-main,
 .privacy-blur-active #emptyChat {
     filter: blur(14px) !important;
     opacity: 0.18 !important;
@@ -1252,8 +1285,25 @@ body.chat-unlocked-mode #pinSecurityScreen {
     transition: filter 0.22s ease, opacity 0.22s ease;
 }
 
-/* Individual peek on direct hover (NEVER unblurs whole sections/headers/footers/rows) */
-.privacy-blur-active .message-bubble:hover {
+/* BUG 1 & 2: Message bubble blur (6px) and immediate re-blur on mouse leave */
+.privacy-blur-active .message-bubble {
+    filter: blur(6px) !important;
+    opacity: 0.45 !important;
+    user-select: none !important;
+    pointer-events: auto;
+    transition: filter 0.12s ease, opacity 0.12s ease;
+}
+
+/* Actions beside the bubble are NEVER blurred */
+.privacy-blur-active .bubble-quick-actions,
+.privacy-blur-active .btn-bubble-action {
+    filter: none !important;
+    user-select: auto !important;
+}
+
+/* Individual bubble peek on direct hover or when hovering actions row */
+.privacy-blur-active .message-bubble:hover,
+.privacy-blur-active .bubble-actions-row:hover .message-bubble {
     filter: blur(0px) !important;
     opacity: 1 !important;
     user-select: text !important;
@@ -1263,24 +1313,53 @@ body.chat-unlocked-mode #pinSecurityScreen {
 .privacy-blur-active .message-bubble:hover .bubble-sender-name,
 .privacy-blur-active .message-bubble:hover .bubble-meta,
 .privacy-blur-active .message-bubble:hover .bubble-reactions,
-.privacy-blur-active .message-bubble:hover .bubble-reply-preview {
+.privacy-blur-active .message-bubble:hover .bubble-reply-preview,
+.privacy-blur-active .bubble-actions-row:hover .message-text,
+.privacy-blur-active .bubble-actions-row:hover .bubble-sender-name,
+.privacy-blur-active .bubble-actions-row:hover .bubble-meta,
+.privacy-blur-active .bubble-actions-row:hover .bubble-reactions,
+.privacy-blur-active .bubble-actions-row:hover .bubble-reply-preview {
     filter: blur(0px) !important;
     opacity: 1 !important;
 }
 
-.privacy-blur-active .chat-input-bar-wrap:hover,
-.privacy-blur-active .chat-input-bar-wrap:focus-within,
-.privacy-blur-active .chat-input-bar-wrap:hover .btn-emoji-trigger,
-.privacy-blur-active .chat-input-bar-wrap:hover .input-field-box,
+/* Message input text, emoji trigger, and send button stay blurred unless mouse is hovering over the input bar */
+.privacy-blur-active .message-textarea,
+.privacy-blur-active .btn-emoji-trigger,
+.privacy-blur-active .btn-send-main {
+    filter: blur(6px) !important;
+    opacity: 0.35 !important;
+    user-select: none !important;
+    transition: filter 0.12s ease, opacity 0.12s ease;
+}
+
+/* Unblur ONLY on mouse hover (no focus-within or focus-based unblur) */
 .privacy-blur-active .chat-input-bar-wrap:hover .message-textarea,
+.privacy-blur-active .chat-input-bar-wrap:hover .btn-emoji-trigger,
 .privacy-blur-active .chat-input-bar-wrap:hover .btn-send-main,
-.privacy-blur-active .chat-input-bar-wrap:focus-within .btn-emoji-trigger,
-.privacy-blur-active .chat-input-bar-wrap:focus-within .input-field-box,
-.privacy-blur-active .chat-input-bar-wrap:focus-within .message-textarea,
-.privacy-blur-active .chat-input-bar-wrap:focus-within .btn-send-main {
+.privacy-blur-active .chat-input-bar-wrap.input-hovered .message-textarea,
+.privacy-blur-active .chat-input-bar-wrap.input-hovered .btn-emoji-trigger,
+.privacy-blur-active .chat-input-bar-wrap.input-hovered .btn-send-main,
+.privacy-blur-active .btn-emoji-trigger:hover,
+.privacy-blur-active .btn-send-main:hover {
     filter: blur(0px) !important;
     opacity: 1 !important;
-    user-select: text !important;
+    user-select: auto !important;
+}
+
+/* Strictly enforce blur on focus when mouse is not hovering */
+.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .message-textarea,
+.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .btn-emoji-trigger,
+.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .btn-send-main,
+.privacy-blur-active .message-textarea:focus:not(:hover) {
+    filter: blur(6px) !important;
+    opacity: 0.35 !important;
+}
+
+/* Input placeholder overlay remains readable and unblurred */
+.privacy-blur-active .input-placeholder-overlay {
+    filter: none !important;
+    opacity: 0.85 !important;
 }
 
 /* Desktop: Header elements unblur on hover */
@@ -2584,6 +2663,53 @@ body.chat-unlocked-mode #pinSecurityScreen {
             if (mobIcon) mobIcon.className = 'fas fa-eye-slash text-info me-2';
             if (mobText) mobText.textContent = 'Privacy Blur Mode';
         }
+        updateInputBlurState();
+    }
+
+    let inputHover = false;
+
+    function handleInputHover(isHovering) {
+        inputHover = isHovering;
+        updateInputBlurState();
+    }
+
+    function updateInputBlurState() {
+        const wrap = document.querySelector('.chat-input-bar-wrap');
+        const textarea = document.getElementById('messageInput');
+        const btnEmoji = document.querySelector('.btn-emoji-trigger');
+        const btnSend = document.getElementById('btnMainSend');
+        if (!textarea) return;
+
+        if (blurEnabled && !inputHover) {
+            if (wrap) wrap.classList.remove('input-hovered');
+            textarea.style.filter = 'blur(6px)';
+            textarea.style.opacity = '0.35';
+            if (btnEmoji) {
+                btnEmoji.style.filter = 'blur(6px)';
+                btnEmoji.style.opacity = '0.35';
+            }
+            if (btnSend) {
+                btnSend.style.filter = 'blur(6px)';
+                btnSend.style.opacity = '0.35';
+            }
+        } else {
+            if (wrap) wrap.classList.add('input-hovered');
+            textarea.style.filter = '';
+            textarea.style.opacity = '';
+            if (btnEmoji) {
+                btnEmoji.style.filter = '';
+                btnEmoji.style.opacity = '';
+            }
+            if (btnSend) {
+                btnSend.style.filter = '';
+                btnSend.style.opacity = '';
+            }
+        }
+    }
+
+    function focusMessageInput() {
+        const input = document.getElementById('messageInput');
+        if (input) input.focus();
     }
 
     function updateActivePersona(persona) {
@@ -3474,7 +3600,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
     let typingPingTimer = null;
 
     function handleMessageInput(textarea) {
+        if (!textarea) return;
         autoResizeTextarea(textarea);
+        const placeholderOverlay = document.getElementById('inputPlaceholderOverlay');
+        if (placeholderOverlay) {
+            placeholderOverlay.style.display = textarea.value.length > 0 ? 'none' : 'block';
+        }
         const btnSend = document.getElementById('btnMainSend');
         const hasText = textarea.value.trim().length > 0;
 
@@ -3701,67 +3832,85 @@ body.chat-unlocked-mode #pinSecurityScreen {
 
         const editedLabelHtml = msg.is_edited ? '<span class="edited-badge ms-1">(edited)</span>' : '';
 
-        // Bubble Action Buttons (Quick React, Reply, Copy, Forward, Pin, Edit, Unsend)
+        // Bubble Action Buttons (BESIDE bubble: Instagram DM style)
         const isPinned = msg.is_pinned;
+        const emojiBtnHtml = `
+            <button type="button" class="btn-bubble-action btn-bubble-react" onclick="showQuickReactions(${msg.id}, event)" title="React with emoji" aria-label="React">
+                <i class="far fa-smile"></i>
+            </button>
+        `;
+        const replyBtnHtml = `
+            <button type="button" class="btn-bubble-action btn-bubble-reply" onclick="replyToMessage(${msg.id}, '${escapeJs(msgSender)}', '${escapeJs(msg.message)}')" title="Reply" aria-label="Reply">
+                <i class="fas fa-reply"></i>
+            </button>
+        `;
+        const moreDropdownHtml = `
+            <div class="dropdown d-inline">
+                <button type="button" class="btn-bubble-action" data-bs-toggle="dropdown" aria-expanded="false" title="More" aria-label="More">
+                    <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark shadow-sm border telegram-dropdown-menu">
+                    <li>
+                        <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="copyMessageText('${msg.id}')">
+                            <i class="far fa-copy me-2 text-muted"></i> Copy Text
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="forwardMessage(${msg.id}, '${escapeJs(msg.message)}')">
+                            <i class="fas fa-share me-2 text-info"></i> Forward
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="togglePinMessage(${msg.id})">
+                            <i class="fas fa-thumbtack me-2 text-warning"></i> ${isPinned ? 'Unpin Message' : 'Pin Message'}
+                        </a>
+                    </li>
+                    ${isSentByMe ? `
+                    <li><hr class="dropdown-divider my-1"></li>
+                    <li>
+                        <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="startEditMessage(${msg.id}, '${escapeJs(msg.message)}')">
+                            <i class="fas fa-pencil-alt me-2 text-primary"></i> Edit Message
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item py-1.5 text-danger" href="javascript:void(0)" onclick="unsendMessage(${msg.id})">
+                            <i class="fas fa-trash-alt me-2"></i> Unsend for Everyone
+                        </a>
+                    </li>
+                    ` : ''}
+                </ul>
+            </div>
+        `;
+
+        // Sent (right-aligned): actions on LEFT, order: More (⋮), Reply (↩), Emoji (☺)
+        // Received (left-aligned): actions on RIGHT, order: Emoji (☺), Reply (↩), More (⋮)
+        const actionsInnerHtml = isSentByMe
+            ? `${moreDropdownHtml}${replyBtnHtml}${emojiBtnHtml}`
+            : `${emojiBtnHtml}${replyBtnHtml}${moreDropdownHtml}`;
+
         const actionsHtml = `
-            <div class="bubble-quick-actions">
-                <button type="button" class="btn-bubble-action btn-bubble-react" onclick="showQuickReactions(${msg.id}, event)" title="React with emoji" aria-label="React">
-                    <i class="far fa-smile"></i>
-                </button>
-                <button type="button" class="btn-bubble-action btn-bubble-reply" onclick="replyToMessage(${msg.id}, '${escapeJs(msgSender)}', '${escapeJs(msg.message)}')" title="Reply" aria-label="Reply">
-                    <i class="fas fa-reply"></i>
-                </button>
-                <button type="button" class="btn-bubble-action btn-bubble-copy" onclick="copyMessageText('${msg.id}')" title="Copy text" aria-label="Copy">
-                    <i class="far fa-copy"></i>
-                </button>
-                <div class="dropdown d-inline">
-                    <button type="button" class="btn-bubble-action" data-bs-toggle="dropdown" aria-expanded="false" title="More" aria-label="More">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-dark shadow-sm border telegram-dropdown-menu">
-                        <li>
-                            <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="forwardMessage(${msg.id}, '${escapeJs(msg.message)}')">
-                                <i class="fas fa-share me-2 text-info"></i> Forward
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="togglePinMessage(${msg.id})">
-                                <i class="fas fa-thumbtack me-2 text-warning"></i> ${isPinned ? 'Unpin Message' : 'Pin Message'}
-                            </a>
-                        </li>
-                        ${isSentByMe ? `
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li>
-                            <a class="dropdown-item py-1.5" href="javascript:void(0)" onclick="startEditMessage(${msg.id}, '${escapeJs(msg.message)}')">
-                                <i class="fas fa-pencil-alt me-2 text-primary"></i> Edit Message
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-1.5 text-danger" href="javascript:void(0)" onclick="unsendMessage(${msg.id})">
-                                <i class="fas fa-trash-alt me-2"></i> Unsend for Everyone
-                            </a>
-                        </li>
-                        ` : ''}
-                    </ul>
-                </div>
+            <div class="bubble-quick-actions opacity-0 group-hover:opacity-100 transition-opacity">
+                ${actionsInnerHtml}
             </div>
         `;
 
         msgDiv.innerHTML = `
             <div class="message-wrapper">
                 ${avatarHtml}
-                <div class="message-bubble position-relative" tabindex="0">
-                    ${senderNameHtml}
-                    ${replyQuoteHtml}
-                    <div class="message-text" style="font-size: 0.93rem; line-height: 1.45; word-break: break-word;">
-                        ${formattedText}
+                <div class="bubble-actions-row group flex items-center ${isSentByMe ? 'flex-row-reverse' : ''}">
+                    <div class="message-bubble position-relative">
+                        ${senderNameHtml}
+                        ${replyQuoteHtml}
+                        <div class="message-text" style="font-size: 0.93rem; line-height: 1.45; word-break: break-word;">
+                            ${formattedText}
+                        </div>
+                        <div class="bubble-meta">
+                            <span>${escapeHtml(msg.formatted_time || '')}</span>
+                            ${editedLabelHtml}
+                            ${deliveryIconHtml}
+                        </div>
+                        ${reactionsWrapHtml}
                     </div>
-                    <div class="bubble-meta">
-                        <span>${escapeHtml(msg.formatted_time || '')}</span>
-                        ${editedLabelHtml}
-                        ${deliveryIconHtml}
-                    </div>
-                    ${reactionsWrapHtml}
                     ${actionsHtml}
                 </div>
             </div>
