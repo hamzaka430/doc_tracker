@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
 | Security is handled inside the controller via session('chat_unlocked').
 */
 Route::get('/chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
+Route::get('/chat/unread-count', [ChatController::class, 'unreadCount'])->name('chat.unreadCount');
 
 /*
 |--------------------------------------------------------------------------

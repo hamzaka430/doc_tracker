@@ -172,7 +172,7 @@
                             <a href="{{ route('chat.index') }}">
                                 <i class="fas fa-comments"></i>
                                 <p>Chat Support</p>
-                                <span class="badge" style="background-color: #ffffff !important; color: #1a2035 !important; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 6px;">Live</span>
+                                <span id="chatSidebarUnreadBadge" class="sidebar-unread-pill d-none" style="min-width: 20px; height: 20px; padding: 0 6px; border-radius: 9999px; background-color: #3b82f6; color: #ffffff; font-size: 11px; font-weight: 600; display: none; align-items: center; justify-content: center; line-height: 1; margin-left: auto;"></span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -426,6 +426,43 @@
                 $('html').removeClass('nav_open');
                 $('.sidebar').removeClass('active');
             });
+
+            // Real-Time Chat Unread Count in Sidebar
+            window.updateChatSidebarBadge = function(count) {
+                const badge = document.getElementById('chatSidebarUnreadBadge');
+                if (!badge) return;
+                const num = parseInt(count, 10) || 0;
+                if (num <= 0) {
+                    badge.style.display = 'none';
+                    badge.classList.add('d-none');
+                    badge.textContent = '';
+                } else {
+                    badge.textContent = num > 99 ? '99+' : num;
+                    badge.style.display = 'inline-flex';
+                    badge.classList.remove('d-none');
+                }
+            };
+
+            window.pollSidebarUnreadCount = function() {
+                if (document.getElementById('chatMainCard') || window.isChatOpenAndActive) {
+                    window.updateChatSidebarBadge(0);
+                    return;
+                }
+                const persona = localStorage.getItem('chat_active_persona') || '';
+                fetch('{{ route("chat.unreadCount") }}?user=' + encodeURIComponent(persona), {
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data && typeof data.unread_count === 'number') {
+                        window.updateChatSidebarBadge(data.unread_count);
+                    }
+                })
+                .catch(function() {});
+            };
+
+            setInterval(window.pollSidebarUnreadCount, 4000);
+            window.pollSidebarUnreadCount();
         });
     </script>
 

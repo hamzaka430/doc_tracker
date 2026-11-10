@@ -499,4 +499,25 @@ class ChatController extends Controller
             'message' => 'Chat conversation cleared successfully.',
         ]);
     }
+
+    /**
+     * Get unread messages count for the sidebar badge.
+     */
+    public function unreadCount(Request $request): JsonResponse
+    {
+        $currentUser = trim($request->query('user', ''));
+
+        $query = ChatMessage::where('is_read', false)
+            ->where('is_deleted', false);
+
+        if (!empty($currentUser)) {
+            $query->where('sender_name', '!=', $currentUser);
+        }
+
+        $count = $query->count();
+
+        return response()->json([
+            'unread_count' => $count,
+        ]);
+    }
 }
