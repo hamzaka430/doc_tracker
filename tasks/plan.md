@@ -1,49 +1,46 @@
-# Implementation Plan: Chat Speed Optimization, Reliable PIN Lock, & Daily Documents Selection Fix
+# Implementation & Deployment Plan: Sidebar Unread Message Count Feature
 
 ## Overview
-This plan addresses 3 core areas requested by the user:
-1. **Daily Documents Selection Bug (`/products/daily`)**: When user selects all documents, they get selected, but unmarking does not unmark individual items or clear bulk selection due to unsynchronized desktop/mobile checkboxes.
-2. **Chat Lock Glitch**: The chat lock should ONLY open with a PIN code, and must never open automatically on page refresh. Fix the session lifecycle and dual-view transition so that every page refresh or entry requires the 4-digit security code.
-3. **Chat System Performance & Speed**: Make all chat features (reactions, last seen activity, typing indicators, replies, unsend, receipts) lightning-fast and responsive using optimistic UI updates and backend query optimizations (throttled presence writes, conditional read receipts, targeted indexes).
+Deploy ONLY the real-time sidebar unread messages count badge to Heroku production without deploying any unfinished chat layout or mobile UI modifications, and without deploying local commit `8556014`.
 
----
+## Architecture & Deployment Decisions
+1. **Zero-Contamination Release Branch**: Create a clean deployment branch `deploy/sidebar-unread-count` directly from `remotes/heroku/main` (currently at `2efc7b1`).
+2. **Preserve Local In-Progress Work**: Stash all existing uncommitted modifications (`custom.css`, `chat/index.blade.php`, etc.) so the user's ongoing work is 100% preserved.
+3. **Targeted Feature Application**: Apply only:
+   - `app/Http/Controllers/ChatController.php`: `unreadCount()` controller action
+   - `routes/web.php`: `/chat/unread-count` route
+   - `resources/views/layouts/dashboard.blade.php`: Sidebar badge element `#chatSidebarUnreadBadge` and client polling function `pollSidebarUnreadCount`
+4. **Verification**: Run `php -l` lint checks and verify route registration.
+5. **Production Deployment**: Push `deploy/sidebar-unread-count:main` to `heroku`.
+6. **Workspace Restoration**: Switch back to `main` branch and restore stashed local changes.
 
-## Architecture & Design Decisions
+## Task List
 
-### 1. Daily Documents Selection Fix (`resources/views/products/daily.blade.php`)
-- Both Desktop table (`selectAllDesktop`) and Mobile card list (`selectAllMobile`) render checkboxes with `.product-checkbox`.
-- When an individual checkbox changes, synchronize all checkboxes with the matching value (`.product-checkbox[value="${this.value}"]`).
-- Update `selectAllDesktop.checked` and `selectAllMobile.checked` based on whether all visible items are selected.
-- When `selectAll` is clicked (checked or unchecked), apply `isChecked` to all checkboxes and update the bulk submit count.
+### Phase 1: Isolation & Preparation
+- [ ] Task 1: Stash local modifications to ensure no work is lost
+- [ ] Task 2: Create release branch `deploy/sidebar-unread-count` from `remotes/heroku/main`
 
-### 2. Lock System Security Fix (`ChatController.php` & `resources/views/chat/index.blade.php`)
-- In `ChatController::index()`, ensure `GET /chat` resets the active unlock state (`session()->forget('chat_unlocked')`) so that accessing or refreshing the page ALWAYS requires the PIN.
-- In `resources/views/chat/index.blade.php`, render the PIN Security Verification Card as the active view and the Chat Container ready in the DOM.
-- When `verifyPin` succeeds via AJAX, verify PIN on server, set `session(['chat_unlocked' => true])`, and smoothly transition the UI from the PIN keypad to the Chat interface without full page reload.
-- If the user reloads the page (`F5`) or navigates away and comes back, the page is securely locked again, strictly requiring the 4-digit PIN code.
+### Checkpoint 1
+- [ ] Working tree on release branch matches live production clean state
 
-### 3. Chat Speed & Performance Optimization
-- **Optimistic UI for Reactions**: When a user double-taps or taps a reaction emoji, immediately update the DOM in 0ms (toggle reaction count/pill, play heart burst) before waiting for the network. Background sync reconciliation handles server state.
-- **Backend Presence Throttling (`fetchMessages`)**: Throttles writes to `chat_settings` — only writes to database if `is_typing` state changed or if >8 seconds have elapsed since last write.
-- **Conditional Read Receipt Updates**: Only executes `UPDATE chat_messages SET is_read = true` if there are unread messages from the other user.
-- **Theme Caching**: Avoid re-querying `chat_theme` from MySQL on every 1.6s polling cycle.
-- **Database Indexes Migration**: Add index on `updated_at`, `is_pinned`, and `(sender_name, is_read)` to `chat_messages` on `mysql_chat` connection for sub-millisecond query execution.
+### Phase 2: Feature Implementation on Release Branch
+- [ ] Task 3: Add `unreadCount()` method to `app/Http/Controllers/ChatController.php`
+- [ ] Task 4: Add route `/chat/unread-count` in `routes/web.php`
+- [ ] Task 5: Add sidebar unread badge and polling script in `resources/views/layouts/dashboard.blade.php`
 
----
+### Checkpoint 2
+- [ ] PHP syntax check passes (`php -l`)
+- [ ] Route list includes `chat.unreadCount`
+- [ ] Git diff on release branch shows ONLY sidebar unread count changes
 
-## Task Breakdown
+### Phase 3: Deployment & Cleanup
+- [ ] Task 6: Commit changes with atomic semantic commit message
+- [ ] Task 7: Deploy to Heroku (`git push heroku deploy/sidebar-unread-count:main`)
+- [ ] Task 8: Switch back to `main` branch and restore `git stash pop`
 
-### Phase 1: Daily Documents Selection Bug Fix
-- [ ] Task 1: Fix checkbox synchronization and unmarking in `resources/views/products/daily.blade.php`.
-
-### Phase 2: Lock System Glitch Fix
-- [ ] Task 2: Update `ChatController.php` to enforce lock-on-fresh-visit/refresh and support in-page unlock.
-- [ ] Task 3: Update `resources/views/chat/index.blade.php` to transition into chat upon PIN verification without page reload and stay locked on refresh.
-
-### Phase 3: Chat Speed & Performance Optimizations
-- [ ] Task 4: Add MySQL performance migration for `chat_messages` indexes on `mysql_chat`.
-- [ ] Task 5: Optimize backend queries in `ChatController.php` (`fetchMessages` presence throttling, conditional updates, cached theme).
-- [ ] Task 6: Implement Optimistic UI for reactions, typing indicators, and message unsend in `resources/views/chat/index.blade.php`.
-
-### Phase 4: Verification & Testing
-- [ ] Task 7: Run PHP syntax validation, verify Daily Documents unmarking, test PIN lock on refresh, and verify instant reaction speeds.
+## Risks and Mitigations
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Database query quota spike on JawsDB | High | Route `/chat/unread-count` is placed outside auth middleware, and queries `mysql_chat` (Aiven MySQL) which has an index on `(sender_name, is_read)`. Zero queries to JawsDB. |
+| In-progress layout changes accidentally pushed | High | Using a dedicated release branch off `heroku/main` guarantees zero layout changes reach production. |
+| Local uncommitted work lost during branch switch | High | Stash created and verified prior to branch switch; restored cleanly afterward. |

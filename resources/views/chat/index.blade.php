@@ -138,30 +138,91 @@
     <div class="card shadow-sm border chat-main-card" id="chatMainCard">
         
         <!-- CARD HEADER (TELEGRAM THEME) -->
-        <div class="card-header telegram-header text-white py-2 px-2 px-sm-3 flex-shrink-0" style="margin-top: 15px;">
-            <div class="d-flex align-items-center justify-content-between flex-nowrap gap-2 w-100">
+        <div class="card-header telegram-header text-white py-0 px-2 px-sm-3 flex-shrink-0 mt-0">
+            <div class="d-flex align-items-center justify-content-between flex-nowrap gap-2 w-100 min-w-0" style="height: 56px;">
                 <!-- Left Title -->
-                <div class="d-flex align-items-center gap-2 min-w-0">
-                    <div class="text-truncate">
+                <div class="d-flex align-items-center gap-2 min-w-0 flex-1">
+                    <div class="text-truncate min-w-0">
                         <h4 class="card-title text-white mb-0 fs-6 fw-bold text-truncate" style="letter-spacing: -0.2px;">
                             <span class="d-none d-sm-inline">Support Communication Log</span>
                             <span class="d-sm-none">Support Log</span>
                         </h4>
-                        <div class="text-white-50 d-flex align-items-center gap-1.5" style="font-size: 0.7rem;">
-                            <span class="online-pulse-wrap" id="presencePulse" aria-hidden="true">
+                        <div class="text-white-50 d-flex align-items-center gap-1.5 text-truncate" style="font-size: 0.7rem;">
+                            <span class="online-pulse-wrap flex-shrink-0" id="presencePulse" aria-hidden="true">
                                 <span class="online-pulse-ring"></span>
                                 <span class="online-pulse-dot" id="presenceDot"></span>
                             </span>
-                            <span class="text-emerald-400 fw-semibold" id="presenceStatusText">Active Session</span>
-                            <span id="blurBadge" class="badge bg-warning text-dark px-1.5 py-0.5 ms-1 d-none" style="font-size: 0.6rem;">
+                            <span class="text-emerald-400 fw-semibold text-truncate" id="presenceStatusText">Active Session</span>
+                            <span id="blurBadge" class="badge bg-warning text-dark px-1.5 py-0.5 ms-1 d-none flex-shrink-0" style="font-size: 0.6rem;">
                                 <i class="fas fa-eye-slash me-0.5"></i> Blur
                             </span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Toolbar Buttons -->
-                <div class="d-flex align-items-center gap-1.5 flex-nowrap ms-auto flex-shrink-0">
+                <!-- Mobile Header Actions (< 640px, visible on mobile, hidden on sm:) -->
+                <div class="d-flex d-sm-none align-items-center gap-1.5 flex-nowrap ms-auto flex-shrink-0">
+                    <!-- Search Conversation Toggle Button -->
+                    <button type="button" class="btn btn-telegram-header h-9 w-9 rounded-full d-inline-flex align-items-center justify-content-center p-0" onclick="toggleSearch()" title="Search conversation" aria-label="Search conversation" style="width: 36px; height: 36px; border-radius: 9999px;">
+                        <i class="fas fa-search" style="font-size: 18px;"></i>
+                    </button>
+
+                    <!-- Clear / Delete Conversation Log -->
+                    <button type="button" class="btn btn-telegram-header h-9 w-9 rounded-full d-inline-flex align-items-center justify-content-center p-0" onclick="confirmClearChat()" title="Clear Conversation Log" aria-label="Clear chat log" style="width: 36px; height: 36px; border-radius: 9999px;">
+                        <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
+                    </button>
+
+                    <!-- Three-dots (⋮) Menu Button -->
+                    <div class="dropdown position-relative d-inline-block">
+                        <button type="button" class="btn btn-telegram-header h-9 w-9 rounded-full d-inline-flex align-items-center justify-content-center p-0" id="btnMobileHeaderMenu" onclick="toggleMobileHeaderMenu(event)" aria-expanded="false" title="More options" aria-label="More options" style="width: 36px; height: 36px; border-radius: 9999px;">
+                            <i class="fas fa-ellipsis-v" style="font-size: 18px;"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow border telegram-dropdown-menu mobile-header-dropdown" id="mobileHeaderDropdownMenu" aria-labelledby="btnMobileHeaderMenu">
+                            <!-- White / Black Background Theme Toggle -->
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center px-3" href="javascript:void(0)" onclick="toggleChatTheme(); closeMobileHeaderMenu();" style="height: 44px; font-size: 0.9rem;">
+                                    <i class="fas fa-sun me-2.5 text-warning" id="mobileThemeIcon" style="width: 20px; text-align: center;"></i>
+                                    <span id="mobileThemeText">White BG</span>
+                                </a>
+                            </li>
+                            <!-- Privacy Blur Toggle -->
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center px-3" href="javascript:void(0)" onclick="togglePrivacyBlur(); closeMobileHeaderMenu();" style="height: 44px; font-size: 0.9rem;">
+                                    <i class="fas fa-eye-slash me-2.5 text-info" id="mobileBlurIcon" style="width: 20px; text-align: center;"></i>
+                                    <span id="mobileBlurText">Privacy Blur Mode</span>
+                                </a>
+                            </li>
+                            <!-- Sound Toggle -->
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center px-3" href="javascript:void(0)" onclick="toggleSound(); closeMobileHeaderMenu();" style="height: 44px; font-size: 0.9rem;">
+                                    <i class="fas fa-volume-up me-2.5 text-info" id="mobileSoundIcon" style="width: 20px; text-align: center;"></i>
+                                    <span id="mobileSoundText">Sound: Enabled</span>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <!-- Settings Modal Trigger -->
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center px-3" href="javascript:void(0)" onclick="closeMobileHeaderMenu();" data-bs-toggle="modal" data-bs-target="#chatSettingsModal" style="height: 44px; font-size: 0.9rem;">
+                                    <i class="fas fa-sliders-h me-2.5 text-secondary" style="width: 20px; text-align: center;"></i>
+                                    <span>Settings & Customization</span>
+                                </a>
+                            </li>
+                            <!-- Lock Session -->
+                            <li>
+                                <form method="POST" action="{{ route('chat.lock') }}" class="m-0 p-0">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item d-flex align-items-center px-3 text-danger" style="height: 44px; font-size: 0.9rem; width: 100%; border: none; background: transparent;">
+                                        <i class="fas fa-lock me-2.5 text-danger" style="width: 20px; text-align: center;"></i>
+                                        <span>Lock Session</span>
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Desktop Toolbar Buttons (Visible on sm: and above, hidden on mobile) -->
+                <div class="d-none d-sm-flex align-items-center gap-1.5 flex-nowrap ms-auto flex-shrink-0">
                     <!-- Search Conversation Toggle Button (Visible on Mobile & Desktop) -->
                     <button type="button" class="btn btn-telegram-header" id="btnToggleSearch" onclick="toggleSearch()" title="Search conversation" aria-label="Search conversation">
                         <i class="fas fa-search" id="searchHeaderIcon"></i>
@@ -295,7 +356,7 @@
         </div>
 
         <!-- CARD FOOTER (TELEGRAM INPUT BAR) -->
-        <div class="card-footer py-2 px-2 px-sm-3 border-top flex-shrink-0 position-relative telegram-footer">
+        <div class="card-footer py-2 px-2 px-sm-3 flex-shrink-0 position-relative telegram-footer">
             
             <!-- Top Row: Active Sender Segmented Switcher -->
             <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2 participant-switcher-bar">
@@ -317,29 +378,30 @@
             </div>
 
             <!-- Reply Quote Banner -->
-            <div id="replyBar" class="reply-banner d-none mb-1.5">
-                <div class="d-flex align-items-center justify-content-between w-100 px-3 py-1.5 rounded-pill bg-slate-900 border border-blue-500/40">
-                    <div class="text-truncate d-flex align-items-center gap-1.5" style="font-size: 0.76rem;">
-                        <i class="fas fa-reply text-blue-400"></i>
-                        <span class="text-blue-400 fw-bold" id="replySenderName">Replying to</span>:
-                        <span class="text-slate-300 text-truncate" id="replyPreviewText">...</span>
+            <div id="replyBar" class="reply-banner d-none mb-2">
+                <div class="reply-banner-inner">
+                    <div class="reply-banner-content">
+                        <i class="fas fa-reply reply-icon"></i>
+                        <span class="reply-sender text-truncate" id="replySenderName">Participant</span>
+                        <span class="reply-colon">:</span>
+                        <span class="reply-preview-text text-truncate" id="replyPreviewText">...</span>
                     </div>
-                    <button type="button" class="btn text-white-50 p-0 ms-2" onclick="cancelReply()" title="Cancel reply" aria-label="Cancel reply">
-                        <i class="fas fa-times small"></i>
+                    <button type="button" class="btn btn-reply-close" onclick="cancelReply()" title="Cancel reply" aria-label="Cancel reply">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Editing Message Banner -->
-            <div id="editBar" class="edit-banner d-none mb-1.5">
-                <div class="d-flex align-items-center justify-content-between w-100 px-3 py-1.5 rounded-pill bg-slate-900 border border-amber-500/40">
-                    <div class="text-truncate d-flex align-items-center gap-1.5" style="font-size: 0.76rem;">
-                        <i class="fas fa-pencil-alt text-amber-400"></i>
-                        <span class="text-amber-400 fw-bold">Editing message</span>
-                        <span class="text-white-50 small">(Press Esc or X to cancel)</span>
+            <div id="editBar" class="edit-banner d-none mb-2">
+                <div class="edit-banner-inner">
+                    <div class="edit-banner-content">
+                        <i class="fas fa-pencil-alt edit-icon"></i>
+                        <span class="edit-label">Editing message</span>
+                        <span class="edit-hint text-truncate">(Press Esc or X to cancel)</span>
                     </div>
-                    <button type="button" class="btn text-white-50 p-0 ms-2" onclick="cancelEdit()" title="Cancel edit" aria-label="Cancel edit">
-                        <i class="fas fa-times small"></i>
+                    <button type="button" class="btn btn-edit-close" onclick="cancelEdit()" title="Cancel edit" aria-label="Cancel edit">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -369,11 +431,12 @@
                             name="message"
                             class="form-control message-textarea" 
                             rows="1" 
-                            placeholder=""
+                            placeholder="Write a message..."
                             aria-label="Write a message"
                             onkeydown="handleInputKey(event)"
-                            oninput="handleMessageInput(this)"></textarea>
-                        <span id="inputPlaceholderOverlay" class="input-placeholder-overlay" onclick="focusMessageInput()">Write a message...</span>
+                            oninput="handleMessageInput(this)"
+                            onmouseenter="handleInputHover(true)"
+                            onmouseleave="handleInputHover(false)"></textarea>
                     </div>
 
                     <!-- Single Send Action Button (Telegram Round Plane Button) -->
@@ -500,38 +563,50 @@
 <!-- STYLES -->
 <style>
 /* ========================================================= */
-/* GLOBAL RESET: PREVENT ANY HORIZONTAL SCROLLBAR            */
+/* HIDE BREADCRUMB & FOOTER (MATCHING REFERENCE ON ALL DEVICES) */
 /* ========================================================= */
-html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw;
+.page-header {
+    display: none !important;
 }
-.wrapper, .main-panel, .main-panel > .container {
-    overflow-x: hidden !important;
-    max-width: 100%;
-}
-.chat-page-wrapper {
-    overflow-x: hidden !important;
-    width: 100% !important;
-    max-width: 100% !important;
+footer,
+.footer,
+.main-panel .footer {
+    display: none !important;
 }
 
-/* Full Viewport Fit for Active Chat Session: No outer page scroll */
-body.chat-unlocked-mode, html.chat-unlocked-mode {
-    height: 100%;
-    height: 100dvh;
+/* ========================================================= */
+/* VIEWPORT LOCK: ZERO OUTER SCROLL ACROSS ALL DEVICES       */
+/* ONLY THE MESSAGES STREAM (#chatContainer) SCROLLS         */
+/* ========================================================= */
+html, body {
     overflow: hidden !important;
-}
-body.chat-unlocked-mode .main-panel {
-    height: 100vh !important;
+    height: 100% !important;
     height: 100dvh !important;
-    max-height: 100vh !important;
+    max-height: 100% !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.wrapper {
+    height: 100% !important;
+    height: 100dvh !important;
     max-height: 100dvh !important;
     overflow: hidden !important;
+}
+
+.main-panel {
+    overflow: hidden !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100% !important;
+    max-height: 100dvh !important;
     display: flex !important;
     flex-direction: column !important;
 }
-body.chat-unlocked-mode .main-panel > .container {
+
+/* Desktop sizing: header is 65px */
+.main-panel > .container {
     margin-top: 65px !important;
     margin-bottom: 0 !important;
     padding: 0 !important;
@@ -542,122 +617,97 @@ body.chat-unlocked-mode .main-panel > .container {
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 0 !important;
+    flex: 1 1 auto !important;
     min-height: 0 !important;
 }
-@media (max-width: 991.98px) {
-    body.chat-unlocked-mode .main-panel > .container {
-        margin-top: 56px !important;
-        height: calc(100dvh - 56px) !important;
-        max-height: calc(100dvh - 56px) !important;
-    }
-}
-body.chat-unlocked-mode .main-panel .page-inner {
-    padding: 8px 12px 8px 12px !important;
+
+.main-panel .page-inner {
+    padding: 10px 16px 12px 16px !important;
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 0 !important;
-}
-@media (max-width: 767.98px) {
-    body.chat-unlocked-mode .main-panel .page-inner {
-        padding: 0 !important;
-    }
+    flex: 1 1 auto !important;
+    box-sizing: border-box !important;
 }
 
-/* PIN Security Verification Screen: Flex centering and clean scrolling */
-body:not(.chat-unlocked-mode) .main-panel {
-    min-height: 100vh;
-    min-height: 100dvh;
+.chat-page-wrapper {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    background: #f4f6f9;
-}
-body:not(.chat-unlocked-mode) .main-panel > .container {
-    margin-top: 65px !important;
-    flex: 1 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    margin: 0 !important;
     padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    overflow: hidden !important;
 }
+
+/* Mobile & Tablet sizing: fixed header is 56px */
 @media (max-width: 991.98px) {
-    body:not(.chat-unlocked-mode) .main-panel > .container {
+    .main-panel > .container {
         margin-top: 56px !important;
-    }
-}
-body:not(.chat-unlocked-mode) .main-panel .page-inner {
-    flex: 1 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 24px 16px !important;
-    width: 100% !important;
-}
-
-/* ========================================================= */
-/* FOOTER VISIBILITY & POSITIONING (ALL SCREENS & MOBILE)    */
-/* ========================================================= */
-/* Mobile & Tablet: Hide footer everywhere on chat page */
-@media (max-width: 991.98px) {
-    footer,
-    .footer,
-    .main-panel .footer {
-        display: none !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: calc(100% - 56px) !important;
+        height: calc(100dvh - 56px) !important;
+        max-height: calc(100% - 56px) !important;
+        max-height: calc(100dvh - 56px) !important;
     }
 }
 
-/* Unlocked chat: Always hide footer and page header */
-body.chat-unlocked-mode footer,
-body.chat-unlocked-mode .footer,
-body.chat-unlocked-mode .main-panel .footer,
-.page-header,
-.main-panel .page-header {
-    display: none !important;
-}
-
-/* Desktop PIN lock screen: Footer neatly at the bottom */
-body:not(.chat-unlocked-mode) footer,
-body:not(.chat-unlocked-mode) .footer {
-    position: static !important;
-    margin-top: auto !important;
-    width: 100% !important;
-    background: #ffffff !important;
-    border-top: 1px solid #e2e8f0 !important;
-}
-
-/* Ensure chat wrapper is strictly hidden on lock screen to eliminate line/scrollbar artifact */
-body:not(.chat-unlocked-mode) #chatPageWrapper {
-    display: none !important;
-}
-
-body.chat-unlocked-mode #pinSecurityScreen {
-    display: none !important;
+@media (max-width: 767.98px) {
+    .main-panel > .container {
+        padding: 0 !important;
+        margin-top: 56px !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .main-panel .page-inner {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
 }
 
 /* ========================================================= */
 /* BLACK THEME: MAIN CARD & HEADER (MATCHING REFERENCE)      */
 /* ========================================================= */
-.chat-page-wrapper {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    flex: 1 1 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
 
 .chat-main-card {
+    --chat-bg: #121624;
+    --chat-surface: #1a2035;
+    --chat-surface-2: #202940;
+    --chat-border: #2a3454;
+    --chat-text: #f8fafc;
+    --chat-text-muted: #94a3b8;
+    --bubble-own: linear-gradient(135deg, #1572e8, #1c7ffc);
+    --bubble-own-text: #ffffff;
+    --bubble-other: #202940;
+    --bubble-other-text: #f4f6f9;
+    --bubble-other-border: #2a3454;
+    --accent: #1572e8;
+    --reply-bg: #1b2540;
+    --reply-text: #e6ecff;
+    --reply-border: rgba(96, 165, 250, 0.35);
+    --reply-accent: #60a5fa;
+    --edit-bg: #2d2415;
+    --edit-text: #fef3c7;
+    --edit-border: rgba(245, 158, 11, 0.4);
+    --edit-accent: #f59e0b;
+    --reaction-bg: rgba(15, 23, 42, 0.85);
+    --reaction-border: rgba(71, 85, 105, 0.6);
+    --reaction-text: #f1f5f9;
+    --scrollbar-thumb: #2a3454;
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
@@ -667,8 +717,15 @@ body.chat-unlocked-mode #pinSecurityScreen {
     border-radius: 12px !important;
     overflow: hidden !important;
     margin-bottom: 0 !important;
-    border: 1px solid #262930 !important;
+    background: var(--chat-bg) !important;
+    border: 1px solid var(--chat-border) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+.chat-main-card .card-header,
+.chat-main-card .card-footer,
+.chat-main-card .telegram-header,
+.chat-main-card .telegram-footer {
+    border-color: var(--chat-border) !important;
 }
 @media (max-width: 767.98px) {
     .chat-main-card {
@@ -679,13 +736,79 @@ body.chat-unlocked-mode #pinSecurityScreen {
 }
 
 .telegram-header {
-    margin-top: 15px !important;
-    background: #1a2035 !important;
-    border-bottom: 1px solid #2a3454 !important;
-    min-height: 52px !important;
+    margin-top: 0 !important;
+    background: var(--chat-surface, #1a2035) !important;
+    border-bottom: 1px solid var(--chat-border, #2a3454) !important;
+    min-height: 56px !important;
+    height: 56px !important;
+    display: flex !important;
+    align-items: center !important;
     flex-shrink: 0 !important;
     backdrop-filter: blur(8px);
     border-radius: 12px 12px 0 0 !important;
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1050 !important;
+}
+
+.card-header.telegram-header {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1050 !important;
+}
+
+.mobile-header-dropdown {
+    display: none;
+    position: absolute !important;
+    top: calc(100% + 6px) !important;
+    right: 0 !important;
+    left: auto !important;
+    min-width: 220px !important;
+    max-width: calc(100vw - 20px) !important;
+    z-index: 99999 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7) !important;
+    background: #1a2035 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    padding: 6px 0 !important;
+    margin: 0 !important;
+}
+
+.mobile-header-dropdown.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.mobile-header-dropdown .dropdown-item {
+    color: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 10px 16px !important;
+    font-size: 0.9rem !important;
+    transition: background 0.15s ease !important;
+}
+
+.mobile-header-dropdown .dropdown-item:hover,
+.mobile-header-dropdown .dropdown-item:active {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
+.chat-main-card.chat-theme-white .mobile-header-dropdown {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15) !important;
+}
+
+.chat-main-card.chat-theme-white .mobile-header-dropdown .dropdown-item {
+    color: #1e293b !important;
+}
+
+.chat-main-card.chat-theme-white .mobile-header-dropdown .dropdown-item:hover,
+.chat-main-card.chat-theme-white .mobile-header-dropdown .dropdown-item:active {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
 }
 .telegram-header-avatar {
     width: 38px;
@@ -757,18 +880,30 @@ body.chat-unlocked-mode #pinSecurityScreen {
 /* KAIADMIN DASHBOARD MESSAGES STREAM                        */
 /* ========================================================= */
 .chat-messages-container {
-    background: #121624 !important;
+    background: var(--chat-bg, #121624) !important;
     overflow-y: auto !important;
     position: relative;
     flex: 1 1 auto !important;
     min-height: 0 !important;
+    padding: 12px !important;
+}
+@media (min-width: 768px) {
+    .chat-messages-container {
+        padding: 16px 20px !important;
+    }
 }
 .chat-messages-container::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+}
+.chat-messages-container::-webkit-scrollbar-track {
+    background: transparent;
 }
 .chat-messages-container::-webkit-scrollbar-thumb {
-    background: #2a3454;
-    border-radius: 10px;
+    background: var(--scrollbar-thumb, #2a3454);
+    border-radius: 9999px;
+}
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent, #1572e8);
 }
 
 #messagesStream {
@@ -808,21 +943,28 @@ body.chat-unlocked-mode #pinSecurityScreen {
     position: sticky;
     top: 8px;
     z-index: 10;
-    margin: 14px 0;
+    margin: 12px 0;
     pointer-events: none;
+    width: 100%;
 }
 .date-divider span {
-    background: rgba(32, 41, 64, 0.95) !important;
-    color: #b9babf !important;
-    border: 1px solid #2a3454 !important;
+    background: var(--chat-surface-2, rgba(32, 41, 64, 0.95)) !important;
+    color: var(--chat-text-muted, #94a3b8) !important;
+    border: 1px solid var(--chat-border, #2a3454) !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     letter-spacing: 0.3px;
-    padding: 4px 14px !important;
+    padding: 3px 14px !important;
     border-radius: 9999px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
     display: inline-block;
+}
+.chat-main-card.chat-theme-white .date-divider span {
+    background: #ffffff !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
 .unread-messages-divider {
@@ -1057,28 +1199,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
     pointer-events: none;
 }
 
-/* INPUT PLACEHOLDER OVERLAY (NOT BLURRED) */
+/* INPUT FIELD CONTAINER */
 .input-field-box {
     position: relative;
-}
-.input-placeholder-overlay {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 0.93rem;
-    pointer-events: none;
-    user-select: none;
-    transition: opacity 0.15s ease;
-    z-index: 2;
-}
-.chat-theme-white .input-placeholder-overlay {
-    color: rgba(0, 0, 0, 0.45);
-}
-.privacy-blur-active .input-placeholder-overlay {
-    filter: none !important;
-    opacity: 0.85 !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
 }
 
 /* ========================================================= */
@@ -1095,17 +1221,17 @@ body.chat-unlocked-mode #pinSecurityScreen {
 }
 .telegram-persona-capsule {
     display: inline-flex;
-    background: #121624;
+    background: var(--chat-surface-2, #121624);
     padding: 3px;
     border-radius: 12px;
-    border: 1px solid #2a3454;
+    border: 1px solid var(--chat-border, #2a3454);
     gap: 3px;
 }
 .telegram-persona-capsule .persona-tab {
     padding: 5px 14px;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #8d9498;
+    color: var(--chat-text-muted, #94a3b8);
     border-radius: 9px;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -1119,12 +1245,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #64748b;
+    background: var(--chat-text-muted, #64748b);
     display: inline-block;
     transition: all 0.15s ease;
 }
 .telegram-persona-capsule input[type="radio"]:checked + .persona-tab {
-    background: linear-gradient(135deg, #1572e8, #1c7ffc) !important;
+    background: var(--bubble-own, linear-gradient(135deg, #1572e8, #1c7ffc)) !important;
     color: #ffffff !important;
     box-shadow: 0 2px 6px rgba(21, 114, 232, 0.4);
     font-weight: 700;
@@ -1133,6 +1259,17 @@ body.chat-unlocked-mode #pinSecurityScreen {
     background: #ffffff;
     box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
+.chat-main-card.chat-theme-white .telegram-persona-capsule {
+    background: #e2e8f0 !important;
+    border-color: #cbd5e1 !important;
+}
+.chat-main-card.chat-theme-white .telegram-persona-capsule .persona-tab {
+    color: #475569 !important;
+}
+.chat-main-card.chat-theme-white .telegram-persona-capsule input[type="radio"]:checked + .persona-tab {
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    color: #ffffff !important;
+}
 
 .chat-input-bar-wrap {
     width: 100%;
@@ -1140,29 +1277,31 @@ body.chat-unlocked-mode #pinSecurityScreen {
 }
 .chat-input-inner {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
     width: 100%;
 }
 .btn-emoji-trigger {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0;
-    color: #8d9498;
-    border: 1px solid #2e3856;
-    background: #202940;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+    color: var(--chat-text-muted, #8d9498) !important;
+    border: 1.5px solid var(--chat-border, #2e3856) !important;
+    background: var(--chat-surface-2, #202940) !important;
     transition: all 0.15s ease;
 }
 .btn-emoji-trigger:hover {
-    color: #1572e8;
-    border-color: #1572e8;
-    background: #25304c;
-    transform: scale(1.05);
+    color: var(--accent, #1572e8) !important;
+    border-color: var(--accent, #1572e8) !important;
+    background: #25304c !important;
+    transform: scale(1.04);
 }
 .input-field-box {
     flex: 1 1 auto;
@@ -1172,27 +1311,41 @@ body.chat-unlocked-mode #pinSecurityScreen {
 .message-textarea {
     width: 100% !important;
     min-height: 44px !important;
+    height: 44px;
     max-height: 120px !important;
-    border-radius: 9999px !important;
-    border: 1.5px solid #2e3856 !important;
-    background: #202940 !important;
-    padding: 11px 18px !important;
-    font-size: 15px !important;
-    line-height: 1.4 !important;
-    color: #ffffff !important;
+    border-radius: 22px !important;
+    border: 1.5px solid var(--chat-border, #2e3856) !important;
+    background: var(--chat-surface-2, #202940) !important;
+    padding: 10px 42px 10px 16px !important;
+    margin: 0 !important;
+    font-size: 16px !important;
+    line-height: 22px !important;
+    color: var(--chat-text, #ffffff) !important;
     resize: none !important;
     outline: none !important;
     box-shadow: none !important;
-    transition: all 0.18s ease;
+    box-sizing: border-box !important;
+    overflow-y: hidden;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
 }
 .message-textarea::placeholder {
-    color: #718096 !important;
+    color: var(--chat-text-muted, #8d9498) !important;
     opacity: 1 !important;
+    font-size: 16px !important;
+    line-height: 22px !important;
 }
 .message-textarea:focus {
-    border-color: #1572e8 !important;
+    border-color: var(--accent, #1572e8) !important;
     box-shadow: 0 0 0 3px rgba(21, 114, 232, 0.25) !important;
-    background: #1a2035 !important;
+    background: var(--chat-surface, #1a2035) !important;
+}
+/* Native textarea scrollbar spinner removal */
+.message-textarea::-webkit-scrollbar {
+    width: 4px;
+}
+.message-textarea::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
 }
 
 /* CIRCULAR GRADIENT SEND BUTTON WITH DISABLED STATE */
@@ -1323,43 +1476,49 @@ body.chat-unlocked-mode #pinSecurityScreen {
     opacity: 1 !important;
 }
 
-/* Message input text, emoji trigger, and send button stay blurred unless mouse is hovering over the input bar */
-.privacy-blur-active .message-textarea,
-.privacy-blur-active .btn-emoji-trigger,
-.privacy-blur-active .btn-send-main {
-    filter: blur(6px) !important;
-    opacity: 0.35 !important;
-    user-select: none !important;
+/* When Privacy Blur is active: ONLY blur the message textarea IF it has typed text */
+.privacy-blur-active .message-textarea.has-text,
+.privacy-blur-active .message-textarea:not(:placeholder-shown) {
+    filter: blur(5px) !important;
+    opacity: 0.45 !important;
     transition: filter 0.12s ease, opacity 0.12s ease;
 }
 
-/* Unblur ONLY on mouse hover (no focus-within or focus-based unblur) */
+/* Hovering over the input bar or textarea unblurs the typed text so user can read/inspect */
 .privacy-blur-active .chat-input-bar-wrap:hover .message-textarea,
-.privacy-blur-active .chat-input-bar-wrap:hover .btn-emoji-trigger,
-.privacy-blur-active .chat-input-bar-wrap:hover .btn-send-main,
 .privacy-blur-active .chat-input-bar-wrap.input-hovered .message-textarea,
-.privacy-blur-active .chat-input-bar-wrap.input-hovered .btn-emoji-trigger,
-.privacy-blur-active .chat-input-bar-wrap.input-hovered .btn-send-main,
-.privacy-blur-active .btn-emoji-trigger:hover,
-.privacy-blur-active .btn-send-main:hover {
+.privacy-blur-active .message-textarea:hover {
     filter: blur(0px) !important;
-    opacity: 1 !important;
-    user-select: auto !important;
-}
-
-/* Strictly enforce blur on focus when mouse is not hovering */
-.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .message-textarea,
-.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .btn-emoji-trigger,
-.privacy-blur-active .chat-input-bar-wrap:focus-within:not(:hover) .btn-send-main,
-.privacy-blur-active .message-textarea:focus:not(:hover) {
-    filter: blur(6px) !important;
-    opacity: 0.35 !important;
-}
-
-/* Input placeholder overlay remains readable and unblurred */
-.privacy-blur-active .input-placeholder-overlay {
     filter: none !important;
-    opacity: 0.85 !important;
+    -webkit-filter: none !important;
+    opacity: 1 !important;
+}
+
+/* UI action buttons in the input bar are NEVER blurred */
+.btn-emoji-trigger,
+.btn-send-main,
+.privacy-blur-active .btn-emoji-trigger,
+.privacy-blur-active .btn-send-main {
+    filter: none !important;
+    -webkit-filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Placeholder is ALWAYS crisp, unblurred, and visible when input is empty (Telegram & Instagram style) */
+.message-textarea::placeholder {
+    color: var(--chat-text-muted, #94a3b8) !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: var(--chat-text-muted, #94a3b8) !important;
+    font-size: 15px !important;
+    line-height: 22px !important;
+    filter: none !important;
+}
+
+.chat-main-card.chat-theme-white .message-textarea::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+    -webkit-text-fill-color: #64748b !important;
+    filter: none !important;
 }
 
 /* Desktop: Header elements unblur on hover */
@@ -1751,8 +1910,32 @@ body.chat-unlocked-mode #pinSecurityScreen {
 /* WHITE THEME / LIGHT MODE STYLES                           */
 /* ========================================================= */
 .chat-main-card.chat-theme-white {
-    background: #ffffff !important;
-    border-color: #e2e8f0 !important;
+    --chat-bg: #f8fafc;
+    --chat-surface: #ffffff;
+    --chat-surface-2: #f1f5f9;
+    --chat-border: #e2e8f0;
+    --chat-text: #0f172a;
+    --chat-text-muted: #64748b;
+    --bubble-own: linear-gradient(135deg, #2563eb, #3b82f6);
+    --bubble-own-text: #ffffff;
+    --bubble-other: #ffffff;
+    --bubble-other-text: #0f172a;
+    --bubble-other-border: #e2e8f0;
+    --accent: #2563eb;
+    --reply-bg: #eef2fb;
+    --reply-text: #1f2937;
+    --reply-border: rgba(37, 99, 235, 0.25);
+    --reply-accent: #2563eb;
+    --edit-bg: #fef9c3;
+    --edit-text: #78350f;
+    --edit-border: rgba(217, 119, 6, 0.3);
+    --edit-accent: #d97706;
+    --reaction-bg: #ffffff;
+    --reaction-border: #cbd5e1;
+    --reaction-text: #1f2937;
+    --scrollbar-thumb: #cbd5e1;
+    background: var(--chat-bg) !important;
+    border-color: var(--chat-border) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
@@ -1950,16 +2133,22 @@ body.chat-unlocked-mode #pinSecurityScreen {
     .message-row.sender-1-row .message-wrapper,
     .message-row.sender-2-row .message-wrapper {
         max-width: 85% !important;
+        min-width: 0 !important;
     }
     .message-bubble {
         padding: 8px 12px !important;
         font-size: 0.88rem !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
     .telegram-header {
-        margin-top: 15px !important;
-        padding: 6px 10px !important;
-        min-height: 48px !important;
-        border-radius: 8px 8px 0 0 !important;
+        margin-top: 0 !important;
+        padding: 0 10px !important;
+        height: 56px !important;
+        min-height: 56px !important;
+        border-radius: 0 !important;
     }
     /* Mobile: Top section and toolbar options are strictly excluded from blur */
     .privacy-blur-active .telegram-header,
@@ -1981,8 +2170,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
         min-width: 36px !important;
         width: 36px !important;
         padding: 0 !important;
-        font-size: 0.78rem !important;
-        border-radius: 8px !important;
+        font-size: 0.85rem !important;
+        border-radius: 50% !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
     }
     .telegram-header-avatar {
         width: 32px !important;
@@ -1992,7 +2185,37 @@ body.chat-unlocked-mode #pinSecurityScreen {
     .bubble-avatar {
         width: 26px !important;
         height: 26px !important;
+        min-width: 26px !important;
+        min-height: 26px !important;
         font-size: 0.68rem !important;
+    }
+    /* Mobile floating action pill so it NEVER causes horizontal overflow */
+    .bubble-actions-row {
+        position: relative;
+        max-width: 100% !important;
+    }
+    .bubble-quick-actions {
+        position: absolute;
+        bottom: calc(100% + 4px);
+        z-index: 25;
+        background: rgba(15, 23, 42, 0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 9999px !important;
+        padding: 3px 8px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+        backdrop-filter: blur(8px);
+    }
+    .message-row.sender-1-row .bubble-quick-actions {
+        right: 0;
+    }
+    .message-row.sender-2-row .bubble-quick-actions {
+        left: 0;
+    }
+    .message-row.mobile-active .bubble-quick-actions,
+    .bubble-actions-row.mobile-active .bubble-quick-actions {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        display: inline-flex !important;
     }
     .telegram-persona-capsule .persona-tab {
         padding: 4px 10px !important;
@@ -2008,6 +2231,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
         min-height: 40px !important;
         padding: 9px 14px !important;
         font-size: 16px !important; /* Prevents auto zoom on iOS */
+    }
+    .message-textarea::placeholder {
+        color: var(--chat-text-muted, #94a3b8) !important;
+        opacity: 1 !important;
+        -webkit-text-fill-color: var(--chat-text-muted, #94a3b8) !important;
+        font-size: 15px !important;
     }
     .chat-input-bar-wrap {
         padding-right: 0 !important;
@@ -2085,6 +2314,8 @@ body.chat-unlocked-mode #pinSecurityScreen {
 /* REPLY & EDIT BANNERS IN INPUT AREA                        */
 /* ========================================================= */
 .reply-banner, .edit-banner {
+    width: 100%;
+    margin-bottom: 8px;
     animation: fadeInSlide 0.18s ease-out;
 }
 @keyframes fadeInSlide {
@@ -2092,37 +2323,204 @@ body.chat-unlocked-mode #pinSecurityScreen {
     to { opacity: 1; transform: translateY(0); }
 }
 
+.reply-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--reply-bg, #1b2540) !important;
+    border: 1px solid var(--reply-border, rgba(96, 165, 250, 0.35)) !important;
+    border-left: 3.5px solid var(--reply-accent, #60a5fa) !important;
+    box-sizing: border-box;
+    gap: 8px;
+}
+.reply-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+.reply-icon {
+    color: var(--reply-accent, #60a5fa) !important;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+}
+.reply-sender {
+    color: var(--reply-accent, #60a5fa) !important;
+    font-weight: 700 !important;
+    flex-shrink: 0;
+    max-width: 120px;
+}
+.reply-colon {
+    color: var(--reply-accent, #60a5fa) !important;
+    font-weight: 700 !important;
+    margin-left: -4px;
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+.reply-preview-text {
+    color: var(--reply-text, #e6ecff) !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+    font-weight: 500;
+}
+.btn-reply-close {
+    background: transparent !important;
+    border: none !important;
+    color: var(--reply-text, #e6ecff) !important;
+    opacity: 0.65;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    border-radius: 6px;
+    flex-shrink: 0;
+    width: 28px !important;
+    height: 28px !important;
+    transition: all 0.15s ease;
+}
+.btn-reply-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: var(--reply-text, #ffffff) !important;
+}
+
+.edit-banner-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--edit-bg, #2d2415) !important;
+    border: 1px solid var(--edit-border, rgba(245, 158, 11, 0.4)) !important;
+    border-left: 3.5px solid var(--edit-accent, #f59e0b) !important;
+    box-sizing: border-box;
+    gap: 8px;
+}
+.edit-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+.edit-icon {
+    color: var(--edit-accent, #f59e0b) !important;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+}
+.edit-label {
+    color: var(--edit-accent, #f59e0b) !important;
+    font-weight: 700 !important;
+    flex-shrink: 0;
+}
+.edit-hint {
+    color: var(--edit-text, #fef3c7) !important;
+    opacity: 0.75;
+    font-size: 0.75rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.btn-edit-close {
+    background: transparent !important;
+    border: none !important;
+    color: var(--edit-text, #fef3c7) !important;
+    opacity: 0.65;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    border-radius: 6px;
+    flex-shrink: 0;
+    width: 28px !important;
+    height: 28px !important;
+    transition: all 0.15s ease;
+}
+.btn-edit-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: var(--edit-text, #ffffff) !important;
+}
+
 /* ========================================================= */
 /* BUBBLE REPLY QUOTE PREVIEWS                               */
 /* ========================================================= */
 .bubble-reply-preview {
-    background: rgba(0, 0, 0, 0.2);
-    border-left: 3px solid #60a5fa;
-    padding: 3px 8px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-left: 3px solid var(--accent, #60a5fa) !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    margin-bottom: 6px !important;
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
     cursor: pointer;
     user-select: none;
     max-width: 100%;
+    transition: background 0.15s ease;
+}
+.bubble-reply-preview:hover {
+    background: rgba(0, 0, 0, 0.35) !important;
 }
 .sender-1-row .bubble-reply-preview {
-    background: rgba(0, 0, 0, 0.25);
-    border-left-color: #93c5fd;
+    background: rgba(0, 0, 0, 0.22) !important;
+    border-left-color: #ffffff !important;
 }
-.bubble-reply-preview .reply-sender {
+.sender-1-row .bubble-reply-preview .reply-sender {
+    color: #ffffff !important;
     font-weight: 700;
-    font-size: 0.72rem;
-    color: #93c5fd;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
 }
-.sender-2-row .bubble-reply-preview .reply-sender {
-    color: #60a5fa;
-}
-.bubble-reply-preview .reply-text {
-    opacity: 0.85;
+.sender-1-row .bubble-reply-preview .reply-text {
+    color: rgba(255, 255, 255, 0.92) !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.sender-2-row .bubble-reply-preview {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-left-color: #48abf7 !important;
+}
+.sender-2-row .bubble-reply-preview .reply-sender {
+    color: #48abf7 !important;
+    font-weight: 700;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+.sender-2-row .bubble-reply-preview .reply-text {
+    color: #e2e8f0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* White Theme overrides for Bubble Reply Quote */
+.chat-main-card.chat-theme-white .sender-2-row .bubble-reply-preview {
+    background: #f1f5f9 !important;
+    border-left-color: #2563eb !important;
+}
+.chat-main-card.chat-theme-white .sender-2-row .bubble-reply-preview .reply-sender {
+    color: #2563eb !important;
+}
+.chat-main-card.chat-theme-white .sender-2-row .bubble-reply-preview .reply-text {
+    color: #334155 !important;
 }
 
 /* ========================================================= */
@@ -2137,17 +2535,32 @@ body.chat-unlocked-mode #pinSecurityScreen {
 .sender-1-row .bubble-reactions-row {
     justify-content: flex-end;
 }
+/* Universal Cross-Platform High-DPI Emoji Font Stack */
+.emoji-font,
+.reaction-pill,
+.reaction-emoji,
+.reaction-count,
+.reaction-pill span,
+.bubble-reactions span,
+.emoji-grid-item,
+.emoji-category-tabs button,
+.message-bubble,
+.message-content {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+}
+
 .reaction-pill {
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(71, 85, 105, 0.6);
-    color: #f1f5f9;
-    border-radius: 9999px;
-    padding: 1px 6px;
-    font-size: 0.72rem;
+    background: var(--reaction-bg, rgba(15, 23, 42, 0.85)) !important;
+    border: 1px solid var(--reaction-border, rgba(71, 85, 105, 0.6)) !important;
+    color: var(--reaction-text, #f1f5f9) !important;
+    border-radius: 9999px !important;
+    padding: 2px 7px !important;
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     user-select: none;
     transition: transform 0.12s ease;
 }
@@ -2155,10 +2568,30 @@ body.chat-unlocked-mode #pinSecurityScreen {
     transform: scale(1.1);
 }
 .reaction-pill.active {
-    background: rgba(37, 99, 235, 0.35);
-    border-color: #3b82f6;
-    color: #93c5fd;
+    background: rgba(37, 99, 235, 0.35) !important;
+    border-color: #3b82f6 !important;
+    color: #93c5fd !important;
     font-weight: 700;
+}
+.reaction-emoji {
+    font-size: 0.82rem;
+    line-height: 1;
+    display: inline-block;
+}
+.reaction-count {
+    font-weight: 700;
+    font-size: 0.7rem;
+}
+.chat-main-card.chat-theme-white .reaction-pill {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.chat-main-card.chat-theme-white .reaction-pill.active {
+    background: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    color: #1d4ed8 !important;
 }
 .quick-reaction-bar, .quick-reactions-bar {
     position: absolute;
@@ -2172,6 +2605,29 @@ body.chat-unlocked-mode #pinSecurityScreen {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
     z-index: 20;
     animation: fadeInSlide 0.15s ease-out;
+}
+
+/* Mobile Active Actions & Accessibility */
+.bubble-actions-row.mobile-active .bubble-quick-actions {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+.btn-telegram-header:focus-visible,
+.btn-emoji-trigger:focus-visible,
+.btn-send-main:focus-visible,
+.btn-bubble-action:focus-visible,
+.reaction-pill:focus-visible,
+.persona-tab:focus-visible {
+    outline: 2px solid var(--accent, #3b82f6) !important;
+    outline-offset: 2px !important;
 }
 .sender-1-row .quick-reaction-bar, .sender-1-row .quick-reactions-bar {
     right: 0;
@@ -2441,8 +2897,6 @@ body.chat-unlocked-mode #pinSecurityScreen {
             chatWrapper.classList.remove('d-none');
             chatWrapper.style.display = '';
         }
-        document.body.classList.add('chat-unlocked-mode');
-        document.documentElement.classList.add('chat-unlocked-mode');
         startChatEngine();
     }
 
@@ -2666,6 +3120,32 @@ body.chat-unlocked-mode #pinSecurityScreen {
         updateInputBlurState();
     }
 
+    function toggleMobileHeaderMenu(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const menu = document.getElementById('mobileHeaderDropdownMenu') || document.querySelector('.mobile-header-dropdown');
+        const btn = document.getElementById('btnMobileHeaderMenu');
+        if (!menu) return;
+        const isShown = menu.classList.contains('show');
+        if (isShown) {
+            menu.classList.remove('show');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        } else {
+            document.querySelectorAll('.dropdown-menu.show').forEach(el => el.classList.remove('show'));
+            menu.classList.add('show');
+            if (btn) btn.setAttribute('aria-expanded', 'true');
+        }
+    }
+
+    function closeMobileHeaderMenu() {
+        const menu = document.getElementById('mobileHeaderDropdownMenu') || document.querySelector('.mobile-header-dropdown');
+        const btn = document.getElementById('btnMobileHeaderMenu');
+        if (menu) menu.classList.remove('show');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+
     let inputHover = false;
 
     function handleInputHover(isHovering) {
@@ -2676,34 +3156,23 @@ body.chat-unlocked-mode #pinSecurityScreen {
     function updateInputBlurState() {
         const wrap = document.querySelector('.chat-input-bar-wrap');
         const textarea = document.getElementById('messageInput');
-        const btnEmoji = document.querySelector('.btn-emoji-trigger');
-        const btnSend = document.getElementById('btnMainSend');
         if (!textarea) return;
+        const hasText = textarea.value.trim().length > 0;
 
-        if (blurEnabled && !inputHover) {
-            if (wrap) wrap.classList.remove('input-hovered');
-            textarea.style.filter = 'blur(6px)';
-            textarea.style.opacity = '0.35';
-            if (btnEmoji) {
-                btnEmoji.style.filter = 'blur(6px)';
-                btnEmoji.style.opacity = '0.35';
-            }
-            if (btnSend) {
-                btnSend.style.filter = 'blur(6px)';
-                btnSend.style.opacity = '0.35';
-            }
+        if (hasText) {
+            textarea.classList.add('has-text');
         } else {
-            if (wrap) wrap.classList.add('input-hovered');
+            textarea.classList.remove('has-text');
+        }
+
+        if (blurEnabled && hasText && !inputHover) {
+            if (wrap) wrap.classList.remove('input-hovered');
+            textarea.style.setProperty('filter', 'blur(5px)', 'important');
+            textarea.style.setProperty('opacity', '0.45', 'important');
+        } else {
+            if (wrap && inputHover) wrap.classList.add('input-hovered');
             textarea.style.filter = '';
             textarea.style.opacity = '';
-            if (btnEmoji) {
-                btnEmoji.style.filter = '';
-                btnEmoji.style.opacity = '';
-            }
-            if (btnSend) {
-                btnSend.style.filter = '';
-                btnSend.style.opacity = '';
-            }
         }
     }
 
@@ -2726,23 +3195,98 @@ body.chat-unlocked-mode #pinSecurityScreen {
     }
 
     function autoResizeTextarea(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        if (!textarea) return;
+        textarea.style.height = '44px';
+        if (textarea.scrollHeight > 44) {
+            textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+            textarea.style.overflowY = textarea.scrollHeight > 120 ? 'auto' : 'hidden';
+        } else {
+            textarea.style.overflowY = 'hidden';
+        }
+    }
+
+    // ===================================================
+    // DETERMINISTIC OVERLAYS FINITE STATE MACHINE (FSM)
+    // Mutually exclusive overlays: 'none' | 'emoji' | 'search' | 'reactions' | 'settings'
+    // ===================================================
+    let activeOverlay = 'none';
+
+    function setOverlay(nextOverlay) {
+        if (activeOverlay === nextOverlay) {
+            closeAllOverlays();
+            return;
+        }
+
+        closeAllOverlays();
+        activeOverlay = nextOverlay;
+
+        if (nextOverlay === 'emoji') {
+            const drawer = document.getElementById('emojiPickerPopup');
+            if (drawer) {
+                drawer.classList.remove('d-none');
+                renderEmojiCategory('all');
+                const searchInput = document.getElementById('emojiSearchInput');
+                if (searchInput) searchInput.focus();
+            }
+        } else if (nextOverlay === 'search') {
+            const bar = document.getElementById('chatSearchBar');
+            if (bar) {
+                bar.classList.remove('d-none');
+                searchActive = true;
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
+            }
+        }
+    }
+
+    function closeAllOverlays() {
+        // 1. Emoji drawer
+        const drawer = document.getElementById('emojiPickerPopup');
+        if (drawer && !drawer.classList.contains('d-none')) {
+            drawer.classList.add('d-none');
+        }
+
+        // 2. Search bar
+        const bar = document.getElementById('chatSearchBar');
+        if (bar && !bar.classList.contains('d-none')) {
+            bar.classList.add('d-none');
+            searchActive = false;
+            const badge = document.getElementById('searchResultsBadge');
+            if (badge) badge.classList.add('d-none');
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) searchInput.value = '';
+            document.querySelectorAll('#messagesStream .message-row').forEach(row => {
+                row.classList.remove('search-hidden', 'search-match');
+                const textEl = row.querySelector('.message-text');
+                if (textEl && textEl.dataset.originalHtml) {
+                    textEl.innerHTML = textEl.dataset.originalHtml;
+                    delete textEl.dataset.originalHtml;
+                }
+            });
+        }
+
+        // 3. Quick reactions
+        closeAllQuickReactions();
+
+        // 4. Mobile active message rows
+        document.querySelectorAll('#messagesStream .message-row.mobile-active').forEach(r => {
+            r.classList.remove('mobile-active');
+        });
+
+        activeOverlay = 'none';
     }
 
     // ===================================================
     // FULL MEDIA DRAWER (EMOJIS, STICKERS, GIFS)
     // ===================================================
     function toggleEmojiPicker() {
-        const drawer = document.getElementById('emojiPickerPopup');
-        if (!drawer) return;
-        if (drawer.classList.contains('d-none')) {
-            drawer.classList.remove('d-none');
-            renderEmojiCategory('all');
-            const searchInput = document.getElementById('emojiSearchInput');
-            if (searchInput) searchInput.focus();
+        if (activeOverlay === 'emoji') {
+            closeAllOverlays();
         } else {
-            drawer.classList.add('d-none');
+            setOverlay('emoji');
         }
     }
 
@@ -2822,39 +3366,15 @@ body.chat-unlocked-mode #pinSecurityScreen {
     // SEARCH IN CONVERSATION
     // ===================================================
     function toggleSearch() {
-        const bar = document.getElementById('chatSearchBar');
-        if (!bar) return;
-        searchActive = !searchActive;
-        if (searchActive) {
-            bar.classList.remove('d-none');
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.value = '';
-                searchInput.focus();
-            }
+        if (activeOverlay === 'search') {
+            closeAllOverlays();
         } else {
-            closeSearch();
+            setOverlay('search');
         }
     }
 
     function closeSearch() {
-        searchActive = false;
-        const bar = document.getElementById('chatSearchBar');
-        if (bar) bar.classList.add('d-none');
-        const badge = document.getElementById('searchResultsBadge');
-        if (badge) badge.classList.add('d-none');
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = '';
-
-        // Reset highlight & visible rows
-        document.querySelectorAll('#messagesStream .message-row').forEach(row => {
-            row.classList.remove('search-hidden', 'search-match');
-            const textEl = row.querySelector('.message-text');
-            if (textEl && textEl.dataset.originalHtml) {
-                textEl.innerHTML = textEl.dataset.originalHtml;
-                delete textEl.dataset.originalHtml;
-            }
-        });
+        closeAllOverlays();
     }
 
     function handleSearch(query) {
@@ -2978,9 +3498,16 @@ body.chat-unlocked-mode #pinSecurityScreen {
             return;
         }
 
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage(activePersona);
+        // On mobile/touch devices, Enter creates a newline naturally (send via send button)
+        const isMobileDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth < 768);
+        if (event.key === 'Enter') {
+            if (isMobileDevice) {
+                return;
+            }
+            if (!event.shiftKey) {
+                event.preventDefault();
+                sendMessage(activePersona);
+            }
         }
     }
 
@@ -3233,10 +3760,12 @@ body.chat-unlocked-mode #pinSecurityScreen {
         const existingBar = document.getElementById('quickBar-' + messageId);
         if (existingBar) {
             existingBar.remove();
+            activeOverlay = 'none';
             return;
         }
 
-        closeAllQuickReactions();
+        closeAllOverlays();
+        activeOverlay = 'reactions';
 
         const row = document.getElementById('msg-' + messageId);
         if (!row) return;
@@ -3257,6 +3786,7 @@ body.chat-unlocked-mode #pinSecurityScreen {
             btn.onclick = function(e) {
                 e.stopPropagation();
                 toggleReaction(messageId, em);
+                closeAllOverlays();
             };
             quickBar.appendChild(btn);
         });
@@ -3266,6 +3796,9 @@ body.chat-unlocked-mode #pinSecurityScreen {
 
     function closeAllQuickReactions() {
         document.querySelectorAll('.quick-reactions-bar, .quick-reaction-bar').forEach(bar => bar.remove());
+        if (activeOverlay === 'reactions') {
+            activeOverlay = 'none';
+        }
     }
 
     function showHeartBurst(bubble) {
@@ -3385,9 +3918,15 @@ body.chat-unlocked-mode #pinSecurityScreen {
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Ensure breadcrumbs and footer are completely removed from chat page
+        document.querySelectorAll('.page-header, footer, .footer, .main-panel .footer').forEach(function(el) {
+            el.remove();
+        });
+
         @if($isUnlocked)
             unlockChatInUi();
         @endif
+        updateInputBlurState();
 
         document.addEventListener('visibilitychange', function() {
             if (!chatEngineStarted) return;
@@ -3413,18 +3952,52 @@ body.chat-unlocked-mode #pinSecurityScreen {
             });
         }
 
-        // Close emoji picker & quick reactions when clicking outside
+        // Close overlays when clicking outside
         document.addEventListener('click', function(e) {
-            const drawer = document.getElementById('emojiPickerPopup');
-            if (drawer && !drawer.classList.contains('d-none')) {
-                if (!drawer.contains(e.target) && !e.target.closest('button[onclick="toggleEmojiPicker()"]')) {
-                    drawer.classList.add('d-none');
+            if (activeOverlay === 'emoji') {
+                const drawer = document.getElementById('emojiPickerPopup');
+                if (drawer && !drawer.contains(e.target) && !e.target.closest('button[onclick="toggleEmojiPicker()"]')) {
+                    closeAllOverlays();
                 }
             }
-            if (!e.target.closest('.quick-reactions-bar') && !e.target.closest('.quick-reaction-bar') && !e.target.closest('.btn-bubble-react')) {
-                closeAllQuickReactions();
+
+            if (activeOverlay === 'reactions') {
+                if (!e.target.closest('.quick-reactions-bar') && !e.target.closest('.quick-reaction-bar') && !e.target.closest('.btn-bubble-react')) {
+                    closeAllQuickReactions();
+                }
+            }
+
+            // Dismiss mobile floating actions when tapping anywhere outside message row
+            if (!e.target.closest('.message-row')) {
+                document.querySelectorAll('#messagesStream .message-row.mobile-active').forEach(r => {
+                    r.classList.remove('mobile-active');
+                });
+            }
+
+            // Dismiss mobile 3-dots dropdown when clicking outside
+            const mobileMenu = document.getElementById('mobileHeaderDropdownMenu') || document.querySelector('.mobile-header-dropdown');
+            const mobileMenuBtn = document.getElementById('btnMobileHeaderMenu');
+            if (mobileMenu && mobileMenu.classList.contains('show')) {
+                if (!mobileMenu.contains(e.target) && !e.target.closest('#btnMobileHeaderMenu')) {
+                    mobileMenu.classList.remove('show');
+                    if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                }
             }
         });
+
+        // Integrate Bootstrap Settings Modal with Overlay FSM
+        const settingsModalEl = document.getElementById('chatSettingsModal');
+        if (settingsModalEl) {
+            settingsModalEl.addEventListener('show.bs.modal', function() {
+                closeAllOverlays();
+                activeOverlay = 'settings';
+            });
+            settingsModalEl.addEventListener('hidden.bs.modal', function() {
+                if (activeOverlay === 'settings') {
+                    activeOverlay = 'none';
+                }
+            });
+        }
     });
 
     // ===================================================
@@ -3602,10 +4175,7 @@ body.chat-unlocked-mode #pinSecurityScreen {
     function handleMessageInput(textarea) {
         if (!textarea) return;
         autoResizeTextarea(textarea);
-        const placeholderOverlay = document.getElementById('inputPlaceholderOverlay');
-        if (placeholderOverlay) {
-            placeholderOverlay.style.display = textarea.value.length > 0 ? 'none' : 'block';
-        }
+        updateInputBlurState();
         const btnSend = document.getElementById('btnMainSend');
         const hasText = textarea.value.trim().length > 0;
 
@@ -3995,8 +4565,18 @@ body.chat-unlocked-mode #pinSecurityScreen {
                 toggleReaction(msg.id, '❤️');
                 showHeartBurst(bubble);
                 lastTouchTime = 0;
+                msgDiv.classList.remove('mobile-active');
             } else {
                 lastTouchTime = now;
+                setTimeout(() => {
+                    if (Date.now() - lastTouchTime >= 330 && lastTouchTime !== 0) {
+                        const wasActive = msgDiv.classList.contains('mobile-active');
+                        document.querySelectorAll('#messagesStream .message-row.mobile-active').forEach(r => {
+                            if (r !== msgDiv) r.classList.remove('mobile-active');
+                        });
+                        msgDiv.classList.toggle('mobile-active', !wasActive);
+                    }
+                }, 340);
             }
         }, { passive: true });
     }
@@ -4004,7 +4584,11 @@ body.chat-unlocked-mode #pinSecurityScreen {
     // ===================================================
     // SEND MESSAGE (NEW MESSAGE OR EDIT SUBMIT)
     // ===================================================
+    let isSending = false;
+
     function sendMessage(senderName) {
+        if (isSending) return;
+
         const input = document.getElementById('messageInput');
         const text = input.value.trim();
 
@@ -4012,6 +4596,14 @@ body.chat-unlocked-mode #pinSecurityScreen {
             input.focus();
             return;
         }
+
+        const sendBtn = document.getElementById('btnMainSend');
+        if (sendBtn) {
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50');
+        }
+
+        isSending = true;
 
         // If in EDIT mode
         if (editingMessageId) {
@@ -4037,7 +4629,13 @@ body.chat-unlocked-mode #pinSecurityScreen {
                     updateExistingMessage(data.message);
                 }
             })
-            .catch(err => console.error('Edit error:', err));
+            .catch(err => console.error('Edit error:', err))
+            .finally(() => {
+                isSending = false;
+                const inp = document.getElementById('messageInput');
+                if (inp) handleMessageInput(inp);
+                if (sendBtn) sendBtn.classList.remove('opacity-50');
+            });
             return;
         }
 
@@ -4080,7 +4678,14 @@ body.chat-unlocked-mode #pinSecurityScreen {
         .catch(err => {
             console.error('Send message error:', err);
             input.value = text;
+            autoResizeTextarea(input);
             handleMessageInput(input);
+        })
+        .finally(() => {
+            isSending = false;
+            const inp = document.getElementById('messageInput');
+            if (inp) handleMessageInput(inp);
+            if (sendBtn) sendBtn.classList.remove('opacity-50');
         });
     }
 
@@ -4144,6 +4749,21 @@ body.chat-unlocked-mode #pinSecurityScreen {
             .replace(/"/g, '\\"')
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r');
+    }
+
+    // Mobile Visual Viewport & Keyboard Handling
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', function() {
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer) {
+                const activeEl = document.activeElement;
+                if (activeEl && activeEl.id === 'messageInput') {
+                    setTimeout(() => {
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, 50);
+                }
+            }
+        });
     }
 </script>
 @endsection
